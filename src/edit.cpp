@@ -1,49 +1,29 @@
-#include <iostream>
-
-#include <iostream>
 #include <string>
-#include <histedit.h> // Core libedit header
+#include <iostream>
 
-// Callback for the prompt
-const char* prompt(EditLine *e) {
-    return "my_shell> ";
-}
+#include <histedit.h>
 
-int main() {
-    // 1. Initialize EditLine
-    // "sh" is the program name for .editrc settings
-    EditLine *el = el_init("sh", stdin, stdout, stderr);
-    el_set(el, EL_PROMPT, &prompt);
-    el_set(el, EL_EDITOR, "emacs"); // Set default mode
+std::string get_input() {
+    EditLine* el = el_init("cmix", stdin, stdout, stderr);
+    History* hist = history_init();
 
-    // 2. Initialize History
-    History *myhistory = history_init();
     HistEvent ev;
-    history(myhistory, &ev, H_SETSIZE, 800);
-    el_set(el, EL_HIST, history, myhistory);
+    history(hist, &ev, H_SETSIZE, 100);
 
-    int count;
-    const char *line;
+    el_set(el, EL_HIST, history, hist);
+    el_set(el, EL_PROMPT, [](EditLine*) -> const char* { return ">>> "; });
 
-    // 3. Main Loop
-    while ((line = el_gets(el, &count)) != NULL && count > 0) {
-        std::string input(line);
-        if (!input.empty() && input != "\n") {
-            history(myhistory, &ev, H_ENTER, line); // Add to history
-            std::cout << "You entered: " << input;
-        }
+    int count = 0;
+    const char* line = el_gets(el, &count);
+
+    std::string result;
+    if (line && count > 0) {
+        result = std::string(line, count);
+        history(hist, &ev, H_ENTER, line);
     }
 
-    // 4. Cleanup
-    history_end(myhistory);
+    history_end(hist);
     el_end(el);
-    return 0;
-}
 
-
-
-
-int main(void)
-{
-  std::cout << "enter a line" <<std::endl;
+    return result;
 }
