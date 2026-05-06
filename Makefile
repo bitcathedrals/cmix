@@ -40,7 +40,7 @@ $(TARGET): $(OBJ_DIR)/$(MAIN_AR) cmix.cpp
 # testing
 #
 
-GOOGLE_TEST=../googletest
+GOOGLE_TEST=vendor/googletest
 
 TEST_FLAGS = $(CXXFLAGS) -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR)
 TEST_LDFLAGS = -L$(GOOGLE_TEST)/lib -lgtest -lgtest_main
@@ -49,7 +49,7 @@ TEST_TARGET = test_runner
 
 TEST_DIR = tests/
 
-TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp $(TEST_DIR)/*/*.cpp $(TEST_DIR)/*/*.cpp)
+TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp $(TEST_DIR)/*/*.cpp $(TEST_DIR)/*/*/*.cpp)
 TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(TEST_SRCS))
 
 #
@@ -64,7 +64,8 @@ $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 # compile test runner
 # 
 
-# $(info TEST_SRCS is $(TEST_SRCS))
+$(info TEST_SRCS is $(TEST_SRCS))
+$(info TEST_OBJS is $(TEST_OBJS))
 
 $(TEST_TARGET): $(TEST_OBJS) $(OBJ_DIR)/$(MAIN_AR)
 	$(CXX) $(TEST_FLAGS) -o $@ $^ $(TEST_LDFLAGS)
@@ -76,6 +77,6 @@ tests: $(TEST_TARGET)
 app: $(TARGET)
 
 clean:
-	rm -f $(OBJ_DIR)/* $(TARGET) $(TEST_TARGET)
+	rm -rf $(OBJ_DIR)/* $(TARGET) $(TEST_TARGET)
 
 .PHONY: clean
