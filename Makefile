@@ -2,8 +2,11 @@
 # compiler
 # 
 
+SRC_DIR = src
+OBJ_DIR = obj
+
 CXX ?= clang++
-CXXFLAGS = -std=c++17 -Wall -Wextra -I./src  -pthread
+CXXFLAGS = -std=c++17 -Wall -Wextra -I$(SRC_DIR)  -pthread
 LDFLAGS = -ledit -lncurses
 
 AR = ar
@@ -15,17 +18,14 @@ MAIN_AR = core.a
 # source
 #
 
-SRC_DIR = src
-OBJ_DIR = obj
-
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+SRCS = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/*/*.cpp $(SRC_DIR)/*/*/*.cpp)
 OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 TARGET = cmix
 
 # Compile .cpp -> obj/.o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	test -d $(OBJ_DIR) || mkdir -p $(OBJ_DIR)
+	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # build static lib
@@ -42,14 +42,14 @@ $(TARGET): $(OBJ_DIR)/$(MAIN_AR) cmix.cpp
 
 GOOGLE_TEST=../googletest
 
-TEST_FLAGS = $(CXXFLAGS) -I$(GOOGLE_TEST)/googletest/include
+TEST_FLAGS = $(CXXFLAGS) -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR)
 TEST_LDFLAGS = -L$(GOOGLE_TEST)/lib -lgtest -lgtest_main
 
 TEST_TARGET = test_runner
 
 TEST_DIR = tests/
 
-TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp)
+TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp $(TEST_DIR)/*/*.cpp $(TEST_DIR)/*/*.cpp)
 TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(TEST_SRCS))
 
 #
@@ -57,7 +57,7 @@ TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(TEST_SRCS))
 #
 
 $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
-	test -d $(OBJ_DIR) || mkdir -p $(OBJ_DIR)
+	@mkdir -p $(@D)
 	$(CXX) $(TEST_FLAGS) -c $< -o $@
 
 #
