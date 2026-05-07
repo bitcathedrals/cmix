@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include "cpu.h"
+#include <cpu.h>
 
 class SimpleWordFixture : public testing::Test {
 public:

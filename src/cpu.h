@@ -1,22 +1,12 @@
-#ifndef CPU_H_HEADER
-#define CPU_H_HEADER
+#ifndef CPU_H
+#define CPU_H
 
 #include <array>
 
-using byte = signed char;
+#include <cpu/defs.h>
+#include <cpu/operation.h>
 
 inline constexpr byte data_size = 6;
-
-class operation {
-public:
-    byte operator()([[maybe_unused]] byte i, [[maybe_unused]] byte x) { return 1; };
-    byte operator()([[maybe_unused]] byte i, [[maybe_unused]] byte x, [[maybe_unused]] byte v) { return 1; };
-};
-
-class add : operation {
-public:
-    byte operator()(byte i, byte x, byte v);
-};
 
 class word {
 public:

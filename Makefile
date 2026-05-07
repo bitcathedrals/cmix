@@ -42,7 +42,7 @@ $(TARGET): $(OBJ_DIR)/$(MAIN_AR) cmix.cpp
 
 GOOGLE_TEST=vendor/googletest
 
-TEST_FLAGS = $(CXXFLAGS) -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR)
+TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS)
 TEST_LDFLAGS = -L$(GOOGLE_TEST)/lib -lgtest -lgtest_main
 
 TEST_TARGET = test_runner

@@ -1,4 +1,4 @@
-#include "cpu.h"
+#include <cpu.h>
 
 #include <algorithm>
 #include <cassert>
@@ -10,14 +10,10 @@ static const byte data_bits = 6;
 static const byte data_mask = 0x3F;
 static const byte overflow_mask = 0B0100'0000;
 
-static const byte data_min = 0;
+static const byte data_min = 1;
 static const byte data_max = 5;
 
 static const byte sign_field = 0;
-
-byte add::operator()([[maybe_unused]] byte i, byte x, byte v) {
-    return x + v;
-}
 
 word::word(byte x1, byte x2, byte x3, byte x4, byte x5) {
     data = {1, x1, x2, x3, x4, x5};

@@ -1,6 +1,6 @@
-#include "cpu.h"
-
 #include <gtest/gtest.h>
+
+#include <cpu/operations/ops.h>
 
 TEST(Operation, Add) {
   add op;
