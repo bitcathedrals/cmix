@@ -3,7 +3,7 @@
 
 #include <array>
 
-using byte = unsigned char;
+using byte = signed char;
 
 inline constexpr byte data_size = 6;
 
