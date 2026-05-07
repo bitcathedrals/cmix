@@ -8,7 +8,7 @@ static const unsigned short int RAM_size = 4000;
 static const byte data_bits = 6;
 
 static const byte data_mask = 0x3F;
-static const byte overflow_mask = 0B1100'0000;
+static const byte overflow_mask = 0B0100'0000;
 
 static const byte data_min = 0;
 static const byte data_max = 5;
@@ -19,10 +19,18 @@ byte add::operator()([[maybe_unused]] byte i, byte x, byte v) {
     return x + v;
 }
 
+word::word(byte x1, byte x2, byte x3, byte x4, byte x5) {
+    data = {1, x1, x2, x3, x4, x5};
+
+    if(x1 < 0) {
+        data[0] = -1;
+    }
+}
+
 word::word(word &other) : data(other.data) {}
 
 byte& word::operator[](byte index) {
-    return data[index];
+    return data[index + 1];
 }
 
 byte word::overflow(byte index) {

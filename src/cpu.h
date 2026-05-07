@@ -20,6 +20,8 @@ public:
 
 class word {
 public:
+    word(byte x1, byte x2, byte x3, byte x4, byte x5);
+
     word(word &other);
 
     byte& operator[](byte index);
