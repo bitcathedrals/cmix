@@ -7,8 +7,8 @@ static const unsigned short int RAM_size = 4000;
 
 static const byte data_bits = 6;
 
-static const byte data_mask = 0x3F;
-static const byte overflow_mask = 0B0100'0000;
+static const byte positive_max = 64;
+static const byte negative_max = -64;
 
 static const byte data_min = 1;
 static const byte data_max = 5;
@@ -29,9 +29,12 @@ byte& word::operator[](byte index) {
     return data[index + 1];
 }
 
-byte word::overflow(byte index) {
-    byte check = data[index];
-    return check & overflow_mask;
+bool word::overflowed(byte index) {
+    if (data[index + 1] > positive_max || data[index + 1] < negative_max) {
+        return true;
+    }
+
+    return false;
 }
 
 word word::unary(byte low, byte high, operation op) {

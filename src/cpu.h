@@ -16,7 +16,7 @@ public:
 
     byte& operator[](byte index);
 
-    byte overflow(byte index);
+    bool overflowed(byte index);
 
     word unary(byte low, byte high, operation op);
 

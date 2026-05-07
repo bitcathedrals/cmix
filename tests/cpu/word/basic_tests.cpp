@@ -17,3 +17,16 @@ TEST_F(SimpleWordFixture, SetViaIndexOperator) {
 
     EXPECT_EQ(mix_word[1], 12);
 }
+
+
+TEST_F(SimpleWordFixture, SimpleIsNotOverflowed) {
+    mix_word[1] = 48;
+
+    EXPECT_EQ(mix_word.overflowed(1), false);
+}
+
+TEST_F(SimpleWordFixture, SimpleIsOverflow) {
+    mix_word[1] = 72;
+
+    EXPECT_EQ(mix_word.overflowed(1), true);
+}
