@@ -14,13 +14,17 @@ public:
 
     word(word &other);
 
+    word(word &other, byte lower, byte upper);
+
     byte& operator[](byte index);
 
     bool overflowed(byte index);
 
-    word unary(byte low, byte high, operation op);
+    word& unary(byte low, byte high, operation op);
 
-    word binary(byte low, byte high, operation op, word v);
+    word& binary(byte low, byte high, operation op, word v);
+
+    word& copy_subrange(word& other, byte lower, byte upper);
 
 private:
     std::array<byte, data_size> data;

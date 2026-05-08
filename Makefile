@@ -2,11 +2,13 @@
 # compiler
 # 
 
+MAX_ERRORS = 2
+
 SRC_DIR = src
 OBJ_DIR = obj
 
 CXX ?= clang++
-CXXFLAGS = -std=c++17 -Wall -Wextra -I$(SRC_DIR)  -pthread
+CXXFLAGS = -std=c++17 -Wall -Wextra -I$(SRC_DIR) -pthread -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS)
 LDFLAGS = -ledit -lncurses
 
 AR = ar
