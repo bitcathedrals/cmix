@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <cpu/word.h>
 #include <cpu/word/fixtures.h>
 
 //
