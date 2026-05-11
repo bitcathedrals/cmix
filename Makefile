@@ -7,8 +7,10 @@ MAX_ERRORS = 2
 SRC_DIR = src
 OBJ_DIR = obj
 
+DIAGNOSTICS = -Wall -Wextra -Werror -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS)
+
 CXX ?= clang++
-CXXFLAGS = -std=c++17 -Wall -Wextra -I$(SRC_DIR) -pthread -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS)
+CXXFLAGS = -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread
 LDFLAGS = -ledit -lncurses
 
 AR = ar
