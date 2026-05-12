@@ -15,7 +15,7 @@ extern Word memory[memory_capacity];
 // registers
 //
 
-Word A;
-Word X;
+extern Word A;
+extern Word X;
 
 #endif

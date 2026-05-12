@@ -6,5 +6,5 @@
 
 Word memory[memory_capacity];
 
-extern Word A;
-extern Word X;
+Word A;
+Word X;
