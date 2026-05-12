@@ -7,7 +7,7 @@
 
 class WordFixture : public testing::Test {
 public:
-    word mix_word;
+    Word mix_word;
 
     WordFixture(void) : mix_word(2,4,6,8,10) {};
 };

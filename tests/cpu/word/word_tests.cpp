@@ -10,7 +10,7 @@
 //
 
 TEST(SimpleWordTests, DefaultConstructor) {
-    word test_word;
+    Word test_word;
 
     ASSERT_EQ(0, test_word[0]);
     ASSERT_EQ(0, test_word[1]);
@@ -28,7 +28,7 @@ TEST_F(WordFixture, InitSetAndReadBack) {
 }
 
 TEST_F(WordFixture, SetValuesInConstructor) {
-    word foo(1,3,5,9,11);
+    Word foo(1,3,5,9,11);
 
     ASSERT_EQ(1, foo[0]);
     ASSERT_EQ(3, foo[1]);
@@ -38,7 +38,7 @@ TEST_F(WordFixture, SetValuesInConstructor) {
 }
 
 TEST_F(WordFixture, CopyConstructor) {
-    word foo(mix_word);
+    Word foo(mix_word);
 
     ASSERT_EQ(2, foo[0]);
     ASSERT_EQ(4, foo[1]);

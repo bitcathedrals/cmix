@@ -3,7 +3,7 @@
 #include <cpu/operations/ops.h>
 
 TEST(Operation, Add) {
-  add op;
+  Add op;
 
   EXPECT_EQ(op(1,2,3), 5);
 }
