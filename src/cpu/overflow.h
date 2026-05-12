@@ -1,8 +1,46 @@
 #ifndef CPU_OVERFLOW_H
 #define CPU_OVERFLOW_H
 
-#include <cpu/defs.h>
+#include <stdexcept>
 
-void arithmetic_overflow(byte overflowed);
+#include <cpu/defs.h>
+#include <cpu/exception.h>
+#include <cpu/operation.h>
+
+class OverflowOpException : public OpException {
+public:
+    OverflowOpException(const Operation& op,
+                        const std::string context,
+                        const byte index,
+                        const byte value) : OpException(op, context),
+                                            index(index),
+                                            value(value) {};
+
+    friend std::ostream& operator<<(std::ostream& output,
+                                    const OverflowOpException exception);
+
+private:
+    const byte index;
+    const byte value;
+};
+
+std::ostream& operator<<(std::ostream& output,
+                         const OverflowOpException exception);
+
+class OverflowAtException {
+public:
+    OverflowAtException(const OverflowOpException& ex,
+                        const std::string& location) : ex(ex),
+                                                       location(location) {};
+
+    friend std::ostream& operator<<(std::ostream& output,
+                                    const OverflowAtException exception);
+
+    const OverflowOpException& ex;
+    const std::string& location;
+};
+
+std::ostream& operator<<(std::ostream& output,
+                         const OverflowAtException exception);
 
 #endif

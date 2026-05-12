@@ -1,9 +1,20 @@
+#include <iostream>
+#include <string>
+
 #include <cpu/overflow.h>
-#include <sstream>
 
-void arithmetic_overflow(byte overflowed) {
-    std::stringstream ss;
-    ss << "cmix byte overflow: " << overflowed;
+std::ostream& operator<<(std::ostream& output,
+                         const OverflowOpException exception) {
+    output << "overflow: " << info_to_string[exception.op.info]
+           << " index = " << exception.index
+           << " value = " << exception.value;
 
-    throw std::overflow_error(ss.str());
+    return output;
+}
+
+std::ostream& operator<<(std::ostream& output,
+                         const OverflowAtException exception) {
+    output << "overflow at: " << exception.location
+           << exception.ex;
+    return output;
 }

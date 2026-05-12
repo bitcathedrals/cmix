@@ -1,7 +1,12 @@
 #include <cpu/word.h>
+#include <cpu/operation.h>
 #include <cpu/overflow.h>
 
-word::word(byte x1, byte x2, byte x3, byte x4, byte x5) {
+Word::Word() : data {sign_field, 0, 0, 0, 0, 0} {}
+
+Word::Word(Word &other) : data(other.data) {}
+
+Word::Word(byte x1, byte x2, byte x3, byte x4, byte x5) {
     data = {sign_default, x1, x2, x3, x4, x5};
 
     if(x1 < 0) {
@@ -9,11 +14,7 @@ word::word(byte x1, byte x2, byte x3, byte x4, byte x5) {
     }
 }
 
-word::word() : data {sign_field, 0, 0, 0, 0, 0} {}
-
-word::word(word &other) : data(other.data) {}
-
-word::word(word &other, byte lower, byte upper) {
+Word::Word(Word &other, byte lower, byte upper) {
     data[sign_field] = sign_default;
 
     for(byte i = data_min; i <= data_max; i++) {
@@ -27,11 +28,11 @@ word::word(word &other, byte lower, byte upper) {
     }
 }
 
-byte& word::operator[](byte index) {
+byte& Word::operator[](byte index) {
     return data[index + data_offset];
 }
 
-bool word::overflowed(byte index) {
+bool Word::overflowed(byte index) {
     if (data[index + data_offset] > positive_max ||
         data[index + data_offset] < negative_max) {
         return true;
@@ -40,32 +41,35 @@ bool word::overflowed(byte index) {
     return false;
 }
 
-word& word::unary(byte low, byte high, operation op) {
+Word& Word::unary(byte low, byte high, Operation op) {
     for(byte i = low; i <= high; i++) {
         data[i] = op(i, data[i]);
 
         if (overflowed(i)) {
-            arithmetic_overflow(data[i]);
+            throw OverflowOpException(op, "unary operation", i, data[i]);
         }
     }
 
     return *this;
 }
 
-word& word::binary(byte low, byte high, operation op, word v) {
+Word& Word::binary(byte low, byte high, Operation op, Word v) {
     for(byte i = low; i <= high; i++) {
         data[i] = op(i, data[i], v.data[i]);
 
         if (overflowed(i)) {
-            arithmetic_overflow(data[i]);
+            throw OverflowOpException(op, "binary operation", i, data[i]);
         }
 
+        if (v.overflowed(i)) {
+            throw OverflowOpException(op, "binary operation", i, data[i]);
+        }
     }
 
     return *this;
 }
 
-word& word::copy_subrange(word& other, byte lower, byte upper) {
+Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
     for(byte i = lower + data_offset; i <= upper; i++) {
         data[i] = other[i];
     }

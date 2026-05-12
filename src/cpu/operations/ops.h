@@ -4,8 +4,10 @@
 #include <cpu/defs.h>
 #include <cpu/operation.h>
 
-class add : public operation {
+class Add : public Operation {
 public:
+    Add() : Operation(ADD) {}
+
     byte operator()(byte i, byte x, byte v);
 };
 

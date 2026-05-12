@@ -23,25 +23,25 @@ static const byte sign_default = 1;
 static const byte sign_positive = 1;
 static const byte sign_negative = -1;
 
-class word {
+class Word {
 public:
-    word();
+    Word();
 
-    word(word &other);
+    Word(Word &other);
 
-    word(byte x1, byte x2, byte x3, byte x4, byte x5);
+    Word(byte x1, byte x2, byte x3, byte x4, byte x5);
 
-    word(word &other, byte lower, byte upper);
+    Word(Word &other, byte lower, byte upper);
 
     byte& operator[](byte index);
 
     bool overflowed(byte index);
 
-    word& unary(byte low, byte high, operation op);
+    Word& unary(byte low, byte high, Operation op);
 
-    word& binary(byte low, byte high, operation op, word v);
+    Word& binary(byte low, byte high, Operation op, Word v);
 
-    word& copy_subrange(word& other, byte lower, byte upper);
+    Word& copy_subrange(Word& other, byte lower, byte upper);
 
 private:
     std::array<byte, data_size> data;

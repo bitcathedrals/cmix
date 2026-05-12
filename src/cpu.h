@@ -9,13 +9,13 @@
 
 inline const short int memory_capacity = 4000;
 
-extern word memory[memory_capacity];
+extern Word memory[memory_capacity];
 
 //
 // registers
 //
 
-word A;
-word X;
+Word A;
+Word X;
 
 #endif

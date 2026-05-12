@@ -4,7 +4,7 @@
 #include <cpu.h>
 #include <cpu/word.h>
 
-word memory[memory_capacity];
+Word memory[memory_capacity];
 
-extern word A;
-extern word X;
+extern Word A;
+extern Word X;
