@@ -27,11 +27,13 @@ class Word {
 public:
     Word();
 
-    Word(Word &other);
+    Word(const Word &other);
 
     Word(byte x1, byte x2, byte x3, byte x4, byte x5);
 
     Word(Word &other, byte lower, byte upper);
+
+    Word& operator=(const Word& right);
 
     byte& operator[](byte index);
 

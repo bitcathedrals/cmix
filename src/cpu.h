@@ -9,13 +9,19 @@
 
 inline const short int memory_capacity = 4000;
 
-extern Word memory[memory_capacity];
+class Cpu {
+public:
+    Cpu() {};
 
-//
-// registers
-//
+    Cpu(const Cpu& other) : A(other.A),
+                            X(other.X) {};
 
-extern Word A;
-extern Word X;
+    std::array<Word,memory_capacity> memory;
+
+    Word A;
+    Word X;
+};
+
+extern Cpu CPU;
 
 #endif
