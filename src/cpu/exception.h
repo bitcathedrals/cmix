@@ -15,11 +15,15 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& output,
+
                                     const GeneralException general);
 
 private:
     const std::string context;
     const std::chrono::time_point<std::chrono::system_clock> timestamp;
 };
+
+std::ostream& operator<<(std::ostream& output,
+                         const GeneralException general);
 
 #endif

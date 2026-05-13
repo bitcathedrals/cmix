@@ -8,10 +8,29 @@
 #include <cpu/defs.h>
 #include <cpu/exception.h>
 
+//
+// these are micro ops, not instructions
+//
+
 enum OpInfo {
-    LDA,
-    ADD,
+    ADD
 };
+
+class UndefinedOperation : public GeneralException {
+public:
+    UndefinedOperation(byte i, byte x, byte v=0) : GeneralException("Operation base class reached, undefined operation"),
+                                                   i(i), x(x), v(v) {}
+
+    friend std::ostream& operator<<(std::ostream& output,
+                                    const UndefinedOperation undef);
+private:
+    byte i;
+    byte x;
+    byte v;
+};
+
+std::ostream& operator<<(std::ostream& output,
+                         const UndefinedOperation undef);
 
 extern std::map<OpInfo,std::string> info_to_string;
 
@@ -21,12 +40,12 @@ public:
 
     Operation(OpInfo op_info) : info(op_info) {};
 
-    byte operator()([[maybe_unused]] byte i,
-                    [[maybe_unused]] byte x) { return 1; };
+    byte operator()(byte i,
+                    byte x) { throw UndefinedOperation(i, x); };
 
-    byte operator()([[maybe_unused]] byte i,
-                    [[maybe_unused]] byte x,
-                    [[maybe_unused]] byte v) { return 1; };
+    byte operator()(byte i,
+                    byte x,
+                    byte v) { throw UndefinedOperation(i, x, v); };
 };
 
 class OpException : public GeneralException {
