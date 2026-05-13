@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <cpu/word.h>
 #include <cpu/operation.h>
 #include <cpu/overflow.h>
@@ -65,19 +67,26 @@ Word& Word::binary(byte low, byte high, Operation op, Word v) {
         if (overflowed(i)) {
             throw OverflowOpException(op, "binary operation", i, data[i]);
         }
-
-        if (v.overflowed(i)) {
-            throw OverflowOpException(op, "binary operation", i, data[i]);
-        }
     }
 
     return *this;
 }
 
-Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
+Word& Word::copy_subrange(const Word& other, byte lower, byte upper) {
     for(byte i = lower + data_offset; i <= upper; i++) {
         data[i] = other[i];
     }
 
     return *this;
+}
+
+ostream& operator <<(ostream& output, const Word& x) {
+    output << "{"
+           << x.data[0] << ","
+           << x.data[1] << ","
+           << x.data[2] << ","
+           << x.data[3] << ","
+           << x.data[4] << ","
+           << x.data[5]
+           << "}";
 }
