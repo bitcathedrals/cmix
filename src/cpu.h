@@ -7,14 +7,15 @@
 #include <cpu/operation.h>
 #include <cpu/word.h>
 
-inline const short int memory_capacity = 4000;
+using memory_index_t = short int;
+
+inline const memory_index_t memory_capacity = 4000;
 
 class Cpu {
 public:
     Cpu() {};
 
-    Cpu(const Cpu& other) : A(other.A),
-                            X(other.X) {};
+    Cpu(const Cpu& other);
 
     std::array<Word,memory_capacity> memory;
 
