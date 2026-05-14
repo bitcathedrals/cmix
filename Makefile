@@ -34,12 +34,15 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(OPT_FLAGS) -c $< -o $@
 
+# cmix.o main() conflicts with entry points like googletest
+WITHOUT_CMIX_MAIN=$(filter-out $(OBJ_DIR)/cmix.o, $(OBJS))
+
 # build static lib
-$(OBJ_DIR)/$(MAIN_AR): $(OBJS)
-	$(AR) $(ARFLAGS) $(OBJ_DIR)/$(MAIN_AR) $(OBJS)
+$(OBJ_DIR)/$(MAIN_AR): $(WITHOUT_CMIX_MAIN)
+	$(AR) $(ARFLAGS) $(OBJ_DIR)/$(MAIN_AR) $(WITHOUT_CMIX_MAIN)
 
 # Link step
-$(TARGET): $(OBJ_DIR)/$(MAIN_AR)
+$(TARGET): $(OBJ_DIR)/$(MAIN_AR) $(OBJ_DIR)/cmix.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 #
@@ -73,10 +76,7 @@ $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 # $(info TEST_SRCS is $(TEST_SRCS))
 # $(info TEST_OBJS is $(TEST_OBJS))
 
-# cmix.o main() conflicts with the googletest main() test runner.
-WITHOUT_CMIX_MAIN=$(filter-out $(OBJ_DIR)/cmix.o, $(OBJS))
-
-$(TEST_TARGET): $(TEST_OBJS) $(WITHOUT_CMIX_MAIN)
+$(TEST_TARGET): $(TEST_OBJS)
 	$(CXX) $(TEST_FLAGS) -o $@ $^ $(TEST_LDFLAGS) -ledit
 
 # project scope
