@@ -27,10 +27,12 @@ OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 TARGET = cmix
 
+OPT_FLAGS ?= -O3
+
 # Compile .cpp -> obj/.o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(OPT_FLAGS) -c $< -o $@
 
 # build static lib
 $(OBJ_DIR)/$(MAIN_AR): $(OBJS)
@@ -71,8 +73,11 @@ $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 # $(info TEST_SRCS is $(TEST_SRCS))
 # $(info TEST_OBJS is $(TEST_OBJS))
 
-$(TEST_TARGET): $(TEST_OBJS) $(OBJ_DIR)/$(MAIN_AR)
-	$(CXX) $(TEST_FLAGS) -o $@ $^ $(TEST_LDFLAGS)
+# cmix.o main() conflicts with the googletest main() test runner.
+WITHOUT_CMIX_MAIN=$(filter-out $(OBJ_DIR)/cmix.o, $(OBJS))
+
+$(TEST_TARGET): $(TEST_OBJS) $(WITHOUT_CMIX_MAIN)
+	$(CXX) $(TEST_FLAGS) -o $@ $^ $(TEST_LDFLAGS) -ledit
 
 # project scope
 
