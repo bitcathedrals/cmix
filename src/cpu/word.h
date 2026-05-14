@@ -37,7 +37,7 @@ public:
 
     Word& operator=(const Word& right);
 
-    byte& operator[](byte index);
+    byte& operator[](const byte index);
 
     bool overflowed(byte index);
 
@@ -47,11 +47,11 @@ public:
 
     Word& copy_subrange(Word& other, byte lower, byte upper);
 
-    friend ostream& operator <<(ostream& output, const Word& x);
+    friend std::ostream& operator <<(std::ostream& output, const Word& x);
 private:
     std::array<byte, data_size> data;
 };
 
-ostream& operator <<(ostream& output, const Word& x);
+std::ostream& operator<<(std::ostream& output, const Word& x);
 
 #endif

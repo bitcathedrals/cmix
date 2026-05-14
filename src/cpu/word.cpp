@@ -24,6 +24,8 @@ Word::Word(byte x1, byte x2, byte x3, byte x4, byte x5) {
 Word::Word(Word &other, byte lower, byte upper) {
     data[sign_field] = sign_default;
 
+    lower += data_offset;
+
     for(byte i = data_min; i <= data_max; i++) {
 
         if(i >= lower && i <= upper) {
@@ -35,7 +37,7 @@ Word::Word(Word &other, byte lower, byte upper) {
     }
 }
 
-byte& Word::operator[](byte index) {
+byte& Word::operator[](const byte index) {
     return data[index + data_offset];
 }
 
@@ -72,7 +74,7 @@ Word& Word::binary(byte low, byte high, Operation op, Word v) {
     return *this;
 }
 
-Word& Word::copy_subrange(const Word& other, byte lower, byte upper) {
+Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
     for(byte i = lower + data_offset; i <= upper; i++) {
         data[i] = other[i];
     }
@@ -80,7 +82,7 @@ Word& Word::copy_subrange(const Word& other, byte lower, byte upper) {
     return *this;
 }
 
-ostream& operator <<(ostream& output, const Word& x) {
+std::ostream& operator<<(std::ostream& output, const Word& x) {
     output << "{"
            << x.data[0] << ","
            << x.data[1] << ","
@@ -89,4 +91,6 @@ ostream& operator <<(ostream& output, const Word& x) {
            << x.data[4] << ","
            << x.data[5]
            << "}";
-}
+
+    return output;
+};
