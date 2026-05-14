@@ -76,7 +76,7 @@ $(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 # $(info TEST_SRCS is $(TEST_SRCS))
 # $(info TEST_OBJS is $(TEST_OBJS))
 
-$(TEST_TARGET): $(TEST_OBJS)
+$(TEST_TARGET): $(TEST_OBJS) $(OBJ_DIR)/$(MAIN_AR)
 	$(CXX) $(TEST_FLAGS) -o $@ $^ $(TEST_LDFLAGS) -ledit
 
 # project scope
