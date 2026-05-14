@@ -2,7 +2,7 @@
 
 #include <repl/dispatch.h>
 
-class DispatchFixture  : public testing::Test {
+class DispatchParsingFixture  : public testing::Test {
 public:
     const char* null = nullptr;
 
@@ -12,20 +12,20 @@ public:
     const char* two = "one two";
 };
 
-TEST_F(DispatchFixture, NullPointerTest) {
+TEST_F(DispatchParsingFixture, NullPointerTest) {
     EXPECT_EQ(parse_input(null).size(), (unsigned long)0);
 }
 
-TEST_F(DispatchFixture, EmptyStringTest) {
+TEST_F(DispatchParsingFixture, EmptyStringTest) {
     EXPECT_EQ(parse_input(empty).size(), (unsigned long)0);
 }
 
-TEST_F(DispatchFixture, OneWordTest) {
+TEST_F(DispatchParsingFixture, OneWordTest) {
     EXPECT_EQ(parse_input(one).size(), (unsigned long)1);
     EXPECT_EQ(parse_input(one)[0], std::string("one"));
 }
 
-TEST_F(DispatchFixture, TwoWordTest) {
+TEST_F(DispatchParsingFixture, TwoWordTest) {
     EXPECT_EQ(parse_input(two).size(), (unsigned long)2);
     EXPECT_EQ(parse_input(two)[0], std::string("one"));
     EXPECT_EQ(parse_input(two)[1], std::string("two"));
