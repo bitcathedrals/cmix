@@ -6,8 +6,8 @@
 Commands string_to_command(const std::string command) {
     if(command == "quit") return Commands::quit;
 
-    if(command == "peek") return Commands::peek;
-    if(command == "poke") return Commands::poke;
+    if(command == "read") return Commands::peek;
+    if(command == "write") return Commands::poke;
 
     return Commands::unknown;
 }
