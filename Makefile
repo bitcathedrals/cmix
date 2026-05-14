@@ -37,7 +37,7 @@ $(OBJ_DIR)/$(MAIN_AR): $(OBJS)
 	$(AR) $(ARFLAGS) $(OBJ_DIR)/$(MAIN_AR) $(OBJS)
 
 # Link step
-$(TARGET): $(OBJ_DIR)/$(MAIN_AR) cmix.cpp
+$(TARGET): $(OBJ_DIR)/$(MAIN_AR)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 #
