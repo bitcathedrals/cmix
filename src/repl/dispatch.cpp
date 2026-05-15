@@ -3,13 +3,21 @@
 #include <string>
 #include <regex>
 
-Commands string_to_command(const std::string command) {
-    if(command == "quit") return Commands::quit;
+// foo = CommandEntry(Command::quit, 1, "foo");
 
-    if(command == "read") return Commands::peek;
-    if(command == "write") return Commands::poke;
+CommandEntry CommandTable[CommandCount] = {
+    {Command::quit, 1, "quit cmix."},
+    {Command::read, 1, "read <i> = print memory at <i>"},
+    {Command::write, 7, "write <i> <x> = write word at i with x,x,x,x,x"}
+};
 
-    return Commands::unknown;
+Command string_to_command(const std::string command) {
+    if(command == "quit") return Command::quit;
+
+    if(command == "read") return Command::read;
+    if(command == "write") return Command::write;
+
+    return Command::unknown;
 }
 
 parse_t parse_input(const char* input_cstring) {

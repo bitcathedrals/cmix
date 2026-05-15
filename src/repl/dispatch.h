@@ -4,16 +4,26 @@
 #include <string>
 #include <vector>
 
-enum Commands {
-    quit,
+enum class Command {
+    quit = 0,
 
-    peek,
-    poke,
+    read = 1,
+    write = 2,
 
-    unknown
+    unknown = 32
 };
 
-Commands string_to_command(const std::string command);
+static inline const char CommandCount = 4;
+
+struct CommandEntry {
+    Command cmd;
+    char word_count;
+    std::string help;
+};
+
+extern CommandEntry CommandTable[CommandCount];
+
+Command string_to_command(const std::string command);
 
 using parse_t = std::vector<std::string>;
 
