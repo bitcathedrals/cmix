@@ -1,9 +1,8 @@
 #ifndef CPU_WORD_H
 #define CPU_WORD_H
 
-#include <iostream>
-
 #include <array>
+
 #include <cpu/defs.h>
 #include <cpu/operation.h>
 
@@ -47,11 +46,14 @@ public:
 
     Word& copy_subrange(Word& other, byte lower, byte upper);
 
-    friend std::ostream& operator <<(std::ostream& output, const Word& x);
+    friend std::ostream& operator <<(std::ostream& output, const Word&);
+    friend std::istream& operator >>(std::istream& input, Word& x);
+
 private:
     std::array<byte, data_size> data;
 };
 
 std::ostream& operator<<(std::ostream& output, const Word& x);
+std::istream& operator>>(std::istream& input, Word& x);
 
 #endif

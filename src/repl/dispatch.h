@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <parse.h>
+
 enum class Command {
     quit = 0,
 
@@ -24,9 +26,5 @@ struct CommandEntry {
 extern CommandEntry CommandTable[CommandCount];
 
 Command string_to_command(const std::string command);
-
-using parse_t = std::vector<std::string>;
-
-parse_t parse_input(const char* input_cstring);
 
 #endif

@@ -1,8 +1,10 @@
-#include <iostream>
+#include <iterator>
+#include <algorithm>
 
 #include <cpu/word.h>
 #include <cpu/operation.h>
 #include <cpu/overflow.h>
+#include <parse.h>
 
 Word::Word() : data {sign_field, 0, 0, 0, 0, 0} {}
 
@@ -83,14 +85,32 @@ Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
 }
 
 std::ostream& operator<<(std::ostream& output, const Word& x) {
-    output << "{"
+    output << "["
            << x.data[0] << ","
            << x.data[1] << ","
            << x.data[2] << ","
            << x.data[3] << ","
            << x.data[4] << ","
            << x.data[5]
-           << "}";
+           << "]";
 
     return output;
+};
+
+using input_iterator = std::istreambuf_iterator<char>;
+
+std::istream& operator>>(std::istream& input, Word& x) {
+    input_iterator begin(input);
+    input_iterator end;
+
+    std::string data(begin, end);
+
+    parse_t parse = parse_word_cli(data);
+
+    for(auto i = 0; i < data_size; i++) {
+        byte v = static_cast<byte>(stoi(parse[i]));
+        x.data[i] = v;
+    }
+
+    return input;
 };
