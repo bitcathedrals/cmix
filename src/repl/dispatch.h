@@ -25,6 +25,8 @@ struct CommandEntry {
 
 extern CommandEntry CommandTable[CommandCount];
 
+CommandEntry lookup_command(const Command x);
+
 Command string_to_command(const std::string command);
 
 #endif

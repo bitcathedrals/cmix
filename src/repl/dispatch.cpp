@@ -10,7 +10,7 @@ CommandEntry CommandTable[CommandCount] = {
     {Command::write, 7, "write <i> <x> = write word at i with x,x,x,x,x"}
 };
 
-CommandEntry lookup_command(Command x) {
+CommandEntry lookup_command(const Command x) {
     for(auto i = 0; i <CommandCount; i++) {
         if (CommandTable[i].cmd == x) {
             return CommandTable[i];
