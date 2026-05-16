@@ -2,7 +2,7 @@
 #include <string>
 #include <regex>
 
-#include <repl/dispatch.h>
+#include <repl/command.h>
 
 CommandEntry CommandTable[CommandCount] = {
     {Command::quit, 1, "quit cmix."},
