@@ -3,6 +3,18 @@
 
 #include <parse.h>
 
+std::ostream& operator<<(std::ostream& output, const parse_t p) {
+    output << p[0]
+           << p[1]
+           << p[2]
+           << p[3]
+           << p[4]
+           << p[5];
+
+    return output;
+}
+
+
 std::istringstream istream_from_string(const std::string input) {
     return std::istringstream(input);
 }

@@ -5,6 +5,8 @@
 
 using parse_t = std::vector<std::string>;
 
+std::ostream& operator<<(std::ostream& output, const parse_t p);
+
 std::istringstream istream_from_string(const std::string input);
 
 parse_t parse_cli(const std::string& input);

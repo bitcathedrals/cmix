@@ -3,11 +3,11 @@
 # 
 
 MAX_ERRORS = 2
-
+MAX_BACKTRACE=4
 SRC_DIR = src
 OBJ_DIR = obj
 
-DIAGNOSTICS = -Wall -Wextra -Werror -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS)
+DIAGNOSTICS = -Wall -Wextra -Werror -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS) -ftemplate-backtrace-limit=$(MAX_BACKTRACE)
 
 CXX ?= clang++
 CXXFLAGS = -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread
