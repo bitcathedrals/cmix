@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include <cpu/defs.h>
-#include <cpu/exception.h>
+#include <exception.h>
 
 //
 // these are micro ops, not instructions
@@ -22,7 +22,7 @@ public:
                                                    i(i), x(x), v(v) {}
 
     friend std::ostream& operator<<(std::ostream& output,
-                                    const UndefinedOperation undef);
+                                    const UndefinedOperation& undef);
 private:
     byte i;
     byte x;
@@ -30,7 +30,7 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& output,
-                         const UndefinedOperation undef);
+                         const UndefinedOperation& undef);
 
 extern std::map<OpInfo,std::string> info_to_string;
 
@@ -55,12 +55,12 @@ public:
                                              op(op) {};
 
     friend std::ostream& operator<<(std::ostream& output,
-                                    const OpException exception);
+                                    const OpException& exception);
 
     const Operation& op;
 };
 
 std::ostream& operator<<(std::ostream& output,
-                         const OpException exception);
+                         const OpException& exception);
 
 #endif

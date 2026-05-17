@@ -6,12 +6,38 @@
 #include <cpu/overflow.h>
 #include <parse.h>
 
-Word::Word() : data {sign_field, 0, 0, 0, 0, 0} {}
+void Word::sanitize(void) {
+    for(auto i = data_offset; i <= data_max; i++) {
+        if (data[i] > positive_max ||
+            data[i] < negative_max) {
+            throw ArithmeticException("during Word::sanitize",
+                                      data[i]);
+        }
+    }
 
-Word::Word(const Word &other) : data(other.data) {}
+    // fix the sign
+}
+
+// Word::Word() {}
+
+Word::Word() : data {sign_default, 0, 0, 0, 0, 0} {
+//    std::cerr << "here!" << std::endl;
+}
+
+Word::Word(const Word& other) : data(other.data) {}
 
 Word& Word::operator=(const Word& other) {
     data = other.data;
+    return *this;
+}
+
+Word& Word::operator=(const parse_t& p) {
+    for (auto i = 0; i <= data_max; i++) {
+        data[i + data_offset] = static_cast<byte>(std::atoi(p[i].c_str()));
+    }
+
+    sanitize();
+
     return *this;
 }
 
@@ -23,7 +49,7 @@ Word::Word(byte x1, byte x2, byte x3, byte x4, byte x5) {
     }
 }
 
-Word::Word(Word &other, byte lower, byte upper) {
+Word::Word(Word& other, byte lower, byte upper) {
     data[sign_field] = sign_default;
 
     lower += data_offset;
@@ -85,11 +111,11 @@ Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
 }
 
 std::ostream& operator<<(std::ostream& output, const Word& x) {
-    output << x.data[0] << ","
-           << x.data[1] << ","
-           << x.data[2] << ","
-           << x.data[3] << ","
-           << x.data[4] << ","
+    output << x.data[0] << ":"
+           << x.data[1] << ":"
+           << x.data[2] << ":"
+           << x.data[3] << ":"
+           << x.data[4] << ":"
            << x.data[5];
 
     return output;
@@ -103,11 +129,7 @@ std::istream& operator>>(std::istream& input, Word& x) {
 
     std::string data(begin, end);
 
-    parse_t parse = parse_word_cli(data);
-
-    for(auto i = 0; i < data_size; i++) {
-        x.data[i] = static_cast<byte>(stoi(parse[i]));
-    }
+    x = parse_word_cli(data);
 
     return input;
 };

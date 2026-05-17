@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include <cpu/defs.h>
-#include <cpu/exception.h>
+#include <exception.h>
 #include <cpu/operation.h>
 
 class OverflowOpException : public OpException {
@@ -17,15 +17,13 @@ public:
                                             value(value) {};
 
     friend std::ostream& operator<<(std::ostream& output,
-                                    const OverflowOpException exception);
-
-private:
+                                    const OverflowOpException ex);
     const byte index;
     const byte value;
 };
 
 std::ostream& operator<<(std::ostream& output,
-                         const OverflowOpException exception);
+                         const OverflowOpException& ex);
 
 class OverflowAtException {
 public:
@@ -34,13 +32,13 @@ public:
                                                        location(location) {};
 
     friend std::ostream& operator<<(std::ostream& output,
-                                    const OverflowAtException exception);
+                                    const OverflowAtException& ex);
 
     const OverflowOpException& ex;
     const std::string& location;
 };
 
 std::ostream& operator<<(std::ostream& output,
-                         const OverflowAtException exception);
+                         const OverflowAtException& exception);
 
 #endif

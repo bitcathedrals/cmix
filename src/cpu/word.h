@@ -3,6 +3,7 @@
 
 #include <array>
 
+#include <parse.h>
 #include <cpu/defs.h>
 #include <cpu/operation.h>
 
@@ -28,15 +29,17 @@ class Word {
 public:
     Word();
 
-    Word(const Word &other);
+    Word(const Word& other);
 
     Word(byte x1, byte x2, byte x3, byte x4, byte x5);
 
-    Word(Word &other, byte lower, byte upper);
+    Word(Word& other, byte lower, byte upper);
 
     Word& operator=(const Word& right);
-
+    Word& operator=(const parse_t& p);
     byte& operator[](const byte index);
+
+    void sanitize(void);
 
     bool overflowed(byte index);
 

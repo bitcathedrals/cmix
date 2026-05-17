@@ -4,17 +4,16 @@
 #include <cpu/overflow.h>
 
 std::ostream& operator<<(std::ostream& output,
-                         const OverflowOpException exception) {
-    output << "overflow: " << info_to_string[exception.op.info]
-           << " index = " << exception.index
-           << " value = " << exception.value;
+                         const OverflowOpException& ex) {
+    output << "overflow: " << info_to_string[ex.op.info]
+           << " index = " << ex.index
+           << " value = " << ex.value;
 
     return output;
 }
 
 std::ostream& operator<<(std::ostream& output,
-                         const OverflowAtException exception) {
-    output << "overflow at: " << exception.location
-           << exception.ex;
+                         const OverflowAtException& ex) {
+    output << "overflow at: " << ex.location;
     return output;
 }

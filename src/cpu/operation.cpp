@@ -5,8 +5,9 @@
 #include <cpu/operation.h>
 
 std::ostream& operator<<(std::ostream& output,
-                         const UndefinedOperation undef) {
-    output << "undefined operation parameters are: "
+                         const UndefinedOperation& undef) {
+    output << static_cast<GeneralException>(undef)
+           << "undefined operation parameters are: "
            << "i (index) = " << undef.i
            << "x (value) = " << undef.x
            << "v (value) = " << undef.v;
@@ -19,7 +20,7 @@ std::map<OpInfo,std::string> info_to_string = {
 };
 
 std::ostream& operator<<(std::ostream& output,
-                         const OpException exception) {
+                         const OpException& exception) {
     output << "Operation: "
            << info_to_string[exception.op.info];
 

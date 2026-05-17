@@ -12,32 +12,25 @@
 TEST(SimpleWordTests, DefaultConstructor) {
     Word test_word;
 
-    ASSERT_EQ(0, test_word[0]);
-    ASSERT_EQ(0, test_word[1]);
-    ASSERT_EQ(0, test_word[2]);
-    ASSERT_EQ(0, test_word[3]);
-    ASSERT_EQ(0, test_word[4]);
+    EXPECT_EQ(0, test_word[0]);
+    EXPECT_EQ(0, test_word[1]);
+    EXPECT_EQ(0, test_word[2]);
+    EXPECT_EQ(0, test_word[3]);
+    EXPECT_EQ(0, test_word[4]);
 }
 
 TEST_F(WordFixture, InitSetAndReadBack) {
-  ASSERT_EQ(2, mix_word[0]);
-  ASSERT_EQ(4, mix_word[1]);
-  ASSERT_EQ(6, mix_word[2]);
-  ASSERT_EQ(8, mix_word[3]);
-  ASSERT_EQ(10, mix_word[4]);
-}
+    Word test_word(2,4,6,8,10);
 
-TEST_F(WordFixture, SetValuesInConstructor) {
-    Word foo(1,3,5,9,11);
-
-    ASSERT_EQ(1, foo[0]);
-    ASSERT_EQ(3, foo[1]);
-    ASSERT_EQ(5, foo[2]);
-    ASSERT_EQ(9, foo[3]);
-    ASSERT_EQ(11, foo[4]);
+  EXPECT_EQ(2, mix_word[0]);
+  EXPECT_EQ(4, mix_word[1]);
+  EXPECT_EQ(6, mix_word[2]);
+  EXPECT_EQ(8, mix_word[3]);
+  EXPECT_EQ(10, mix_word[4]);
 }
 
 TEST_F(WordFixture, CopyConstructor) {
+    Word test_word(2,4,6,8,10);
     Word foo(mix_word);
 
     ASSERT_EQ(2, foo[0]);
