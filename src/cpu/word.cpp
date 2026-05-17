@@ -85,14 +85,12 @@ Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
 }
 
 std::ostream& operator<<(std::ostream& output, const Word& x) {
-    output << "["
-           << x.data[0] << ","
+    output << x.data[0] << ","
            << x.data[1] << ","
            << x.data[2] << ","
            << x.data[3] << ","
            << x.data[4] << ","
-           << x.data[5]
-           << "]";
+           << x.data[5];
 
     return output;
 };
@@ -108,8 +106,7 @@ std::istream& operator>>(std::istream& input, Word& x) {
     parse_t parse = parse_word_cli(data);
 
     for(auto i = 0; i < data_size; i++) {
-        byte v = static_cast<byte>(stoi(parse[i]));
-        x.data[i] = v;
+        x.data[i] = static_cast<byte>(stoi(parse[i]));
     }
 
     return input;
