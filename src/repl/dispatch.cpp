@@ -13,15 +13,15 @@ const inline byte data_field = 3;
 const inline byte read_parse_size = 3;
 const inline byte write_parse_size = 4;
 
-static Cmd_Status exec_read(const parse_t p);
-static Cmd_Status exec_write(const parse_t p);
+static CmdStatus exec_read(const parse_t p);
+static CmdStatus exec_write(const parse_t p);
 
-Cmd_Status run_command(const parse_t p) {
+CmdStatus run_command(const parse_t p) {
     char size = p.size();
 
     if(size < 1) {
         std::cerr << "cmix: empty command." << std::endl;
-        return Cmd_Status::bad_input;
+        return CmdStatus::bad_input;
     }
 
     Command cmd = string_to_command(p[cmd_field]);
@@ -32,7 +32,7 @@ Cmd_Status run_command(const parse_t p) {
 
     switch (cmd) {
     case Command::quit:
-        return Cmd_Status::ok;
+        return CmdStatus::ok;
 
     case Command::read:
         return exec_read(p);
@@ -47,15 +47,15 @@ Cmd_Status run_command(const parse_t p) {
     }
 
     std::cerr << "cmix unhandled command: " << p[cmd_field] << std::endl;
-    return Cmd_Status::bad_input;
+    return CmdStatus::bad_input;
 }
 
-static Cmd_Status exec_read(const parse_t p) {
+static CmdStatus exec_read(const parse_t p) {
     int size = p.size();
 
     if (size != read_parse_size) {
         std::cerr << "cmix bad input, expected " << size << p << std::endl;
-        return Cmd_Status::bad_input;
+        return CmdStatus::bad_input;
     }
 
     if (p[type_field] == "reg") {
@@ -66,6 +66,8 @@ static Cmd_Status exec_read(const parse_t p) {
         if (p[adr_field] == "X") {
             std::cerr << CPU.X << std::endl;
         }
+
+        return CmdStatus::ok;
     }
 
     if (p[type_field] == "mem") {
@@ -76,22 +78,24 @@ static Cmd_Status exec_read(const parse_t p) {
         }
         else {
             std::cerr << "cmix: bad address: " << p[adr_field] << std::endl;
-            return Cmd_Status::out_of_range;
+            return CmdStatus::out_of_range;
         }
+
+        return CmdStatus::ok;
     }
 
     std::cerr << "cmix unknown type (reg/mem): " << p[type_field] << std::endl;
-    return Cmd_Status::bad_input;
+    return CmdStatus::bad_input;
 }
 
-static Cmd_Status exec_write(const parse_t p) {
+static CmdStatus exec_write(const parse_t p) {
     byte size = p.size();
 
     if (size != read_parse_size) {
         std::cerr << "cmix bad input, expected " << size
                   << "fields, instead: "  << p << std::endl;
 
-        return Cmd_Status::bad_input;
+        return CmdStatus::bad_input;
     }
 
     if (p[type_field] == "reg") {
@@ -104,6 +108,8 @@ static Cmd_Status exec_write(const parse_t p) {
             CPU.X = p[data_field];
             std::cerr << CPU.X << std::endl;
         }
+
+        return CmdStatus::ok;
     }
 
     if (p[type_field] == "mem") {
@@ -113,14 +119,16 @@ static Cmd_Status exec_write(const parse_t p) {
            CPU.memory[address] = parse_t(data_field);
 
             std::cerr << CPU.memory[address] << std::endl;
+
+            return CmdStatus::ok;
         }
         else {
             std::cerr << "cmix: bad address: " << p[adr_field] << std::endl;
-            return Cmd_Status::out_of_range;
+            return CmdStatus::out_of_range;
         }
     }
 
     std::cerr << "cmix unknown type (reg/mem): " << p[type_field] << std::endl;
-    return Cmd_Status::bad_input;
+    return CmdStatus::bad_input;
 }
 

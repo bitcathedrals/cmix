@@ -8,15 +8,15 @@
 // these are exit codes.
 //
 
-enum class Cmd_Status {
+enum class CmdStatus {
+    ok = 0,
+
     general_failure = -1,
     bad_input = -2,
     bad_value = -3,
     out_of_range = -4,
-
-    ok = -24
 };
 
-Cmd_Status run_command(const parse_t p);
+CmdStatus run_command(const parse_t p);
 
 #endif
