@@ -13,4 +13,13 @@ parse_t parse_cli(const std::string& input);
 
 parse_t parse_word(const std::string& input);
 
+parse_t make_parse(const std::string& x1,
+                   const std::string& x2,
+                   const std::string& x3);
+
+parse_t make_parse(const std::string& x1,
+                   const std::string& x2,
+                   const std::string& x3,
+                   const std::string& x4);
+
 #endif

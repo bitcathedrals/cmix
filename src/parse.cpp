@@ -53,3 +53,32 @@ parse_t parse_word(const char* input) {
 parse_t parse_word(const std::string& input) {
     return parse_core(input, std::regex("[^:]+"));
 }
+
+
+// this is for variants to make a new parse_t with variable arguments.
+
+parse_t make_parse(const std::string& x1,
+                   const std::string& x2,
+                   const std::string& x3) {
+    parse_t p;
+
+    p[0] = x1;
+    p[1] = x2;
+    p[2] = x3;
+
+    return p;
+}
+
+parse_t make_parse(const std::string& x1,
+                   const std::string& x2,
+                   const std::string& x3,
+                   const std::string& x4) {
+    parse_t p;
+
+    p[0] = x1;
+    p[1] = x2;
+    p[2] = x3;
+    p[3] = x4;
+
+    return p;
+}

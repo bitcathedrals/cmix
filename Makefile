@@ -2,7 +2,7 @@
 # compiler
 # 
 
-MAX_ERRORS = 3
+MAX_ERRORS = 6
 MAX_BACKTRACE=4
 SRC_DIR = src
 OBJ_DIR = obj

@@ -37,6 +37,8 @@ public:
 
     Word& operator=(const Word& right);
     Word& operator=(const parse_t& p);
+    Word& operator=(const std::string& x);
+
     byte& operator[](const byte index);
 
     void sanitize(void);

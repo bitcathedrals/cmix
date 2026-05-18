@@ -4,8 +4,17 @@
 #include <cpu/cpu.h>
 #include <repl/dispatch.h>
 
-Cmd_Status exec_read(const parse_t p);
-Cmd_Status exec_write(const parse_t p);
+const inline byte cmd_field = 0;
+const inline byte type_field = 1;
+const inline byte adr_field = 2;
+
+const inline byte data_field = 3;
+
+const inline byte read_parse_size = 3;
+const inline byte write_parse_size = 4;
+
+static Cmd_Status exec_read(const parse_t p);
+static Cmd_Status exec_write(const parse_t p);
 
 Cmd_Status run_command(const parse_t p) {
     char size = p.size();
@@ -15,10 +24,10 @@ Cmd_Status run_command(const parse_t p) {
         return Cmd_Status::bad_input;
     }
 
-    Command cmd = string_to_command(p[0]);
+    Command cmd = string_to_command(p[cmd_field]);
 
     if(cmd == Command::unknown) {
-        std::cerr << "cmix: unknown command: " << p[0] << std::endl;
+        std::cerr << "cmix: unknown command: " << p[cmd_field] << std::endl;
     }
 
     switch (cmd) {
@@ -37,43 +46,81 @@ Cmd_Status run_command(const parse_t p) {
         break;
     }
 
-    std::cerr << "cmix unhandled command: " << p[0] << std::endl;
+    std::cerr << "cmix unhandled command: " << p[cmd_field] << std::endl;
     return Cmd_Status::bad_input;
 }
 
-Cmd_Status exec_read(const parse_t p) {
-    const int read_parse_size = 3;
-
-    int size = std::atoi(p[0].c_str());
+static Cmd_Status exec_read(const parse_t p) {
+    int size = p.size();
 
     if (size != read_parse_size) {
         std::cerr << "cmix bad input, expected " << size << p << std::endl;
         return Cmd_Status::bad_input;
     }
 
-    if (p[1] == "reg") {
-        if (p[2] == "X") {
+    if (p[type_field] == "reg") {
+        if (p[adr_field] == "A") {
             std::cerr << CPU.A << std::endl;
         }
 
-        if (p[2] == "Z") {
+        if (p[adr_field] == "X") {
             std::cerr << CPU.X << std::endl;
         }
     }
 
-    if (p[1] == "mem") {
+    if (p[type_field] == "mem") {
         int address = std::atoi(p[2].c_str());
 
         if ((address >= 0) && (address < memory_capacity)) {
             std::cerr << CPU.memory[address] << std::endl;
         }
         else {
-            std::cerr << "cmix: bad address: " << p[2] << std::endl;
+            std::cerr << "cmix: bad address: " << p[adr_field] << std::endl;
             return Cmd_Status::out_of_range;
         }
     }
 
-    std::cerr << "cmix unknown type (reg/mem): " << p[1] << std::endl;
+    std::cerr << "cmix unknown type (reg/mem): " << p[type_field] << std::endl;
+    return Cmd_Status::bad_input;
+}
+
+static Cmd_Status exec_write(const parse_t p) {
+    byte size = p.size();
+
+    if (size != read_parse_size) {
+        std::cerr << "cmix bad input, expected " << size
+                  << "fields, instead: "  << p << std::endl;
+
+        return Cmd_Status::bad_input;
+    }
+
+    if (p[type_field] == "reg") {
+        if (p[adr_field] == "A") {
+            CPU.A = p[data_field];
+            std::cerr << CPU.A << std::endl;
+        }
+
+        if (p[adr_field] == "X") {
+            CPU.X = p[data_field];
+            std::cerr << CPU.X << std::endl;
+        }
+    }
+
+    if (p[type_field] == "mem") {
+        int address = std::atoi(p[adr_field].c_str());
+
+        if ((address >= 0) && (address < memory_capacity)) {
+           CPU.memory[address] = parse_t(data_field);
+
+            std::cerr << CPU.memory[address] << std::endl;
+        }
+        else {
+            std::cerr << "cmix: bad address: " << p[adr_field] << std::endl;
+            return Cmd_Status::out_of_range;
+        }
+    }
+
+    std::cerr << "cmix unknown type (reg/mem): " << p[type_field] << std::endl;
     return Cmd_Status::bad_input;
 }
 

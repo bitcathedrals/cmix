@@ -27,9 +27,21 @@ Word& Word::operator=(const Word& other) {
     return *this;
 }
 
-Word& Word::operator=(const parse_t& other) {
+Word& Word::operator=(const std::string& x) {
+    parse_t p = parse_word(x);
+
     for(auto i = data_offset; i < data_size; i++) {
-        data[i] = static_cast<byte>(std::atoi(other[i - data_offset].c_str()));
+        data[i] = static_cast<byte>(std::atoi(p[i - data_offset].c_str()));
+    }
+
+    sanitize();
+
+    return *this;
+}
+
+Word& Word::operator=(const parse_t& x) {
+    for(auto i = data_offset; i < data_size; i++) {
+        data[i] = static_cast<byte>(std::atoi(x[i - data_offset].c_str()));
     }
 
     sanitize();
@@ -107,11 +119,11 @@ Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
 }
 
 std::ostream& operator<<(std::ostream& output, const Word& x) {
-    output << x.data[0] << ":"
-           << x.data[1] << ":"
-           << x.data[2] << ":"
-           << x.data[3] << ":"
-           << x.data[4] << ":"
+    output << x.data[0] << "::"
+           << x.data[1] << "::"
+           << x.data[2] << "::"
+           << x.data[3] << "::"
+           << x.data[4] << "::"
            << x.data[5];
 
     return output;
@@ -123,9 +135,9 @@ std::istream& operator>>(std::istream& input, Word& x) {
     input_iterator begin(input);
     input_iterator end;
 
-    std::string data(begin, end);
+    std::string in(begin, end);
 
-    x = parse_word(data);
+    x = parse_word(in);
 
     return input;
 };
