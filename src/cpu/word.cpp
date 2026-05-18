@@ -7,13 +7,16 @@
 #include <parse.h>
 
 void Word::sanitize(void) {
-    for(auto i = data_offset; i <= data_max; i++) {
-        if (data[i] > positive_max ||
-            data[i] < negative_max) {
-            throw ArithmeticException("during Word::sanitize",
-                                      data[i]);
+    auto itr_b = data.begin();
+    itr_b++; // skip over sign.
+
+    std::for_each(itr_b, data.end(), [](const byte x) {
+        if (x > positive_max ||
+            x < negative_max) {
+
+            throw ArithmeticException("during Word::sanitize", x);
         }
-    }
+    });
 
     // fix the sign
 }
@@ -30,19 +33,33 @@ Word& Word::operator=(const Word& other) {
 Word& Word::operator=(const std::string& x) {
     parse_t p = parse_word(x);
 
-    for(auto i = data_offset; i < data_size; i++) {
-        data[i] = static_cast<byte>(std::atoi(p[i - data_offset].c_str()));
+    if(!(p.size() == data_size)) {
+        throw std::out_of_range("word::operator=(const std::string& x) parse is the wrong size");
     }
+
+    auto itr_b = data.begin();
+    itr_b++; // skip over the sign
+
+    std::transform(p.begin(), p.end(), itr_b, [](const std::string& x) {
+        return static_cast<byte>(std::atoi(x.c_str()));
+    });
 
     sanitize();
 
     return *this;
 }
 
-Word& Word::operator=(const parse_t& x) {
-    for(auto i = data_offset; i < data_size; i++) {
-        data[i] = static_cast<byte>(std::atoi(x[i - data_offset].c_str()));
+Word& Word::operator=(const parse_t& p) {
+    auto dest_itr_b = data.begin();
+    dest_itr_b++;  // skip over sign
+
+    if(!(p.size() == data_size)) {
+        throw std::out_of_range("word::operator=(const std::parse_t& x) parse is the wrong size");
     }
+
+    std::transform(p.begin(), p.end(), dest_itr_b, [](const std::string& x) {
+        return static_cast<byte>(std::atoi(x.c_str()));
+    });
 
     sanitize();
 
@@ -55,6 +72,10 @@ Word::Word(byte x1, byte x2, byte x3, byte x4, byte x5) {
     if(x1 < 0) {
         data[sign_field] = sign_negative;
     }
+
+    else {
+        data[sign_field] = sign_positive;
+    }
 }
 
 Word::Word(Word& other, byte lower, byte upper) {
@@ -63,7 +84,6 @@ Word::Word(Word& other, byte lower, byte upper) {
     lower += data_offset;
 
     for(byte i = data_min; i <= data_max; i++) {
-
         if(i >= lower && i <= upper) {
             data[i] = other[i];
         }
@@ -87,7 +107,7 @@ bool Word::overflowed(byte index) {
 }
 
 Word& Word::unary(byte low, byte high, Operation op) {
-    for(byte i = low; i <= high; i++) {
+    for(byte i = low + data_offset; i <= high; i++) {
         data[i] = op(i, data[i]);
 
         if (overflowed(i)) {
@@ -99,11 +119,11 @@ Word& Word::unary(byte low, byte high, Operation op) {
 }
 
 Word& Word::binary(byte low, byte high, Operation op, Word v) {
-    for(byte i = low; i <= high; i++) {
+    for(byte i = low + data_offset; i <= high; i++) {
         data[i] = op(i, data[i], v.data[i]);
 
         if (overflowed(i)) {
-            throw OverflowOpException(op, "binary operation", i, data[i]);
+            throw OverflowOpException(op, "Word::binary overflow", i, data[i]);
         }
     }
 

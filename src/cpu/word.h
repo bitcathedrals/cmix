@@ -7,17 +7,31 @@
 #include <cpu/defs.h>
 #include <cpu/operation.h>
 
-inline constexpr byte data_size = 6;
+//
+// word = data + sign
+//
+
+inline constexpr byte word_size = 6;
 
 static const byte data_bits = 6;
 
 static const byte positive_max = 64;
 static const byte negative_max = -64;
 
+//
+// data = word - sign
+//
+
+static const byte data_size = 5;
+
 static const byte data_min = 1;
 static const byte data_max = 5;
 
 static const byte data_offset = 1;
+
+//
+// sign is a -1 || 1 depending on the sign.
+//
 
 static const byte sign_field = 0;
 static const byte sign_default = 1;
@@ -55,7 +69,7 @@ public:
     friend std::istream& operator >>(std::istream& input, Word& x);
 
 private:
-    std::array<byte, data_size> data;
+    std::array<byte, word_size> data;
 };
 
 std::ostream& operator<<(std::ostream& output, const Word& x);
