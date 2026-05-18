@@ -34,19 +34,19 @@ TEST(CLiParsing, TwoWordTest) {
 TEST(WordParsing, EmptyStringTest) {
     std::string empty {""};
 
-    EXPECT_EQ(parse_word_cli(empty).size(), static_cast<cmp_type>(0));
+    EXPECT_EQ(parse_word(empty).size(), static_cast<cmp_type>(0));
 }
 
 TEST(WordParsing, SeperatorOnly) {
     std::string sep { "::" };
-    parse_t p = parse_word_cli(sep);
+    parse_t p = parse_word(sep);
 
     EXPECT_EQ(p.size(), static_cast<cmp_type>(0));
 }
 
 TEST(WordParsing, OneByteValue) {
     std::string input { "32" };
-    parse_t p = parse_word_cli(input);
+    parse_t p = parse_word(input);
 
     EXPECT_EQ(p.size(), static_cast<cmp_type>(1));
     EXPECT_EQ(p[0], "32");
@@ -54,7 +54,7 @@ TEST(WordParsing, OneByteValue) {
 
 TEST(WordParsing, TwoByteValue) {
     std::string byte { "16::32" };
-    parse_t p = parse_word_cli(byte);
+    parse_t p = parse_word(byte);
 
     EXPECT_EQ(p.size(), static_cast<cmp_type>(2));
     EXPECT_EQ(p[0], "16");
@@ -63,7 +63,7 @@ TEST(WordParsing, TwoByteValue) {
 
 TEST(WordParsing, FullWord) {
     std::string input { "8::12::24::36::48" };
-    parse_t p = parse_word_cli(input);
+    parse_t p = parse_word(input);
 
     EXPECT_EQ(p.size(), static_cast<cmp_type>(5));
 

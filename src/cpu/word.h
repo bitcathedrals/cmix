@@ -31,9 +31,9 @@ public:
 
     Word(const Word& other);
 
-    Word(byte x1, byte x2, byte x3, byte x4, byte x5);
-
     Word(Word& other, byte lower, byte upper);
+
+    Word(byte x1, byte x2, byte x3, byte x4, byte x5);
 
     Word& operator=(const Word& right);
     Word& operator=(const parse_t& p);

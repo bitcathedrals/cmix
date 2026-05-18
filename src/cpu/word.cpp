@@ -18,11 +18,7 @@ void Word::sanitize(void) {
     // fix the sign
 }
 
-// Word::Word() {}
-
-Word::Word() : data {sign_default, 0, 0, 0, 0, 0} {
-//    std::cerr << "here!" << std::endl;
-}
+Word::Word() : data {sign_default, 0, 0, 0, 0, 0} {}
 
 Word::Word(const Word& other) : data(other.data) {}
 
@@ -31,9 +27,9 @@ Word& Word::operator=(const Word& other) {
     return *this;
 }
 
-Word& Word::operator=(const parse_t& p) {
-    for (auto i = 0; i <= data_max; i++) {
-        data[i + data_offset] = static_cast<byte>(std::atoi(p[i].c_str()));
+Word& Word::operator=(const parse_t& other) {
+    for(auto i = data_offset; i < data_size; i++) {
+        data[i] = static_cast<byte>(std::atoi(other[i - data_offset].c_str()));
     }
 
     sanitize();
@@ -129,7 +125,7 @@ std::istream& operator>>(std::istream& input, Word& x) {
 
     std::string data(begin, end);
 
-    x = parse_word_cli(data);
+    x = parse_word(data);
 
     return input;
 };

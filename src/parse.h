@@ -11,6 +11,6 @@ std::istringstream istream_from_string(const std::string input);
 
 parse_t parse_cli(const std::string& input);
 
-parse_t parse_word_cli(const std::string& input);
+parse_t parse_word(const std::string& input);
 
 #endif

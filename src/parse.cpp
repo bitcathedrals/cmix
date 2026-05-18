@@ -46,6 +46,10 @@ parse_t parse_cli(const std::string& input) {
     return parse_core(input, std::regex("\\S+"));
 }
 
-parse_t parse_word_cli(const std::string& input) {
+parse_t parse_word(const char* input) {
+    return parse_core(std::string(input), std::regex("[^:]+"));
+}
+
+parse_t parse_word(const std::string& input) {
     return parse_core(input, std::regex("[^:]+"));
 }
