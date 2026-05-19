@@ -82,30 +82,20 @@ $(DEBUG): $(DBG_OBJ_DIR)/$(MAIN_AR) $(DBG_OBJ_DIR)/cmix.o
 
 GOOGLE_TEST=vendor/googletest
 
-TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS)
-TEST_LDFLAGS = -L$(GOOGLE_TEST)/lib -lgtest -lgtest_main
+TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) -fsanitize=address
+TEST_LDFLAGS = -fsanitize=address -L$(GOOGLE_TEST)/lib -lgtest -lgtest_main
 
-TEST_TARGET = run-tests
+TEST_TARGET = runner
 
 TEST_DIR = tests/
+TEST_OBJ = .build/test
 
-TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp $(TEST_DIR)/*/*.cpp $(TEST_DIR)/*/*/*.cpp)
-TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(TEST_SRCS))
+TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp,$(TEST_DIR)/*/*.cpp,$(TEST_DIR)/*/*/*.cpp)
+TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(TEST_OBJ)/%.o,$(TEST_SRCS))
 
-#
-# compile tests
-#
-
-$(OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
+$(TEST_OBJS)/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(TEST_FLAGS) -c $< -o $@
-
-#
-# compile test runner
-# 
-
-# $(info TEST_SRCS is $(TEST_SRCS))
-# $(info TEST_OBJS is $(TEST_OBJS))
 
 $(TEST_TARGET): $(TEST_OBJS) $(OBJ_DIR)/$(MAIN_AR)
 	$(CXX) $(TEST_FLAGS) -o $@ $^ $(TEST_LDFLAGS) -ledit
@@ -122,3 +112,6 @@ clean:
 	rm -rf .build $(TARGET) $(DEBUG_TARGET) $(TEST_TARGET)
 
 .PHONY: clean
+
+# $(info TEST_SRCS is $(TEST_SRCS))
+# $(info TEST_OBJS is $(TEST_OBJS))

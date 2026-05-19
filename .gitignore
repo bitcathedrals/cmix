@@ -1,4 +1,6 @@
 cmix
-test_runner
-obj/*
+runner
+dbg
+.build
+
 
