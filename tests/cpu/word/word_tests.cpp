@@ -8,7 +8,7 @@
 // Constructor and Init tests.
 //
 
-TEST(ConstructorTests, DefaultConstructor) {
+TEST(WordConstructorTests, DefaultConstructor) {
     Word test_word;
 
     EXPECT_EQ(0, test_word[0]);
@@ -18,7 +18,7 @@ TEST(ConstructorTests, DefaultConstructor) {
     EXPECT_EQ(0, test_word[4]);
 }
 
-TEST(ConstructorTests, CopyConstructor) {
+TEST(WordConstructorTests, CopyConstructor) {
     Word other_word(1,2,3,4,5);
 
     Word test(other_word);
@@ -31,7 +31,7 @@ TEST(ConstructorTests, CopyConstructor) {
 }
 
 
-TEST(ConstructorTests, InitSetAndReadBack) {
+TEST(WordConstructorTests, InitSetAndReadBack) {
     Word mix_word(2,4,6,8,10);
 
     EXPECT_EQ(2, mix_word[0]);
@@ -45,14 +45,14 @@ TEST(ConstructorTests, InitSetAndReadBack) {
 // overflow
 //
 
-TEST(OverflowTests, SimpleIsNotOverflowed) {
+TEST(WordOverflowTests, SimpleIsNotOverflowed) {
     Word mix_word;
     mix_word[1] = 48;
 
     EXPECT_EQ(mix_word.overflowed(1), false);
 }
 
-TEST(OverflowTests, SimpleIsOverflow) {
+TEST(WordOverflowTests, SimpleIsOverflow) {
     Word mix_word;
 
     mix_word[1] = 72;
@@ -64,14 +64,14 @@ TEST(OverflowTests, SimpleIsOverflow) {
 // operators
 //
 
-TEST(ReadWriteTests, AssignOperatorNumber) {
+TEST(WordReadWriteTests, AssignOperatorNumber) {
     Word mix_word;
     mix_word [1] = 12;
 
     EXPECT_EQ(mix_word[1], 12);
 }
 
-TEST(ReadWriteTests, AssignOperatorParse) {
+TEST(WordReadWriteTests, AssignOperatorParse) {
     Word mix_word;
 
     mix_word = parse_word("1::2::3::4::5");

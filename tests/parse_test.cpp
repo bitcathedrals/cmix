@@ -6,20 +6,20 @@
 
 using cmp_type = const unsigned long;
 
-TEST(CliParsing, EmptyStringTest) {
+TEST(ParseCliParsing, EmptyStringTest) {
     std::string empty {""};
 
     EXPECT_EQ(parse_cli(empty).size(), static_cast<cmp_type>(0));
 }
 
-TEST(CliParsing, OneWordTest) {
+TEST(ParseCliParsing, OneWordTest) {
     std::string one {"one"};
 
     EXPECT_EQ(parse_cli(one).size(), static_cast<cmp_type>(1));
     EXPECT_EQ(parse_cli(one)[0], std::string("one"));
 }
 
-TEST(CLiParsing, TwoWordTest) {
+TEST(ParseCliParsing, TwoWordTest) {
     std::string two {"one two"};
 
     EXPECT_EQ(parse_cli(two).size(), static_cast<cmp_type>(2));
@@ -31,20 +31,20 @@ TEST(CLiParsing, TwoWordTest) {
 // word parsing
 //
 
-TEST(WordParsing, EmptyStringTest) {
+TEST(ParseWordParsing, EmptyStringTest) {
     std::string empty {""};
 
     EXPECT_EQ(parse_word(empty).size(), static_cast<cmp_type>(0));
 }
 
-TEST(WordParsing, SeperatorOnly) {
+TEST(ParseWordParsing, SeperatorOnly) {
     std::string sep { "::" };
     parse_t p = parse_word(sep);
 
     EXPECT_EQ(p.size(), static_cast<cmp_type>(0));
 }
 
-TEST(WordParsing, OneByteValue) {
+TEST(ParseWordParsing, OneByteValue) {
     std::string input { "32" };
     parse_t p = parse_word(input);
 
@@ -52,7 +52,7 @@ TEST(WordParsing, OneByteValue) {
     EXPECT_EQ(p[0], "32");
 }
 
-TEST(WordParsing, TwoByteValue) {
+TEST(ParseWordParsing, TwoByteValue) {
     std::string byte { "16::32" };
     parse_t p = parse_word(byte);
 
@@ -61,7 +61,7 @@ TEST(WordParsing, TwoByteValue) {
     EXPECT_EQ(p[1], "32");
 }
 
-TEST(WordParsing, FullWord) {
+TEST(ParseWordParsing, FullWord) {
     std::string input { "8::12::24::36::48" };
     parse_t p = parse_word(input);
 
@@ -73,4 +73,3 @@ TEST(WordParsing, FullWord) {
     EXPECT_EQ(p[3], "36");
     EXPECT_EQ(p[4], "48");
 }
-
