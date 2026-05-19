@@ -17,17 +17,20 @@ ARFLAGS = rcs
 
 MAIN_AR = core.a
 
-#
-# production
-# 
+# commonly used for most builds
 
 SRC_DIR = src
-OBJ_DIR = .build/prod
 
 SRCS = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/*/*.cpp $(SRC_DIR)/*/*/*.cpp)
 OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
-PROD = cmix
+#
+# production
+# 
+
+OBJ_DIR = .build/prod
+
+PROD_TARGET = cmix
 
 OPT_FLAGS ?= -O3 -flto
 
@@ -44,45 +47,21 @@ $(OBJ_DIR)/$(MAIN_AR): $(WITHOUT_CMIX_MAIN)
 	$(AR) $(ARFLAGS) $(OBJ_DIR)/$(MAIN_AR) $(WITHOUT_CMIX_MAIN)
 
 # Link step
-$(TARGET): $(OBJ_DIR)/$(MAIN_AR) $(OBJ_DIR)/cmix.o
+$(PROD_TARGET): $(OBJ_DIR)/$(MAIN_AR) $(OBJ_DIR)/cmix.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ -flto $(LDFLAGS)
 
 #
-# debug - same build technique as production but with debugging
+# test
 #
 
-DBG_OBJ_DIR = .build/dbg
+GOOGLE_TEST = vendor/googletest
 
-DEBUG_FLAGS = -g -O0 -fsanitize=address
+TEST_DIR = tests/
 
-DBG_SRCS = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/*/*.cpp $(SRC_DIR)/*/*/*.cpp)
-DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS))
+TEST_COVERAGE_FLAGS = -fcoverage-mapping -fprofile-arcs -ftest-coverage
+TEST_RUNTIME = -fsanitize=address
 
-DEBUG = dbg
-
-# Compile .cpp -> obj/.o
-$(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
-
-# cmix.o main() conflicts with entry points like googletest
-DBG_WITHOUT_CMIX_MAIN=$(filter-out $(DBG_OBJ_DIR)/cmix.o, $(DBG_OBJS))
-
-# build static lib
-$(DBG_OBJ_DIR)/$(MAIN_AR): $(DBG_WITHOUT_CMIX_MAIN)
-	$(AR) $(ARFLAGS) $(DBG_OBJ_DIR)/$(MAIN_AR) $(DBG_WITHOUT_CMIX_MAIN)
-
-# Link step
-$(DEBUG): $(DBG_OBJ_DIR)/$(MAIN_AR) $(DBG_OBJ_DIR)/cmix.o
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(DEBUG_FLAGS) $(LDFLAGS)
-
-#
-# testing
-#
-
-GOOGLE_TEST=vendor/googletest
-
-TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) -fsanitize=address
+TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) $(TEST_RUNTIME) $(COVERAGE_FLAGS)
 TEST_LDFLAGS = -fsanitize=address -L$(GOOGLE_TEST)/lib -lgtest -lgtest_main
 
 TEST_TARGET = runner
@@ -90,28 +69,124 @@ TEST_TARGET = runner
 TEST_DIR = tests/
 TEST_OBJ = .build/test
 
-TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp,$(TEST_DIR)/*/*.cpp,$(TEST_DIR)/*/*/*.cpp)
-TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(TEST_OBJ)/%.o,$(TEST_SRCS))
+TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp $(TEST_DIR)/*/*.cpp $(TEST_DIR)/*/*/*.cpp)
 
-$(TEST_OBJS)/%.o: $(TEST_DIR)/%.cpp
+TEST_CORE_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(TEST_OBJ)/%.o,$(SRCS))
+TEST_SUITE_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(TEST_OBJ)/%.o,$(TEST_SRCS))
+
+WITHOUT_MAIN=$(filter-out $(TEST_OBJ)/cmix.o , $(TEST_CORE_OBJS))
+
+TEST_SUITE_AR = $(TEST_OBJ)/test-suite.a
+TEST_CORE_AR = $(TEST_OBJ)/test-core.a
+
+# test suite .a
+
+$(TEST_OBJ)/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(TEST_FLAGS) -c $< -o $@
 
-$(TEST_TARGET): $(TEST_OBJS) $(OBJ_DIR)/$(MAIN_AR)
-	$(CXX) $(TEST_FLAGS) -o $@ $^ $(TEST_LDFLAGS) -ledit
+$(TEST_SUITE_AR): $(TEST_SUITE_OBJS)
+	$(AR) $(ARFLAGS) $(TEST_SUITE_AR) $(TEST_SUITE_OBJS)
 
+# app core .a
+
+$(TEST_OBJ)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(TEST_FLAGS) -c $< -o $@
+
+$(TEST_CORE_AR): $(WITHOUT_MAIN)
+	$(AR) $(ARFLAGS) $(TEST_CORE_AR) $(WITHOUT_MAIN)
+
+# using the .a files is broken for now.
+#  $(TEST_TARGET): $(TEST_SUITE_AR) $(TEST_CORE_AR)
+
+$(TEST_TARGET):  $(TEST_SUITE_OBJS) $(WITHOUT_MAIN)
+	$(CXX) -o $@ $^ $(TEST_LDFLAGS) -ledit
+
+
+#
+# debug - same build technique as production but with debugging
+#
+
+DBG_OBJ_DIR = .build/dbg
+
+DEBUG_FLAGS = -g -O0
+
+DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS))
+
+DEBUG_TARGET = dbg
+
+# Compile .cpp -> obj/.o
+$(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
+
+# build static lib
+
+# $(DBG_OBJ_DIR)/$(MAIN_AR): $(DBG_OBJS)
+#	$(AR) $(ARFLAGS) $(DBG_OBJ_DIR)/$(MAIN_AR) $(DBG_WITHOUT_CMIX_MAIN)
+
+# build
+
+$(DEBUG_TARGET): $(DBG_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(DEBUG_FLAGS) $(LDFLAGS)
+
+#
+# perf
+# 
+
+PERF_OBJ = .build/perf
+
+PERF_INSTRUMENT = -fprofile-instr-generate
+PERF_OPTIMIZE = -fprofile-generate
+PERF_FLAGS = -g -O2 -fno-omit-frame-pointer
+
+PERF_BUILD = $(patsubst $(SRC_DIR)/%.cpp,$(PERF_OBJ)/%.o,$(SRCS))
+
+PERF_TARGET = perf
+
+# Compile .cpp -> obj/.o
+$(PERF_OBJ)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(PERF_FLAGS) -c $< -o $@
+
+# Link step
+$(PERF_TARGET): $(PERF_BUILD)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(PERF_FLAGS) $(PERF_LDFLAGS)
+
+#
 # project scope
+#
 
-tests: $(TEST_TARGET)
+prod: $(PROD_TARGET)
 
-debug: $(DEBUG)
+test: $(TEST_TARGET)
 
-default: $(PROD)
+debug: $(DEBUG_TARGET)
 
-clean:
-	rm -rf .build $(TARGET) $(DEBUG_TARGET) $(TEST_TARGET)
+perf: $(PERF_TARGET)
 
-.PHONY: clean
+default: prod
+
+prod-clean:
+	-rm -rf $(OBJ_DIR)
+	-rm -f $(PROD_TARGET)
+
+test-clean:
+	-rm -f $(TEST_TARGET)
+	-rm -rf $(TEST_OBJ)
+
+debug-clean:
+	-rm -f $(DEBUG_TARGET)
+	-rm -rf $(DBG_OBJ_DIR)
+
+perf-clean:
+	-rm -rf $(PERF_OBJ)
+	-rm -f $(PERF_TARGET)
+
+clean: prod-clean test-clean debug-clean perf-clean
+
+.PHONY: prod-clean test-clean debug-clean perf-clean default
 
 # $(info TEST_SRCS is $(TEST_SRCS))
 # $(info TEST_OBJS is $(TEST_OBJS))
