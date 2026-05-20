@@ -71,7 +71,7 @@ static CmdStatus exec_read(const parse_t p) {
     }
 
     if (p[type_field] == "mem") {
-        int address = std::atoi(p[2].c_str());
+        int address = std::atoi(p[adr_field].c_str());
 
         if ((address >= 0) && (address < memory_capacity)) {
             std::cerr << CPU.memory[address] << std::endl;
