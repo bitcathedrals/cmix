@@ -23,12 +23,13 @@ public:
 std::ostream& operator<<(std::ostream& output,
                          const GeneralException& general);
 
-class ArithmeticException : public GeneralException {
+class ArithmeticException : public std::runtime_error {
 public:
-    ArithmeticException(std::string context, int x) : GeneralException(context), x(x) {}
+    ArithmeticException(std::string context, int x) : std::runtime_error(context), x(x) {}
 
     friend std::ostream& operator<<(std::ostream& output,
                                     const ArithmeticException& ex);
+private:
     int x;
 };
 
