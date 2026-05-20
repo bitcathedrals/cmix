@@ -17,7 +17,7 @@ enum OpInfo {
     ADD
 };
 
-class UndefinedOperation : public runtime_error {
+class UndefinedOperation : public std::runtime_error {
 public:
     UndefinedOperation(byte i, byte x, byte v=0) : std::runtime_error("Operation base class reached, undefined operation"),
                                                    i(i), x(x), v(v) {}
@@ -49,10 +49,10 @@ public:
                     byte v) { throw UndefinedOperation(i, x, v); };
 };
 
-class OpException {
+class OpException : public std::runtime_error {
 public:
     OpException(const Operation& op,
-                const std::string context) : std::runtime_error context),
+                const std::string context) : std::runtime_error(context),
                                              op(op) {};
 
     friend std::ostream& operator<<(std::ostream& output,

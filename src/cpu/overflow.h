@@ -7,17 +7,18 @@
 #include <exception.h>
 #include <cpu/operation.h>
 
-class OverflowOpException : public OpException {
+class OverflowUnaryException : std::runtime_error {
 public:
-    OverflowOpException(const Operation& op,
-                        const std::string context,
-                        const byte index,
-                        const byte value) : OpException(op, context),
-                                            index(index),
-                                            value(value) {};
+    OverflowUnaryException(const Operation& op,
+                           const std::string context,
+                           const byte index,
+                           const byte value) : std::runtime_error(context),
+                                               index(index),
+                                               value(value) {};
 
     friend std::ostream& operator<<(std::ostream& output,
                                     const OverflowOpException ex);
+private:
     const byte index;
     const byte value;
 };
@@ -25,16 +26,14 @@ public:
 std::ostream& operator<<(std::ostream& output,
                          const OverflowOpException& ex);
 
-class OverflowAtException {
+class OverflowBinaryException {
 public:
-    OverflowAtException(const OverflowOpException& ex,
-                        const std::string& location) : ex(ex),
+    OverflowAtException(const std::string context&,
+                        const std::string& location) : std::runtime_error(context),
                                                        location(location) {};
 
     friend std::ostream& operator<<(std::ostream& output,
                                     const OverflowAtException& ex);
-
-    const OverflowOpException& ex;
     const std::string& location;
 };
 

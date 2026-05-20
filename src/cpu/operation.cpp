@@ -14,7 +14,7 @@ std::ostream& operator<<(std::ostream& output,
     return output;
 };
 
-std::map<OpInfo,std::string> info_to_string = {
+std::map<OpInfo,std::string> op_to_string = {
     {ADD, "Add Operation"},
 };
 
