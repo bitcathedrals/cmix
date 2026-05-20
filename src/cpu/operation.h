@@ -33,7 +33,8 @@ private:
 std::ostream& operator<<(std::ostream& output,
                          const UndefinedOperation& undef);
 
-extern std::map<OpInfo,std::string> info_to_string;
+
+extern std::map<OpInfo,std::string> OpInfo_to_String;
 
 class Operation {
 public:

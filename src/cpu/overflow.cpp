@@ -1,11 +1,13 @@
 #include <iostream>
 #include <string>
 
+
 #include <cpu/overflow.h>
 
 std::ostream& operator<<(std::ostream& output,
-                         const OverflowOpException& ex) {
-    output << "overflow: " << info_to_string[ex.op.info]
+                         const OverflowUnaryException& ex) {
+    output << "Unary Overflow: " << OpInfo_to_String[ex.op]
+           << "@ " << ex.address
            << " index = " << ex.index
            << " value = " << ex.value;
 
@@ -13,7 +15,11 @@ std::ostream& operator<<(std::ostream& output,
 }
 
 std::ostream& operator<<(std::ostream& output,
-                         const OverflowAtException& ex) {
-    output << "overflow at: " << ex.location;
+                         const OverflowBinaryException& ex) {
+    output << "overflow at: " << ex.address
+           << " index" << ex.index
+           << " value x = "  << ex.x
+           << " value v = " << ex.v;
+
     return output;
 }

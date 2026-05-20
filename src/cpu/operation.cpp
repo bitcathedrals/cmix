@@ -14,14 +14,14 @@ std::ostream& operator<<(std::ostream& output,
     return output;
 };
 
-std::map<OpInfo,std::string> op_to_string = {
+std::map<OpInfo,std::string> OpInfo_to_String = {
     {ADD, "Add Operation"},
 };
 
 std::ostream& operator<<(std::ostream& output,
                          const OpException& exception) {
     output << "Operation: "
-           << info_to_string[exception.op.info];
+           << OpInfo_to_String[exception.op.info];
 
     return output;
 };

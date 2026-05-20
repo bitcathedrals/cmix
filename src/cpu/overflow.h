@@ -9,35 +9,62 @@
 
 class OverflowUnaryException : std::runtime_error {
 public:
-    OverflowUnaryException(const Operation& op,
+    OverflowUnaryException(const OpInfo op,
                            const std::string context,
+
+                           const std::string location,
+
                            const byte index,
                            const byte value) : std::runtime_error(context),
+
+                                               op(op),
+
+                                               address(location),
+
                                                index(index),
                                                value(value) {};
 
     friend std::ostream& operator<<(std::ostream& output,
-                                    const OverflowOpException ex);
+                                    const OverflowUnaryException& ex);
 private:
+    const OpInfo op;
+    const std::string& address;
+
     const byte index;
     const byte value;
 };
 
 std::ostream& operator<<(std::ostream& output,
-                         const OverflowOpException& ex);
+                         const OverflowUnaryException& ex);
 
-class OverflowBinaryException {
+class OverflowBinaryException : public std::runtime_error {
 public:
-    OverflowAtException(const std::string context&,
-                        const std::string& location) : std::runtime_error(context),
-                                                       location(location) {};
+    OverflowBinaryException(const std::string& context,
+                            const std::string& address,
+
+                            const byte index,
+
+                            const byte x,
+                            const byte v) : std::runtime_error(context),
+                                            address(address),
+
+                                            index(index),
+
+                                            x(x),
+                                            v(v) {};
 
     friend std::ostream& operator<<(std::ostream& output,
-                                    const OverflowAtException& ex);
-    const std::string& location;
+                                    const OverflowBinaryException& ex);
+private:
+    const std::string address;
+
+    const byte index;
+
+    const byte x;
+    const byte v;
 };
 
 std::ostream& operator<<(std::ostream& output,
-                         const OverflowAtException& exception);
+                         const OverflowBinaryException& exception);
 
 #endif
