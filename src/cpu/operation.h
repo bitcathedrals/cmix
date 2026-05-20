@@ -4,6 +4,7 @@
 #include <string.h>
 #include <map>
 #include <iostream>
+#include <stdexcept>
 
 #include <cpu/defs.h>
 #include <exception.h>
@@ -16,9 +17,9 @@ enum OpInfo {
     ADD
 };
 
-class UndefinedOperation : public GeneralException {
+class UndefinedOperation : public runtime_error {
 public:
-    UndefinedOperation(byte i, byte x, byte v=0) : GeneralException("Operation base class reached, undefined operation"),
+    UndefinedOperation(byte i, byte x, byte v=0) : std::runtime_error("Operation base class reached, undefined operation"),
                                                    i(i), x(x), v(v) {}
 
     friend std::ostream& operator<<(std::ostream& output,
@@ -48,15 +49,16 @@ public:
                     byte v) { throw UndefinedOperation(i, x, v); };
 };
 
-class OpException : public GeneralException {
+class OpException {
 public:
     OpException(const Operation& op,
-                const std::string context) : GeneralException(context),
+                const std::string context) : std::runtime_error context),
                                              op(op) {};
 
     friend std::ostream& operator<<(std::ostream& output,
                                     const OpException& exception);
 
+private:
     const Operation& op;
 };
 

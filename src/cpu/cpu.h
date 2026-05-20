@@ -16,7 +16,7 @@ class Cpu {
 public:
     Cpu() {};
 
-    Cpu(const Cpu& other);
+    explicit Cpu(const Cpu& other);
 
     std::array<Word, memory_capacity> memory;
 
