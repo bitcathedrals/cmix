@@ -6,8 +6,7 @@
 
 std::ostream& operator<<(std::ostream& output,
                          const UndefinedOperation& undef) {
-    output << static_cast<GeneralException>(undef)
-           << "undefined operation parameters are: "
+    output << "undefined operation parameters are: "
            << "i (index) = " << undef.i
            << "x (value) = " << undef.x
            << "v (value) = " << undef.v;
