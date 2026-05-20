@@ -103,7 +103,6 @@ $(TEST_CORE_AR): $(WITHOUT_MAIN)
 $(TEST_TARGET):  $(TEST_SUITE_OBJS) $(WITHOUT_MAIN)
 	$(CXX) -o $@ $^ $(TEST_LDFLAGS) -ledit
 
-
 #
 # debug - same build technique as production but with debugging
 #
@@ -117,14 +116,15 @@ DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS))
 DEBUG_TARGET = dbg
 
 # Compile .cpp -> obj/.o
-$(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+
+$($DBG_OBJS)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
 
 # build static lib
 
 # $(DBG_OBJ_DIR)/$(MAIN_AR): $(DBG_OBJS)
-#	$(AR) $(ARFLAGS) $(DBG_OBJ_DIR)/$(MAIN_AR) $(DBG_WITHOUT_CMIX_MAIN)
+#	$(AR) $(ARFLAGS) $(DBG_OBJ_DIR)/$(MAIN_AR)
 
 # build
 
@@ -137,9 +137,15 @@ $(DEBUG_TARGET): $(DBG_OBJS)
 
 PERF_OBJ = .build/perf
 
-PERF_INSTRUMENT = -fprofile-instr-generate
-PERF_OPTIMIZE = -fprofile-generate
-PERF_FLAGS = -g -O2 -fno-omit-frame-pointer
+#ifdef DO_PROFILE
+PERF_PROFILE_FLAGS = -fprofile-instr-generate
+#endif
+
+#ifdef DO_OPTMIZE
+PERF_PROFILE_FLAGS = -fprofile-generate
+#endif
+
+PERF_FLAGS = -Isrc -g -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
 
 PERF_BUILD = $(patsubst $(SRC_DIR)/%.cpp,$(PERF_OBJ)/%.o,$(SRCS))
 
@@ -148,11 +154,11 @@ PERF_TARGET = perf
 # Compile .cpp -> obj/.o
 $(PERF_OBJ)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(PERF_FLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(PERF_FLAGS) -c $< -o $@
 
 # Link step
 $(PERF_TARGET): $(PERF_BUILD)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(PERF_FLAGS) $(PERF_LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(PERF_FLAGS) $(LDFLAGS)
 
 #
 # project scope
@@ -164,7 +170,7 @@ test: $(TEST_TARGET)
 
 debug: $(DEBUG_TARGET)
 
-perf: $(PERF_TARGET)
+profile: $(PERF_TARGET)
 
 default: prod
 
