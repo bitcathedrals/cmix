@@ -115,16 +115,19 @@ DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS))
 
 DEBUG_TARGET = dbg
 
+
+$(info DBG_OBJS_ is $(DBG_OBJS))
+# $(info TEST_OBJS is $(OBJS))
+
+$(info SRC_DIR is $(SRC_DIR))
+
 # Compile .cpp -> obj/.o
 
-$($DBG_OBJS)/%.o: $(SRC_DIR)/%.cpp
+# $(TEST_OBJ)/%.o: $(SRC_DIR)/%.cpp
+
+$(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
-
-# build static lib
-
-# $(DBG_OBJ_DIR)/$(MAIN_AR): $(DBG_OBJS)
-#	$(AR) $(ARFLAGS) $(DBG_OBJ_DIR)/$(MAIN_AR)
 
 # build
 
