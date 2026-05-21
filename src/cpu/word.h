@@ -43,7 +43,7 @@ class Word {
 public:
     Word();
 
-    Word(const Word& other);
+    explicit Word(const Word& other);
 
     Word(Word& other, byte lower, byte upper);
 
@@ -59,9 +59,8 @@ public:
 
     bool overflowed(byte index);
 
-    Word& unary(byte low, byte high, Operation op);
-
-    Word& binary(byte low, byte high, Operation op, Word v);
+    Word& unary(byte low, byte high, OpInfo info, Operation op);
+    Word& binary(byte low, byte high, OpInfo info, Operation op, Word v);
 
     Word& copy_subrange(Word& other, byte lower, byte upper);
 

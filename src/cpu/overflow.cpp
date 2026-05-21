@@ -17,6 +17,7 @@ std::ostream& operator<<(std::ostream& output,
 std::ostream& operator<<(std::ostream& output,
                          const OverflowBinaryException& ex) {
     output << "overflow at: " << ex.address
+           << "execting code: " << OpInfo_to_String[ex.info]
            << " index" << ex.index
            << " value x = "  << ex.x
            << " value v = " << ex.v;

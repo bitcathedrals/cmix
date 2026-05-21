@@ -1,6 +1,8 @@
 #include <iterator>
 #include <algorithm>
 
+#include <sstream>
+
 #include <cpu/word.h>
 #include <cpu/operation.h>
 #include <cpu/overflow.h>
@@ -106,25 +108,43 @@ bool Word::overflowed(byte index) {
     return false;
 }
 
-Word& Word::unary(byte low, byte high, Operation op) {
+Word& Word::unary(byte low, byte high, OpInfo info, Operation op) {
     for(byte i = low + data_offset; i <= high; i++) {
         data[i] = op(i, data[i]);
 
         if (overflowed(i)) {
-            throw OverflowOpException(op, "unary operation", i, data[i]);
+            std::stringstream builder;
+
+            builder << "range from: " << low << "-" << high;
+
+            throw OverflowUnaryException(info,
+                                         "Word: Unary Operation",
+                                         builder.str(),
+                                         i,
+                                         data[i]);
         }
     }
 
     return *this;
 }
 
-Word& Word::binary(byte low, byte high, Operation op, Word v) {
+Word& Word::binary(byte low, byte high, OpInfo info, Operation op, Word v) {
     for(byte i = low + data_offset; i <= high; i++) {
         data[i] = op(i, data[i], v.data[i]);
 
         if (overflowed(i)) {
-            throw OverflowOpException(op, "Word::binary overflow", i, data[i]);
+            std::stringstream location;
+
+            location << "Word, range from: " << low << "-" << high;
+
+            throw OverflowBinaryException(std::string("word binary operation"),
+                                          location.str(),
+                                          info,
+                                          i,
+                                          data[i],
+                                          v.data[i]);
         }
+
     }
 
     return *this;

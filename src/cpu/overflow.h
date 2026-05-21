@@ -16,7 +16,6 @@ public:
 
                            const byte index,
                            const byte value) : std::runtime_error(context),
-
                                                op(op),
 
                                                address(location),
@@ -42,11 +41,15 @@ public:
     OverflowBinaryException(const std::string& context,
                             const std::string& address,
 
+                            const OpInfo info,
+
                             const byte index,
 
                             const byte x,
                             const byte v) : std::runtime_error(context),
                                             address(address),
+
+                                            info(info),
 
                                             index(index),
 
@@ -57,6 +60,8 @@ public:
                                     const OverflowBinaryException& ex);
 private:
     const std::string address;
+
+    const OpInfo info;
 
     const byte index;
 

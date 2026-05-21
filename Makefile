@@ -117,9 +117,6 @@ DEBUG_TARGET = dbg
 
 
 $(info DBG_OBJS_ is $(DBG_OBJS))
-# $(info TEST_OBJS is $(OBJS))
-
-$(info SRC_DIR is $(SRC_DIR))
 
 # Compile .cpp -> obj/.o
 
