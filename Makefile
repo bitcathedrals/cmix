@@ -58,7 +58,7 @@ GOOGLE_TEST = vendor/googletest
 
 TEST_DIR = tests/
 
-TEST_COVERAGE_FLAGS = -fcoverage-mapping -fprofile-arcs -ftest-coverage
+TEST_COVERAGE_FLAGS = --coverage -fcoverage-mapping -fprofile-instr-agenerate
 TEST_RUNTIME = -fsanitize=address
 
 TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) $(TEST_RUNTIME) $(COVERAGE_FLAGS)
