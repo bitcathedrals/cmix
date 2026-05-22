@@ -58,11 +58,11 @@ GOOGLE_TEST = vendor/googletest
 
 TEST_DIR = tests/
 
-TEST_COVERAGE_FLAGS = --coverage -fcoverage-mapping -fprofile-instr-agenerate
+TEST_COVERAGE_FLAGS = --coverage -fprofile-instr-generate
 TEST_RUNTIME = -fsanitize=address
 
-TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) $(TEST_RUNTIME) $(COVERAGE_FLAGS)
-TEST_LDFLAGS = -fsanitize=address -L$(GOOGLE_TEST)/lib -lgtest -lgtest_main
+TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) $(TEST_RUNTIME) $(TEST_COVERAGE_FLAGS)
+TEST_LDFLAGS = -fsanitize=address -L$(GOOGLE_TEST)/lib $(TEST_COVERAGE_FLAGS) -lgtest -lgtest_main
 
 TEST_TARGET = runner
 
