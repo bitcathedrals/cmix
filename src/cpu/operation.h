@@ -17,9 +17,13 @@ enum OpInfo {
     ADD
 };
 
-class UndefinedOperation : public std::runtime_error {
+extern std::map<OpInfo,std::string> OpInfo_to_String;
+
+
+
+class UndefinedOperation : public ThrowableStream {
 public:
-    UndefinedOperation(byte i, byte x, byte v=0) : std::runtime_error("Operation base class reached, undefined operation"),
+    UndefinedOperation(byte i, byte x, byte v=0) : ThrowableStream("Operation base class reached, undefined operation"),
                                                    i(i), x(x), v(v) {}
 
     friend std::ostream& operator<<(std::ostream& output,
@@ -33,9 +37,6 @@ private:
 std::ostream& operator<<(std::ostream& output,
                          const UndefinedOperation& undef);
 
-
-extern std::map<OpInfo,std::string> OpInfo_to_String;
-
 class Operation {
 public:
     const OpInfo info;
@@ -48,22 +49,20 @@ public:
     byte operator()(byte i,
                     byte x,
                     byte v) { throw UndefinedOperation(i, x, v); };
+
 };
 
-class OpException : public std::runtime_error {
+class ArithmeticException : public ThrowableStream {
 public:
-    OpException(const Operation& op,
-                const std::string context) : std::runtime_error(context),
-                                             op(op) {};
+    ArithmeticException(std::string context, int x) : ThrowableStream(context), x(x) {}
 
     friend std::ostream& operator<<(std::ostream& output,
-                                    const OpException& exception);
-
+                                    const ArithmeticException& ex);
 private:
-    const Operation& op;
+    int x;
 };
 
 std::ostream& operator<<(std::ostream& output,
-                         const OpException& exception);
+                         const ArithmeticException& general);
 
 #endif
