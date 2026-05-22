@@ -1,5 +1,5 @@
-#ifndef CPU_EXCEPTION_H
-#define CPU_EXCEPTION_H
+#ifndef EXCEPTION_H
+#define EXCEPTION_H
 
 #include <iostream>
 #include <sstream>
@@ -9,57 +9,47 @@
 #include <stdexcept>
 #include <memory>
 
-using ThrowablePointer = std::unique_ptr<std::ostreamstring>;
+using ThrowablePointer = std::unique_ptr<std::ostringstream>;
 
 class ThrowableStream : public std::runtime_error {
-    explicit ThrowableStream(std::string context) : runtime_error(context),
-                                                    stream(new ostringstream) {}
+public:
+    ThrowableStream() : runtime_error("no context"), stream(nullptr) {}
 
-    ThrowableStream& operator=(ThrowableStream&& prev) {
-        stream = std::move(prev.stream);
+    explicit ThrowableStream(std::string context) : runtime_error(context),
+                                                    stream(new std::ostringstream) {}
+
+    ThrowableStream& operator=(ThrowableStream&& rvalue) {
+        stream = std::move(rvalue.stream);
         return *this;
     }
 
-    std::string& str(void) { return stream.str(); }
+    const std::string str(void) const { return stream->str(); }
 
-    ThrowablePointer* operator->() {
-        return stream;
-    }
+    friend std::ostringstream& operator<<(std::ostringstream& output, const ThrowableStream& stream);
 
 private:
-    ThrowableStream() {}
-
     ThrowablePointer stream;
-}
+};
+
+std::ostringstream& operator<<(std::ostringstream& output,
+                               const ThrowableStream& stream);
 
 class GeneralException : public ThrowableStream {
 public:
-    GeneralException(std::string context) : ThrowableStream(context),
-                                            context(context),
-                                            timestamp(std::chrono::system_clock::now()) {
+    GeneralException() {
+        ThrowableStream();
     }
 
-    friend std::ostream& operator<<(std::ostream& output,
-                                    const GeneralException& general);
+    GeneralException(std::string context) : ThrowableStream(context),
+                                            timestamp(std::chrono::system_clock::now()) {}
 
-    const std::string context;
+    friend std::ostringstream& operator<<(std::ostringstream& output,
+                                          const GeneralException& general);
+private:
     const std::chrono::time_point<std::chrono::system_clock> timestamp;
 };
 
-std::ostream& operator<<(std::ostream& output,
-                         const GeneralException& general);
-
-class ArithmeticException : public std::ThrowableStream {
-public:
-    ArithmeticException(std::string context, int x) : ThrowableStream(context), x(x) {}
-
-    friend std::ostream& operator<<(std::ostream& output,
-                                    const ArithmeticException& ex);
-private:
-    int x;
-};
-
-std::ostream& operator<<(std::ostream& output,
-                         const ArithmeticException& general);
+std::ostringstream& operator<<(std::ostringstream& output,
+                               const GeneralException& general);
 
 #endif

@@ -1,19 +1,16 @@
-#include <iostream>
-
 #include <exception.h>
 
-std::ostream& operator<<(std::ostream& output,
-                         const GeneralException general) {
-    output << "Exception! (" << general.context << ")"
-           << " time = " << general.timestamp;
+std::ostringstream& operator<<(std::ostringstream& output,
+                               const ThrowableStream& stream) {
+    output << "runtime error - context: " << stream.what()
+           << " nested: " << stream.str();
 
     return output;
-};
+}
 
-std::ostream& operator<<(std::ostream& output,
-                         const ArithmeticException& ex) {
-    output << "Arithmetic Overflow! value = "
-           << ex.x;
+std::ostringstream& operator<<(std::ostringstream& output,
+                               const GeneralException& general) {
+    output << "Exception - time: " << general.timestamp;
 
     return output;
 };
