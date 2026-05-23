@@ -1,3 +1,4 @@
+OS := $(shell uname -s)
 
 #
 # common
@@ -58,11 +59,17 @@ GOOGLE_TEST = vendor/googletest
 
 TEST_DIR = tests/
 
-TEST_COVERAGE_FLAGS = -g -fcoverage-mapping -fprofile-instr-generate
+
+ifeq ($(OS),OpenBSD) 
+TEST_RUNTIME = 
+TEST_COVERAGE_FLAGS = 
+else
 TEST_RUNTIME = -fsanitize=address
+TEST_COVERAGE_FLAGS = -g -fcoverage-mapping -fprofile-instr-generate
+endif
 
 TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) $(TEST_RUNTIME) $(TEST_COVERAGE_FLAGS)
-TEST_LDFLAGS = -fsanitize=address -L$(GOOGLE_TEST)/lib $(TEST_COVERAGE_FLAGS) -lgtest -lgtest_main
+TEST_LDFLAGS = $(TEST_RUNTIME) -L$(GOOGLE_TEST)/lib $(TEST_COVERAGE_FLAGS) -lgtest -lgtest_main
 
 TEST_TARGET = runner
 
@@ -102,6 +109,12 @@ $(TEST_CORE_AR): $(WITHOUT_MAIN)
 
 $(TEST_TARGET):  $(TEST_SUITE_OBJS) $(WITHOUT_MAIN)
 	$(CXX) -o $@ $^ $(TEST_LDFLAGS) -ledit
+
+ifeq ($(OS),Darwin) 
+XCRUN = xcrun
+else
+XCRUN = 
+endif
 
 coverage:
 	xcrun llvm-profdata merge -sparse *.profraw -o final.profdata
@@ -178,8 +191,8 @@ prod-clean:
 test-clean:
 	-rm -f $(TEST_TARGET)
 	-rm -rf $(TEST_OBJ)
-	-rm *.profraw
-	-rm *.profdata
+	-rm -f *.profraw
+	-rm -f *.profdata
 
 debug-clean:
 	-rm -f $(DEBUG_TARGET)
