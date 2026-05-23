@@ -3,5 +3,8 @@ runner
 dbg
 perf
 .build
+*.profdata
+*.profraw
+coverage.txt
 
 
