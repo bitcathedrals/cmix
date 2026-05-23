@@ -58,7 +58,7 @@ GOOGLE_TEST = vendor/googletest
 
 TEST_DIR = tests/
 
-TEST_COVERAGE_FLAGS = --coverage -fprofile-instr-generate
+TEST_COVERAGE_FLAGS = -g -fcoverage-mapping -fprofile-instr-generate
 TEST_RUNTIME = -fsanitize=address
 
 TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) $(TEST_RUNTIME) $(TEST_COVERAGE_FLAGS)
@@ -103,6 +103,10 @@ $(TEST_CORE_AR): $(WITHOUT_MAIN)
 $(TEST_TARGET):  $(TEST_SUITE_OBJS) $(WITHOUT_MAIN)
 	$(CXX) -o $@ $^ $(TEST_LDFLAGS) -ledit
 
+coverage:
+	xcrun llvm-profdata merge -sparse *.profraw -o final.profdata
+	xcrun llvm-cov show -instr-profile=final.profdata ./runner
+
 #
 # debug - same build technique as production but with debugging
 #
@@ -114,13 +118,6 @@ DEBUG_FLAGS = -g -O0
 DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS))
 
 DEBUG_TARGET = dbg
-
-
-$(info DBG_OBJS_ is $(DBG_OBJS))
-
-# Compile .cpp -> obj/.o
-
-# $(TEST_OBJ)/%.o: $(SRC_DIR)/%.cpp
 
 $(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
@@ -181,6 +178,8 @@ prod-clean:
 test-clean:
 	-rm -f $(TEST_TARGET)
 	-rm -rf $(TEST_OBJ)
+	-rm *.profraw
+	-rm *.profdata
 
 debug-clean:
 	-rm -f $(DEBUG_TARGET)
