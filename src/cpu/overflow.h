@@ -10,9 +10,9 @@
 class OverflowUnaryException : std::runtime_error {
 public:
     OverflowUnaryException(const OpInfo op,
-                           const std::string context,
+                           const std::string& context,
 
-                           const std::string location,
+                           const std::string& location,
 
                            const byte index,
                            const byte value) : std::runtime_error(context),
