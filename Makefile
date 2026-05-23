@@ -118,7 +118,7 @@ endif
 
 coverage:
 	$(XCRUN) llvm-profdata merge -sparse *.profraw -o final.profdata
-	$(XCRUN) llvm-cov show -instr-profile=final.profdata ./runner
+	$(XCRUN) llvm-cov show -instr-profile=final.profdata ./runner >coverage.txt
 
 #
 # debug - same build technique as production but with debugging
