@@ -1,7 +1,8 @@
 #ifndef CPU_OPERATION_H
 #define CPU_OPERATION_H
 
-#include <string.h>
+#include <sstream>
+#include <string>
 #include <map>
 #include <iostream>
 #include <stdexcept>
@@ -26,16 +27,13 @@ public:
     UndefinedOperation(byte i, byte x, byte v=0) : ThrowableStream("Operation base class reached, undefined operation"),
                                                    i(i), x(x), v(v) {}
 
-    friend std::ostream& operator<<(std::ostream& output,
-                                    const UndefinedOperation& undef);
+    friend std::ostringstream& operator<<(std::ostringstream& output,
+                                          const UndefinedOperation& undef);
 private:
     byte i;
     byte x;
     byte v;
 };
-
-std::ostream& operator<<(std::ostream& output,
-                         const UndefinedOperation& undef);
 
 class Operation {
 public:
@@ -56,8 +54,8 @@ class ArithmeticException : public ThrowableStream {
 public:
     ArithmeticException(std::string context, int x) : ThrowableStream(context), x(x) {}
 
-    friend std::ostream& operator<<(std::ostream& output,
-                                    const ArithmeticException& ex);
+    friend std::ostringstream& operator<<(std::ostringstream& output,
+                                          const ArithmeticException& ex);
 private:
     int x;
 };
