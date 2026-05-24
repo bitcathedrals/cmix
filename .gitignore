@@ -6,5 +6,6 @@ perf
 *.profdata
 *.profraw
 coverage.txt
+*.gcno
 
 
