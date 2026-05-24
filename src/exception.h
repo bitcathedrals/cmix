@@ -13,7 +13,7 @@ using ThrowablePointer = std::unique_ptr<std::ostringstream>;
 
 class ThrowableStream : public std::runtime_error {
 public:
-    ThrowableStream() : runtime_error("no context"), stream(nullptr) {}
+    ThrowableStream() : runtime_error("no context"), stream(new std::ostringstream) {}
 
     explicit ThrowableStream(std::string context) : runtime_error(context),
                                                     stream(new std::ostringstream) {}
@@ -23,7 +23,7 @@ public:
         return *this;
     }
 
-    const std::string str(void) const { return stream->str(); }
+    const std::string str(void) const { return what() + " " + stream->str(); }
 
     friend std::ostringstream& operator<<(std::ostringstream& output, const ThrowableStream& stream);
 
@@ -40,8 +40,8 @@ public:
         ThrowableStream();
     }
 
-    GeneralException(std::string context) : ThrowableStream(context),
-                                            timestamp(std::chrono::system_clock::now()) {}
+    explicit GeneralException(std::string context) : ThrowableStream(context),
+                                                     timestamp(std::chrono::system_clock::now()) {}
 
     friend std::ostringstream& operator<<(std::ostringstream& output,
                                           const GeneralException& general);
