@@ -12,7 +12,8 @@ std::map<OpInfo,std::string> OpInfo_to_String = {
 std::ostringstream& operator<<(std::ostringstream& output,
                                const UndefinedOperation& undef) {
 
-    output << " undefined operation parameters are: "
+    output << undef.what()
+           << " parameters are:"
            << " i value " << static_cast<int>(undef.i)
            << " x value " << static_cast<int>(undef.x)
            << " v value " << static_cast<int>(undef.v);
@@ -22,7 +23,10 @@ std::ostringstream& operator<<(std::ostringstream& output,
 
 std::ostringstream& operator<<(std::ostringstream& output,
                                const ArithmeticException& ex) {
-    output << "Arithmetic Exception value = "
+
+    output << ex.what()
+           << " "
+           << "Arithmetic Exception value = "
            << ex.x;
 
     return output;
