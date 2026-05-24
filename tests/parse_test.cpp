@@ -4,7 +4,7 @@
 
 #include <cpu/defs.h>
 
-using cmp_type = const unsigned long;
+using cmp_type = unsigned long;
 
 TEST(ParseCliParsing, EmptyStringTest) {
     std::string empty {""};
