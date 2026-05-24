@@ -39,3 +39,16 @@ TEST(OperationTests, ArithmeticExceptionTest) {
 
     EXPECT_EQ(out.str(), expected);
 }
+
+
+TEST(OperationTests, ThrowUnaryBaseException) {
+    Operation foo(OpInfo::ADD);
+
+    EXPECT_THROW({ foo(2, 4); };, UndefinedOperation);
+}
+
+TEST(OperationTests, ThrowBinaryBaseException) {
+    Operation foo(OpInfo::ADD);
+
+    EXPECT_THROW({ foo(2, 4, 6); };, UndefinedOperation);
+}
