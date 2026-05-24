@@ -23,7 +23,10 @@ public:
         return *this;
     }
 
-    const std::string str(void) const { return what() + " " + stream->str(); }
+    const std::string str(void) const {
+        std::string ret = what(); ret += " "; ret += stream->str();
+        return ret;
+    }
 
     friend std::ostringstream& operator<<(std::ostringstream& output, const ThrowableStream& stream);
 
