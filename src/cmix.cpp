@@ -1,6 +1,7 @@
 #include <string>
 
 #include <repl/dispatch.h>
+#include <parse.h>
 #include <edit.h>
 
 int main() {
