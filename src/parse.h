@@ -2,6 +2,7 @@
 #define PARSE_H
 
 #include <iostream>
+#include <vector>
 
 using parse_t = std::vector<std::string>;
 
