@@ -101,22 +101,41 @@ coverage:
 # debug - same build technique as production but with debugging
 #
 
+DEBUG_DIR = debug/
+
+DEBUG_SRCS = $(wildcard $(DEBUG_DIR)/*.cpp $(DEBUG_DIR)/*/*.cpp $(DEBUG_DIR)/*/*/*.cpp)
+
 DBG_OBJ_DIR = .build/dbg
 
-DEBUG_FLAGS = -g -O0
+DEBUG_FLAGS = -g -O0 -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR)
 
-DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS))
+DEBUG_LDFLAGS = -L$(GOOGLE_TEST)/lib -lgtest
+
+DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS)) \
+           $(patsubst $(TEST_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(TEST_SRCS)) \
+           $(patsubst $(DEBUG_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(DEBUG_SRCS))
+
+DEBUG_WITHOUT_MAIN=$(filter-out $(DBG_OBJ_DIR)/cmix.o , $(DBG_OBJS))
+
+$(info DEBUG_WITHOUT_MAIN is $(DEBUG_WITHOUT_MAIN))
+
 
 DEBUG_TARGET = dbg
+
+$(DBG_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) $(OPT_FLAGS) -c $< -o $@
 
 $(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
 
-# build
+$(DBG_OBJ_DIR)/%.o: $(DEBUG_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
 
-$(DEBUG_TARGET): $(DBG_OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(DEBUG_FLAGS) $(LDFLAGS)
+$(DEBUG_TARGET): $(DEBUG_WITHOUT_MAIN)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(DEBUG_FLAGS) $(DEBUG_LDFLAGS) $(LDFLAGS)
 
 #
 # perf
