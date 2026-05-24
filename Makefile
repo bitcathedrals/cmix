@@ -7,7 +7,13 @@ OS := $(shell uname -s)
 MAX_ERRORS = 6
 MAX_BACKTRACE=4
 
-DIAGNOSTICS = -Wall -Wextra -Werror -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS) -ftemplate-backtrace-limit=$(MAX_BACKTRACE)
+CORE_DIAGNOSTICS = -Wall -Wextra -Werror -ftemplate-backtrace-limit=$(MAX_BACKTRACE)
+
+ifeq ($(OS), Linux)
+DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fdiagnostics-color=always -fmax-errors=$(MAX_ERRORS)
+else
+DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS) 
+endif
 
 CXX ?= clang++
 CXXFLAGS = -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread
@@ -63,9 +69,11 @@ TEST_DIR = tests/
 ifeq ($(OS),OpenBSD) 
 TEST_RUNTIME = 
 TEST_COVERAGE_FLAGS = 
+else ifeq ($(OS), Linux)
+TEST_COVERAGE_FLAGS = -O0 -g --coverage
 else
+TEST_COVERAGE_FLAGS = -O0 -g -fcoverage-mapping -fprofile-instr-generate
 TEST_RUNTIME = -fsanitize=address
-TEST_COVERAGE_FLAGS = -g -fcoverage-mapping -fprofile-instr-generate
 endif
 
 TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) $(TEST_RUNTIME) $(TEST_COVERAGE_FLAGS)
