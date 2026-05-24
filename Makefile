@@ -19,11 +19,6 @@ CXX ?= clang++
 CXXFLAGS = -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread
 LDFLAGS = -ledit -lncurses
 
-AR = ar
-ARFLAGS = rcs
-
-MAIN_AR = core.a
-
 # commonly used for most builds
 
 SRC_DIR = src
@@ -41,21 +36,12 @@ PROD_TARGET = cmix
 
 OPT_FLAGS ?= -O3 -flto
 
-# Compile .cpp -> obj/.o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(OPT_FLAGS) -c $< -o $@
 
-# cmix.o main() conflicts with entry points like googletest
-WITHOUT_CMIX_MAIN=$(filter-out $(OBJ_DIR)/cmix.o, $(OBJS))
-
-# build static lib
-$(OBJ_DIR)/$(MAIN_AR): $(WITHOUT_CMIX_MAIN)
-	$(AR) $(ARFLAGS) $(OBJ_DIR)/$(MAIN_AR) $(WITHOUT_CMIX_MAIN)
-
-# Link step
-$(PROD_TARGET): $(OBJ_DIR)/$(MAIN_AR) $(OBJ_DIR)/cmix.o
-	$(CXX) $(CXXFLAGS) -o $@ $^ -flto $(LDFLAGS)
+$(PROD_TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(OPT_FLAGS) $(LDFLAGS)
 
 #
 # test
@@ -64,7 +50,6 @@ $(PROD_TARGET): $(OBJ_DIR)/$(MAIN_AR) $(OBJ_DIR)/cmix.o
 GOOGLE_TEST = vendor/googletest
 
 TEST_DIR = tests/
-
 
 ifeq ($(OS),OpenBSD) 
 TEST_RUNTIME = 
@@ -91,29 +76,13 @@ TEST_SUITE_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(TEST_OBJ)/%.o,$(TEST_SRCS))
 
 WITHOUT_MAIN=$(filter-out $(TEST_OBJ)/cmix.o , $(TEST_CORE_OBJS))
 
-TEST_SUITE_AR = $(TEST_OBJ)/test-suite.a
-TEST_CORE_AR = $(TEST_OBJ)/test-core.a
-
-# test suite .a
-
 $(TEST_OBJ)/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(TEST_FLAGS) -c $< -o $@
-
-$(TEST_SUITE_AR): $(TEST_SUITE_OBJS)
-	$(AR) $(ARFLAGS) $(TEST_SUITE_AR) $(TEST_SUITE_OBJS)
-
-# app core .a
+	$(CXX) $(CXXFLAGS) $(TEST_FLAGS) $(OPT_FLAGS) -c $< -o $@
 
 $(TEST_OBJ)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(TEST_FLAGS) -c $< -o $@
-
-$(TEST_CORE_AR): $(WITHOUT_MAIN)
-	$(AR) $(ARFLAGS) $(TEST_CORE_AR) $(WITHOUT_MAIN)
-
-# using the .a files is broken for now.
-#  $(TEST_TARGET): $(TEST_SUITE_AR) $(TEST_CORE_AR)
+	$(CXX) $(CXXFLAGS) $(TEST_FLAGS) $(OPT_FLAGS) -c $< -o $@
 
 $(TEST_TARGET):  $(TEST_SUITE_OBJS) $(WITHOUT_MAIN)
 	$(CXX) -o $@ $^ $(TEST_LDFLAGS) -ledit
