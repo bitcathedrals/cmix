@@ -19,8 +19,6 @@ CXX ?= clang++
 CXXFLAGS = -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread
 LDFLAGS = -ledit -lncurses
 
-# commonly used for most builds
-
 SRC_DIR = src
 
 SRCS = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/*/*.cpp $(SRC_DIR)/*/*/*.cpp)
@@ -61,7 +59,7 @@ TEST_COVERAGE_FLAGS = -O0 -g -fcoverage-mapping -fprofile-instr-generate
 TEST_RUNTIME = -fsanitize=address
 endif
 
-TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(CXXFLAGS) $(TEST_RUNTIME) $(TEST_COVERAGE_FLAGS)
+TEST_FLAGS = -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR) $(TEST_RUNTIME) $(TEST_COVERAGE_FLAGS)
 TEST_LDFLAGS = $(TEST_RUNTIME) -L$(GOOGLE_TEST)/lib $(TEST_COVERAGE_FLAGS) -lgtest -lgtest_main
 
 TEST_TARGET = runner
@@ -74,17 +72,17 @@ TEST_SRCS = $(wildcard $(TEST_DIR)/*.cpp $(TEST_DIR)/*/*.cpp $(TEST_DIR)/*/*/*.c
 TEST_CORE_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(TEST_OBJ)/%.o,$(SRCS))
 TEST_SUITE_OBJS = $(patsubst $(TEST_DIR)/%.cpp,$(TEST_OBJ)/%.o,$(TEST_SRCS))
 
-WITHOUT_MAIN=$(filter-out $(TEST_OBJ)/cmix.o , $(TEST_CORE_OBJS))
+TEST_WITHOUT_MAIN=$(filter-out $(TEST_OBJ)/cmix.o , $(TEST_CORE_OBJS))
 
 $(TEST_OBJ)/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(TEST_FLAGS) $(OPT_FLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(TEST_FLAGS) -c $< -o $@
 
 $(TEST_OBJ)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(TEST_FLAGS) $(OPT_FLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(TEST_FLAGS) -c $< -o $@
 
-$(TEST_TARGET):  $(TEST_SUITE_OBJS) $(WITHOUT_MAIN)
+$(TEST_TARGET):  $(TEST_SUITE_OBJS) $(TEST_WITHOUT_MAIN)
 	$(CXX) -o $@ $^ $(TEST_LDFLAGS) -ledit
 
 ifeq ($(OS),Darwin) 
@@ -93,12 +91,15 @@ else
 XCRUN = 
 endif
 
+run:
+	runner --gtest_show_internal_stack_frames=0
+
 coverage:
 	$(XCRUN) llvm-profdata merge -sparse *.profraw -o final.profdata
 	$(XCRUN) llvm-cov show -ignore-filename-regex "vendor/*" -instr-profile=final.profdata ./runner >coverage.txt
 
 #
-# debug - same build technique as production but with debugging
+# debug
 #
 
 DEBUG_DIR = debug/
@@ -121,7 +122,7 @@ DEBUG_TARGET = dbg
 
 $(DBG_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) $(OPT_FLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
 
 $(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
@@ -138,29 +139,40 @@ $(DEBUG_TARGET): $(DEBUG_WITHOUT_MAIN)
 # perf
 # 
 
+PERF_DIR = perf/
+
 PERF_OBJ = .build/perf
 
-#ifdef DO_PROFILE
+ifeq ($(DO_PROFILE), 1)
 PERF_PROFILE_FLAGS = -fprofile-instr-generate
-#endif
+endif
 
-#ifdef DO_OPTMIZE
+ifeq ($(DO_OPTMIZE), 1)
 PERF_PROFILE_FLAGS = -fprofile-generate
-#endif
+endif
 
-PERF_FLAGS = -Isrc -g -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
+PERF_FLAGS = -I$(SRC_DIR) -I$(PERF_DIR) -g -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
 
-PERF_BUILD = $(patsubst $(SRC_DIR)/%.cpp,$(PERF_OBJ)/%.o,$(SRCS))
+PERF_SRCS = $(wildcard $(PERF_DIR)/*.cpp $(PERF_DIR)/*/*.cpp $(PERF_DIR)/*/*/*.cpp)
 
-PERF_TARGET = perf
+PERF_CORE_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(PERF_OBJ)/%.o,$(SRCS))
+PERF_BENCH_OBJS = $(patsubst $(PERF_DIR)/%.cpp,$(PERF_OBJ)/%.o,$(PERF_SRCS))
 
-# Compile .cpp -> obj/.o
+PERF_OBJS = $(PERF_CORE_OBJS) $(PERF_BENCH_OBJS)
+
+PERF_TARGET = bench
+
+PERF_WITHOUT_MAIN = $(filter-out $(PERF_CORE_OBJS)/cmix.o , $(PERF_OBJS))
+
 $(PERF_OBJ)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(PERF_FLAGS) -c $< -o $@
 
-# Link step
-$(PERF_TARGET): $(PERF_BUILD)
+$(PERF_OBJ)/%.o: $(PERF_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(PERF_FLAGS) -c $< -o $@
+
+$(PERF_TARGET): $(PERF_WITHOUT_MAIN)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(PERF_FLAGS) $(LDFLAGS)
 
 #
