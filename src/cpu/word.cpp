@@ -68,6 +68,10 @@ Word& Word::operator=(const parse_t& p) {
     return *this;
 }
 
+bool Word::operator==(const Word& right) const {
+    return (data == right.data) ? true : false;
+}
+
 Word::Word(byte x1, byte x2, byte x3, byte x4, byte x5) {
     data = {sign_default, x1, x2, x3, x4, x5};
 
