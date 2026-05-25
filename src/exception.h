@@ -3,35 +3,22 @@
 
 #include <iostream>
 #include <sstream>
-#include <utility>
 #include <string>
 #include <chrono>
 #include <stdexcept>
-#include <memory>
-
-using ThrowablePointer = std::unique_ptr<std::ostringstream>;
 
 class ThrowableStream : public std::runtime_error {
 public:
-    ThrowableStream() : runtime_error("no context"), stream(new std::ostringstream) {}
+    ThrowableStream() : runtime_error("no context") {}
 
-    explicit ThrowableStream(std::string context) : runtime_error(context),
-                                                    stream(new std::ostringstream) {}
+    explicit ThrowableStream(std::string context) : runtime_error(context) {}
 
-    ThrowableStream& operator=(ThrowableStream&& rvalue) {
-        stream = std::move(rvalue.stream);
-        return *this;
-    }
-
-    const std::string str(void) const {
-        std::string ret = what(); ret += " "; ret += stream->str();
-        return ret;
-    }
+    std::string report(void) const;
 
     friend std::ostringstream& operator<<(std::ostringstream& output, const ThrowableStream& stream);
 
 private:
-    ThrowablePointer stream;
+    std::ostringstream stream;
 };
 
 std::ostringstream& operator<<(std::ostringstream& output,
