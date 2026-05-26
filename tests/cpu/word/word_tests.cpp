@@ -83,6 +83,16 @@ TEST(WordReadWriteTests, AssignOperatorParse) {
     EXPECT_EQ(mix_word[4], 5);
 }
 
-//
-// ranges
-//
+TEST(WordOperatorEqual, SimpleEqualsTrueTest) {
+    Word left_word(1,2,3,4,5);
+    Word right_word(1,2,3,4,5);
+
+    EXPECT_EQ(left_word == right_word, true);
+}
+
+TEST(WordOperatorEqual, SimpleEqualsFalseTest) {
+    Word left_word(1,2,3,4,5);
+    Word right_word(1,3,5,9,13);
+
+    EXPECT_EQ(left_word == right_word, false);
+}

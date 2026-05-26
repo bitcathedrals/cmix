@@ -1,7 +1,7 @@
 cmix
 runner
 dbg
-perf
+bench
 .build
 *.profdata
 *.profraw
