@@ -10,8 +10,8 @@ Clocked::~Clocked() {
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     std::cerr << "Clocked: " << name
-//              << "Start: " << start
-//              << "End: " << end
-              << "Elapsed: " << elapsed
+//              << " Start = " << start
+//              << " End = " << end
+              << " Elapsed = " << elapsed
               << std::endl;
 }

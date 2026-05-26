@@ -1,14 +1,18 @@
 #include <cpu/word.h>
 #include <cpu/cpu.h>
 
+static inline const int stripe_count = 4;
+
 class EqualsTest {
 public:
     EqualsTest ();
 
-private:
-    Cpu equals_cpu();
+    void test(int iterations);
 
-    Word equals_stripes[4] = {
+private:
+    Cpu cpu;
+
+    Word stripes[stripe_count] = {
         {0,1,2,3,4},
         {4,3,2,1,0},
         {3,2,1,4,0},

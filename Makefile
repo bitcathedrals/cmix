@@ -185,7 +185,7 @@ test: $(TEST_TARGET)
 
 debug: $(DEBUG_TARGET)
 
-perf: $(PERF_TARGET)
+benchmark: $(PERF_TARGET)
 
 default: prod
 
@@ -203,7 +203,7 @@ debug-clean:
 	-rm -f $(DEBUG_TARGET)
 	-rm -rf $(DBG_OBJ_DIR)
 
-perf-clean:
+benchmark-clean:
 	-rm -rf $(PERF_OBJ)
 	-rm -f $(PERF_TARGET)
 

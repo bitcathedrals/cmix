@@ -2,6 +2,7 @@
 #include <string>
 
 #include <randomized.h>
+#include <wall_clock.h>
 
 #include <equals.h>
 
@@ -16,6 +17,12 @@ void random_test() {
 
 void equals_test() {
     EqualsTest equals;
+
+    {
+        Clocked clock("equals benchmark");
+
+        equals.test(4000);
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -39,7 +46,7 @@ int main(int argc, char* argv[]) {
         if(metric == "equals") {
             std::cerr << "equals test..." << std::endl;
             equals_test();
-            std::cerr << "done." << std::endl;
+            std::cerr << "equals test done." << std::endl;
 
             continue;
         }

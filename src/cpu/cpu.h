@@ -10,7 +10,7 @@
 // move this to short.h later
 using memory_index_t = short int;
 
-constexpr memory_index_t  memory_capacity = 4000;
+constexpr memory_index_t memory_capacity = 4000;
 
 class Cpu {
 public:
