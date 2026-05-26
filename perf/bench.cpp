@@ -1,23 +1,37 @@
+#include <iostream>
 #include <string>
 
-#include <repl/dispatch.h>
-#include <parse.h>
-#include <edit.h>
+#include <randomized.h>
+
+void random_test() {
+    Randomized r(0,3999);
+
+    for(auto i = 0; i < 5; i++) {
+        int x = r.next();
+        std::cerr << x << "...";
+    }
+}
 
 int main(int argc, char* argv[]) {
-    std::cerr << "cmix benchmarking." << std::endl;
-
-    std::cerr << "Command-line arguments:";
+    std::cerr << "cmix benchmarking. " << std::endl;
 
     for(auto count = 0; count < argc; count++) {
         if (count < 1) {
             continue;
         }
 
-        std::cerr << argv[count];
-    }
+        std::string metric(argv[count]);
 
-    std::cerr << std::endl;
+        if(metric == "random") {
+            std::cerr << "randomized test...";
+            random_test();
+            std::cerr << "done." << std::endl;
+
+            continue;
+        }
+
+        std::cerr << "unrecognized metric: " << metric << std::endl;
+    }
 
     return 0;
 }
