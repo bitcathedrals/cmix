@@ -3,6 +3,8 @@
 
 #include <randomized.h>
 
+#include <equals.h>
+
 void random_test() {
     Randomized r(0,3999);
 
@@ -10,6 +12,10 @@ void random_test() {
         int x = r.next();
         std::cerr << x << "...";
     }
+}
+
+void equals_test() {
+    EqualsTest equals;
 }
 
 int main(int argc, char* argv[]) {
@@ -25,6 +31,14 @@ int main(int argc, char* argv[]) {
         if(metric == "random") {
             std::cerr << "randomized test...";
             random_test();
+            std::cerr << "done." << std::endl;
+
+            continue;
+        }
+
+        if(metric == "equals") {
+            std::cerr << "equals test..." << std::endl;
+            equals_test();
             std::cerr << "done." << std::endl;
 
             continue;
