@@ -162,7 +162,7 @@ PERF_OBJS = $(PERF_CORE_OBJS) $(PERF_BENCH_OBJS)
 
 PERF_TARGET = bench
 
-PERF_WITHOUT_MAIN = $(filter-out $(PERF_CORE_OBJS)/cmix.o , $(PERF_OBJS))
+PERF_WITHOUT_MAIN=$(filter-out $(PERF_OBJ)/cmix.o , $(PERF_OBJS))
 
 $(PERF_OBJ)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
@@ -185,7 +185,7 @@ test: $(TEST_TARGET)
 
 debug: $(DEBUG_TARGET)
 
-profile: $(PERF_TARGET)
+perf: $(PERF_TARGET)
 
 default: prod
 
