@@ -16,6 +16,23 @@ const inline byte write_parse_size = 4;
 static CmdStatus exec_read(const parse_t p);
 static CmdStatus exec_write(const parse_t p);
 
+std::string cmd_status_string(const CmdStatus s) {
+    switch(s) {
+    case CmdStatus::ok:
+        return std::string("Ok");
+    case CmdStatus::general_failure:
+        return std::string("General Failure");
+    case CmdStatus::bad_input:
+        return std::string("Bad Input");
+    case CmdStatus::bad_value:
+        return std::string("Bad Value");
+    case CmdStatus::out_of_range:
+        return std::string("Out of Range");
+    }
+
+    return std::string("unknown CmdStatus in cmd_status_string");
+}
+
 CmdStatus run_command(const parse_t p) {
     char size = p.size();
 
@@ -32,7 +49,8 @@ CmdStatus run_command(const parse_t p) {
 
     switch (cmd) {
     case Command::quit:
-        return CmdStatus::ok;
+        std::cerr << "exiting." << std::endl;
+        exit(0);
 
     case Command::read:
         return exec_read(p);
@@ -91,9 +109,9 @@ static CmdStatus exec_read(const parse_t p) {
 static CmdStatus exec_write(const parse_t p) {
     byte size = p.size();
 
-    if (size != read_parse_size) {
-        std::cerr << "cmix bad input, expected " << size
-                  << "fields, instead: "  << p << std::endl;
+    if (size != write_parse_size) {
+        std::cerr << "bad input, expected " << write_parse_size
+                  << "fields, instead: "  << p.size() << std::endl;
 
         return CmdStatus::bad_input;
     }
