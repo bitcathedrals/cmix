@@ -1,5 +1,5 @@
-#ifndef REPL_DISPATCH_H
-#define REPL_DISPATCH_H
+#ifndef REPL_COMMAND_H
+#define REPL_COMMAND_H
 
 #include <string>
 #include <vector>
