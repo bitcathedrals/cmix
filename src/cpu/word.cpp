@@ -56,7 +56,12 @@ Word& Word::operator=(const parse_t& p) {
     dest_itr_b++;  // skip over sign
 
     if(!(p.size() == data_size)) {
-        throw std::out_of_range("word::operator=(const std::parse_t& x) parse is the wrong size");
+        std::ostringstream fmt;
+
+        fmt << "word::operator=(const std::parse_t& x) parse is the wrong size: "
+            << p.size();
+
+        throw std::out_of_range(fmt.str());
     }
 
     std::transform(p.begin(), p.end(), dest_itr_b, [](const std::string& x) {
@@ -159,12 +164,12 @@ Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
 }
 
 std::ostream& operator<<(std::ostream& output, const Word& x) {
-    output << x.data[0] << "::"
-           << x.data[1] << "::"
-           << x.data[2] << "::"
-           << x.data[3] << "::"
-           << x.data[4] << "::"
-           << x.data[5];
+    output << static_cast<int>(x.data[0]) << "::"
+           << static_cast<int>(x.data[1]) << "::"
+           << static_cast<int>(x.data[2]) << "::"
+           << static_cast<int>(x.data[3]) << "::"
+           << static_cast<int>(x.data[4]) << "::"
+           << static_cast<int>(x.data[5]);
 
     return output;
 };
