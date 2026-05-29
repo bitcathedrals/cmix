@@ -1,6 +1,6 @@
 cmix
 runner
-dbg
+buggy
 bench
 .build
 *.profdata
