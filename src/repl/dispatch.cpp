@@ -110,8 +110,8 @@ static CmdStatus exec_write(const parse_t p) {
     byte size = p.size();
 
     if (size != write_parse_size) {
-        std::cerr << "bad input, expected " << write_parse_size
-                  << "fields, instead: "  << p.size() << std::endl;
+        std::cerr << "bad input - expected " << write_parse_size
+                  << " fields, instead: "  << p.size() << std::endl;
 
         return CmdStatus::bad_input;
     }
@@ -134,7 +134,7 @@ static CmdStatus exec_write(const parse_t p) {
         int address = std::atoi(p[adr_field].c_str());
 
         if ((address >= 0) && (address < memory_capacity)) {
-           CPU.memory[address] = parse_t(data_field);
+           CPU.memory[address] = p[data_field];
 
             std::cerr << CPU.memory[address] << std::endl;
 
