@@ -118,7 +118,7 @@ DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS)) \
 
 DEBUG_WITHOUT_MAIN=$(filter-out $(DBG_OBJ_DIR)/cmix.o , $(DBG_OBJS))
 
-DEBUG_TARGET = dbg
+DEBUG_TARGET = buggy
 
 $(DBG_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 	@mkdir -p $(@D)
