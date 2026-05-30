@@ -20,19 +20,21 @@ int main() {
         Command cmd = string_to_command(parse[0]);
 
         if (cmd == Command::unknown) {
-            std::cerr << "cmix: unknown command." << std::endl;
+            std::cerr << "cmix: unknown command: "
+                      << cmd_string(parse)
+                      << std::endl;
             continue;
         }
 
-        std::cout << "You entered: " << input << std::endl;
-
         if (cmd == Command::quit) {
-            break;
+            return 0;
         }
 
-        std::cerr << "cmix: cannot handle input = "
-                  << input << std::endl;
+        CmdStatus status = run_command(parse);
+
+        std::cerr << cmd_string(parse) << " command terminated with status: "
+                  << status_string(status) << std::endl;
     } while(true);
 
-    return 0;
+    return -1;
 }
