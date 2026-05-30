@@ -9,7 +9,7 @@ MAX_BACKTRACE=4
 
 CORE_DIAGNOSTICS = -Wall -Wextra -Werror -ftemplate-backtrace-limit=$(MAX_BACKTRACE)
 
-ifeq ($(OS), Linux)
+ifeq ($(CXX), g++)
 DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fdiagnostics-color=always -fmax-errors=$(MAX_ERRORS)
 else
 DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS) 
