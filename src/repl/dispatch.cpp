@@ -4,19 +4,19 @@
 #include <cpu/cpu.h>
 #include <repl/dispatch.h>
 
-const inline byte cmd_field = 0;
-const inline byte type_field = 1;
-const inline byte adr_field = 2;
+const constexpr byte cmd_field = 0;
+const constexpr byte type_field = 1;
+const constexpr byte adr_field = 2;
 
-const inline byte data_field = 3;
+const constexpr byte data_field = 3;
 
-const inline byte read_parse_size = 3;
-const inline byte write_parse_size = 4;
+const constexpr byte read_parse_size = 3;
+const constexpr byte write_parse_size = 4;
 
 static CmdStatus exec_read(const parse_t p);
 static CmdStatus exec_write(const parse_t p);
 
-std::string cmd_status_string(const CmdStatus s) {
+std::string status_string(const CmdStatus s) {
     switch(s) {
     case CmdStatus::ok:
         return std::string("Ok");
@@ -33,6 +33,10 @@ std::string cmd_status_string(const CmdStatus s) {
     return std::string("unknown CmdStatus in cmd_status_string");
 }
 
+std::string cmd_string(const parse_t p) {
+    return p[cmd_field];
+}
+
 CmdStatus run_command(const parse_t p) {
     char size = p.size();
 
@@ -44,7 +48,7 @@ CmdStatus run_command(const parse_t p) {
     Command cmd = string_to_command(p[cmd_field]);
 
     if(cmd == Command::unknown) {
-        std::cerr << "cmix: unknown command: " << p[cmd_field] << std::endl;
+        return CmdStatus::bad_input;
     }
 
     switch (cmd) {
@@ -64,7 +68,6 @@ CmdStatus run_command(const parse_t p) {
         break;
     }
 
-    std::cerr << "cmix unhandled command: " << p[cmd_field] << std::endl;
     return CmdStatus::bad_input;
 }
 
