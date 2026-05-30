@@ -13,7 +13,7 @@ enum class Command {
     unknown = 32
 };
 
-static inline const char CommandCount = 4;
+const inline constexpr char CommandCount = 4;
 
 struct CommandEntry {
     Command cmd;
