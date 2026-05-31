@@ -4,8 +4,10 @@
 #include <parse.h>
 #include <edit.h>
 
+#include <repl/dispatch.h>
+
 int main() {
-    std::cerr << "Welcome to cmix." << std::endl;
+    std::cerr << "Welcome to cmix Debugging, down the rabbit hole we go!" << std::endl;
 
     do {
         std::string input = get_input();
@@ -17,24 +19,11 @@ int main() {
             continue;
         }
 
-        Command cmd = string_to_command(parse[0]);
-
-        if (cmd == Command::unknown) {
-            std::cerr << "cmix: unknown command: "
-                      << cmd_string(parse)
-                      << std::endl;
-            continue;
-        }
-
-        if (cmd == Command::quit) {
-            return 0;
-        }
-
         CmdStatus status = run_command(parse);
 
         std::cerr << cmd_string(parse) << " command terminated with status: "
                   << status_string(status) << std::endl;
     } while(true);
 
-    return -1;
+    return 0;
 }
