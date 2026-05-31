@@ -1,4 +1,4 @@
-* CMix
+# CMix
 
 CMix is an implementation of the Knuth CMix mythical computer. Mix
 is a machine based upon 1960's era technology. It contains a couple
@@ -10,7 +10,7 @@ CMix also has IO in the form of disks, and a punch card interface.
 This project aims to implement CMIX with a CLI interface, and related
 tools such as an a assembler.
 
-** Goals
+## Goals
 
 - Idiomatic C++, a refresh on idioms and best practices.
 - Portable: currently developed on MacOS, Linux, and
@@ -22,7 +22,7 @@ tools such as an a assembler.
   submodules. No patching vendor code in the submodules.
 - Exploring compiler features like profile driven optimizations.
 
-Non Goals
+## Non Goals
 
 - Not competing with other implementations. Other implementations that
   I am aware of are a web version, and a Java version. Both are
@@ -32,22 +32,22 @@ Non Goals
   maximum speed possible is not a goal. For that a machine code translation
   would be a place to start, not an emulator.
 
-* Personal Goals
+## Personal Goals
 
 - to become familiar and proficient in Modern C++. My old C++
   experience is with '03. I am aiming at '17 generally, and '20 for green
   field projects, and '11 for legacy. '03 is too much suffering unless
   I am incentivized heavily.
 
-** History
+## History
 
 I wanted to study Knuth's the Art of Computer Programming, and I wanted to
 come up to speed with modern C++. This project works on both axis making
 the best use of my time possible.
 
-** Process to Progress
+## Process to Progress
 
-*** Phase 1
+### Phase 1
 
 The first stage is to lay down the core defitions. This would be the 
 core abstractions for both instructions and data. I want to make it
@@ -59,17 +59,17 @@ well in phase 1. Once I had both a Data and Instruction class I should
 be able to churn out instructions until done with the CPU, or at least
 the most pressing bits.
 
-*** Phase 2
+### Phase 2
 
 The second phase would be: churning out instructions for both
 execution and assembling. Execution involves decoding into MicroCode
 the instructions. Assembling involves taking strings and encoding into
 instructions.
 
-*** Phase 3
+### Phase 3
 
 Phase 3 is implementing a external assembler and a linker.
 
-*** Phase 4 is IO.
+### Phase 4 is IO.
 
 Implement the disks first, and then the punch card reader.
