@@ -4,15 +4,15 @@ OS := $(shell uname -s)
 # common
 #
 
-MAX_ERRORS = 6
+MAX_ERRORS = 3
 MAX_BACKTRACE=4
 
 CORE_DIAGNOSTICS = -Wall -Wextra -Werror -ftemplate-backtrace-limit=$(MAX_BACKTRACE)
 
 ifeq ($(CXX), g++)
-DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fdiagnostics-color=always -fmax-errors=$(MAX_ERRORS)
+DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fdiagnostics-color=never -fmax-errors=$(MAX_ERRORS)
 else
-DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fcolor-diagnostics -ferror-limit=$(MAX_ERRORS) 
+DIAGNOSTICS = $(CORE_DIAGNOSTICS) -ferror-limit=$(MAX_ERRORS) 
 endif
 
 CXX ?= clang++
