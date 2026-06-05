@@ -35,9 +35,8 @@ tools such as an a assembler.
 ## Personal Goals
 
 - to become familiar and proficient in Modern C++. My old C++
-  experience is with '03. I am aiming at '17 generally, and '20 for green
-  field projects, and '11 for legacy. '03 is too much suffering unless
-  I am incentivized heavily.
+  experience is with '03. I am aiming at '17 as legacy, and '20 for
+  green field projects.
 
 ## History
 
