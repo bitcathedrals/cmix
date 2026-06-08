@@ -3,9 +3,9 @@
 
 #include <array>
 
-#include <cpu/defs.h>
-#include <cpu/operation.h>
-#include <cpu/word.h>
+#include "cpu/defs.h"
+#include "cpu/operation.h"
+#include "cpu/word.h"
 
 // move this to short.h later
 using memory_index_t = short int;

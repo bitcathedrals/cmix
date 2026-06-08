@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <exception.h>
+#include "exception.h"
 
 std::string ThrowableStream::report(void) const {
     std::string rep(what());

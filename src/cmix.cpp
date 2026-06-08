@@ -1,8 +1,8 @@
 #include <string>
-
-#include <repl/dispatch.h>
-#include <parse.h>
 #include <edit.h>
+
+#include "repl/dispatch.h"
+#include "parse.h"
 
 int main() {
     std::cerr << "Welcome to cmix." << std::endl;

@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include <parse.h>
-#include <cpu/cpu.h>
-#include <repl/dispatch.h>
+#include "parse.h"
+#include "cpu/cpu.h"
+#include "repl/dispatch.h"
 
 const constexpr byte cmd_field = 0;
 const constexpr byte type_field = 1;

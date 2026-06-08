@@ -3,9 +3,9 @@
 
 #include <array>
 
-#include <parse.h>
-#include <cpu/defs.h>
-#include <cpu/operation.h>
+#include "parse.h"
+#include "cpu/defs.h"
+#include "cpu/operation.h"
 
 //
 // word = data + sign

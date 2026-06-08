@@ -1,8 +1,7 @@
 #include <iostream>
 #include <string>
 
-
-#include <cpu/overflow.h>
+#include "cpu/overflow.h"
 
 std::ostream& operator<<(std::ostream& output,
                          const OverflowUnaryException& ex) {

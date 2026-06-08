@@ -3,10 +3,10 @@
 
 #include <sstream>
 
-#include <cpu/word.h>
-#include <cpu/operation.h>
-#include <cpu/overflow.h>
-#include <parse.h>
+#include "cpu/word.h"
+#include "cpu/operation.h"
+#include "cpu/overflow.h"
+#include "parse.h"
 
 void Word::sanitize(void) {
     auto itr_b = data.begin();

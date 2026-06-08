@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <exception.h>
+#include "exception.h"
 
 TEST(ExceptionCore, ThrowableStreamBase) {
     ThrowableStream throwable = ThrowableStream("ExceptionCore.ThrowableStream");

@@ -1,5 +1,6 @@
-#include <cpu/cpu.h>
 #include <algorithm>
+
+#include "cpu/cpu.h"
 
 Cpu CPU;
 

@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include <repl/command.h>
+#include "repl/command.h"
 
 TEST(CommandDispatch, StringToCommand) {
     EXPECT_EQ(string_to_command("quit"), Command::quit);

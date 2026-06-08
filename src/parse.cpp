@@ -1,7 +1,7 @@
 #include <sstream>
 #include <regex>
 
-#include <parse.h>
+#include "parse.h"
 
 std::ostream& operator<<(std::ostream& output, const parse_t p) {
     output << p[0]

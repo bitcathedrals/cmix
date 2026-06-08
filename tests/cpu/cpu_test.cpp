@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <cpu/word.h>
-#include <cpu/cpu.h>
-
+#include "cpu/word.h"
+#include "cpu/cpu.h"
 
 //
 // test memory array, type and set

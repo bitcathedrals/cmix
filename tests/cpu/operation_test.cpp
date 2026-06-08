@@ -4,8 +4,8 @@
 
 #include <gtest/gtest.h>
 
-#include <exception.h>
-#include <cpu/operation.h>
+#include "exception.h"
+#include "cpu/operation.h"
 
 TEST(OperationTests, TestUndefinedOperationBase) {
     int i = 3;

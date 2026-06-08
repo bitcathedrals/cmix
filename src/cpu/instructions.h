@@ -1,8 +1,13 @@
-static const byte address_begin = 0;
-static const byte address_end = 1;
-static const byte index = 2;
-static const byte field = 3;
-static const byte opcode = 4;
+#ifndef INSTRUCTIONS_H
+#define INSTRUCTIONS_H
+
+#include "cpu/defs.h"
+
+static constexpr byte address_begin = 0;
+static constexpr byte address_end = 1;
+static constexpr byte index = 2;
+static constexpr byte field = 3;
+static constexpr byte opcode = 4;
 
 enum opcodes {
     LDA = 8,
@@ -21,3 +26,5 @@ public:
 
 
 };
+
+#endif

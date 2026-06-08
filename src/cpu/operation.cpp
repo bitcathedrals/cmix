@@ -2,7 +2,7 @@
 #include <map>
 #include <string>
 
-#include <cpu/operation.h>
+#include "cpu/operation.h"
 
 std::map<OpInfo,std::string> OpInfo_to_String = {
     {ADD, "Add Operation"},

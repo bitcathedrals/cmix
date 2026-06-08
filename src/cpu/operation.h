@@ -7,8 +7,8 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <cpu/defs.h>
-#include <exception.h>
+#include "cpu/defs.h"
+#include "exception.h"
 
 //
 // these are micro ops, not instructions

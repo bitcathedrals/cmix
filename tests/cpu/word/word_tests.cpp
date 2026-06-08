@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include <cpu/word.h>
+#include "cpu/word.h"
 
 //
 // Constructor and Init tests.

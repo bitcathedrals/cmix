@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <repl/dispatch.h>
+#include "repl/dispatch.h"
 
 CmdStatus repl_ok(void);
 

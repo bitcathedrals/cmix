@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include <cpu/defs.h>
+#include "cpu/defs.h"
 
 using cmp_type = unsigned long;
 

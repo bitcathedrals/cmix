@@ -3,9 +3,9 @@
 
 #include <stdexcept>
 
-#include <cpu/defs.h>
-#include <exception.h>
-#include <cpu/operation.h>
+#include "cpu/defs.h"
+#include "exception.h"
+#include "cpu/operation.h"
 
 class OverflowUnaryException : std::runtime_error {
 public:
