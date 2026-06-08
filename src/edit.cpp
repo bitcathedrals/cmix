@@ -2,13 +2,18 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "edit.h"
 #include <histedit.h>
+
+#include "edit.h"
 
 extern "C" {
     static std::string prompt("cmix> ");
 
     static EditLine* el = nullptr;
+
+    History* history_ptr = nullptr;
+    HistEvent hev;
+    int history_size = 512;
 
     char* edit_prompt(EditLine* el [[maybe_unused]]) {
         return const_cast<char*>("buggy> ");
@@ -24,6 +29,15 @@ extern "C" {
 
         el_set(el, EL_PROMPT, &edit_prompt);
         el_set(el, EL_EDITOR, "emacs");
+
+        history_ptr = history_init();
+        history(history_ptr, &hev, H_SETSIZE, history_size);
+
+        el_set(el, EL_HIST, history, history_ptr);
+    }
+
+    void store_history(const char* line) {
+        history(history_ptr, &hev, H_ENTER, line);
     }
 }
 
@@ -38,6 +52,8 @@ std::string get_input(void) {
 
     while((line = el_gets(el, &count)) != nullptr) {
         if(count > 1) {
+            store_history(line);
+
             return std::string(line);
         }
     }
