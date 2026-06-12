@@ -1,3 +1,4 @@
+#include <cctype>
 #include <gtest/gtest.h>
 
 #include "mixer/parser.h"
@@ -29,4 +30,19 @@ TEST(MixerBasicToken, MatchLowerCase) {
 
     EXPECT_EQ(token.get_type(), Token::label::text);
     EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
+}
+
+
+TEST(MixerBasicToken, MatchInjectNumbers) {
+    std::string lower("22aa");
+
+    std::string::const_iterator begin = lower.cbegin();
+    std::string::const_iterator end = lower.cend();
+
+    Alphabetic matcher(Token::label::nothing);
+
+    Token token = matcher.match(begin, end);
+
+    EXPECT_EQ(token.get_type(), Token::label::nothing);
+    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
 }
