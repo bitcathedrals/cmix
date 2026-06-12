@@ -17,7 +17,6 @@ TEST(MixerBasicToken, MatchNoInput) {
     EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
 }
 
-
 TEST(MixerBasicToken, MatchLowerCase) {
     std::string lower("aa");
 
@@ -32,7 +31,6 @@ TEST(MixerBasicToken, MatchLowerCase) {
     EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
 }
 
-
 TEST(MixerBasicToken, MatchInjectNumbers) {
     std::string lower("22aa");
 
@@ -46,3 +44,22 @@ TEST(MixerBasicToken, MatchInjectNumbers) {
     EXPECT_EQ(token.get_type(), Token::label::nothing);
     EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
 }
+
+//
+// Numeric
+//
+
+TEST(MixerBasicToken, NumberMatchTest) {
+    std::string lower("22aa");
+
+    std::string::const_iterator begin = lower.cbegin();
+    std::string::const_iterator end = lower.cend();
+
+    Numeric matcher(Token::label::number);
+
+    Token token = matcher.match(begin, end);
+
+    EXPECT_EQ(token.get_type(), Token::label::number);
+    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
+}
+

@@ -115,4 +115,26 @@ protected:
     };
 };
 
+class AlphaNumeric : public Token {
+public:
+    AlphaNumeric() : Token() {}
+
+    AlphaNumeric(const AlphaNumeric& from) : Token(from) {}
+
+    explicit AlphaNumeric(const Token::label label) : Token{label} {}
+
+    explicit AlphaNumeric(const Token::label type, const std::string capture) : Token(type, capture) {}
+
+    explicit AlphaNumeric(const Token::label type, const std::vector<Token>& children) : Token(type, children) {}
+
+protected:
+    virtual bool is_capture(const char x) {
+        if (std::isalnum(x)) {
+            return true;
+        }
+
+        return false;
+    };
+};
+
 #endif
