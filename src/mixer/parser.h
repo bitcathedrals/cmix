@@ -25,7 +25,7 @@ public:
                                tree(from.tree),
                                value(from.value) {}
 
-    explicit Token(const Token::label label) : t {label} {}
+    Token(const Token::label label) : t {label} {}
 
     explicit Token(const Token::label type, const std::string capture) : t(type),
                                                                          value(capture) {}
@@ -35,9 +35,26 @@ public:
 
     virtual ~Token(void) {}
 
-
     Token& operator=(const Token& from);
     Token& operator=(const std::vector<Token> parse);
+
+    Token::label get_type(void) const {
+        return t;
+    }
+
+    const std::string get_match(void) const {
+        return value;
+    }
+
+    const std::vector<Token>& get_parse(void) const {
+        return tree;
+    }
+
+    Token match(std::string::const_iterator& i,
+                std::string::const_iterator& end);
+
+    Token parse(std::string::const_iterator& i,
+                std::string::const_iterator& end);
 
 protected:
     virtual bool is_capture(const char x [[maybe_unused]]) { return false; };
@@ -52,14 +69,7 @@ private:
     static const std::array<char,4> constexpr terminal {' ', '\t', '\n', ','};
 
     bool is_terminal(const char x);
-
-    Token match(std::string::const_iterator& i,
-                std::string::const_iterator& end);
-
-    Token parse(std::string::const_iterator& i,
-                std::string::const_iterator& end);
 };
-
 
 class Alphabetic : public Token {
 public:
