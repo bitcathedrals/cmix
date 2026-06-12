@@ -82,6 +82,18 @@ public:
     explicit Alphabetic(const Token::label type, const std::string capture) : Token(type, capture) {}
 
     explicit Alphabetic(const Token::label type, const std::vector<Token>& children) : Token(type, children) {}
+protected:
+    virtual bool is_capture(const char x) {
+         if (x >= 65 && x <= 90) {
+             return true;
+         }
+
+         if (x >= 97 && x <= 122) {
+             return true;
+         }
+
+         return false;
+    };
 };
 
 #endif
