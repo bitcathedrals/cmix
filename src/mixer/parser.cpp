@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "mixer/parser.h"
-
+ 
 bool Token::is_terminal(const char x) {
     if(terminal[0] == x ||
        terminal[1] == x ||

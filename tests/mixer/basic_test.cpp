@@ -13,6 +13,7 @@ TEST(MixerBasicToken, MatchNoInput) {
     Token token = alpha.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::nothing);
+    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
 }
 
 
@@ -27,4 +28,5 @@ TEST(MixerBasicToken, MatchLowerCase) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::text);
+    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
 }
