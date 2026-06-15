@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "mixer/parser.h"
- 
+
 bool Token::is_terminal(const char x) {
     if(terminal[0] == x ||
        terminal[1] == x ||
@@ -16,8 +16,28 @@ bool Token::is_terminal(const char x) {
     return false;
 }
 
+void Token::skip_terminal(std::string::const_iterator& i,
+                          std::string::const_iterator& end) {
+
+    while(i != end) {
+        char x = *i;
+
+        for(char z : terminal) {
+            if (x == z) {
+                goto next_char;
+            }
+        }
+
+        return; // if it's not a terminal
+
+    next_char: i++;
+    }
+}
+
 Token Token::match(std::string::const_iterator& i,
                    std::string::const_iterator& end) {
+
+    skip_terminal(i, end);
 
     std::string capture;
 

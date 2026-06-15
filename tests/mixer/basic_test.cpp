@@ -63,3 +63,31 @@ TEST(MixerBasicToken, NumberMatchTest) {
     EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
 }
 
+
+TEST(MixerBasicToken, NumberUnreachableTest) {
+    std::string lower("aa22");
+
+    std::string::const_iterator begin = lower.cbegin();
+    std::string::const_iterator end = lower.cend();
+
+    Numeric matcher(Token::label::number);
+
+    Token token = matcher.match(begin, end);
+
+    EXPECT_EQ(token.get_type(), Token::label::nothing);
+    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
+}
+
+TEST(MixerBasicToken, NumberGappedTest) {
+    std::string lower("22 44");
+
+    std::string::const_iterator begin = lower.cbegin();
+    std::string::const_iterator end = lower.cend();
+
+    Numeric matcher(Token::label::number);
+
+    Token token = matcher.match(begin, end);
+
+    EXPECT_EQ(token.get_type(), Token::label::number);
+    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
+}

@@ -70,6 +70,9 @@ private:
     static const std::array<char,4> constexpr terminal {' ', '\t', '\n', ','};
 
     bool is_terminal(const char x);
+
+    void skip_terminal(std::string::const_iterator& i,
+                       std::string::const_iterator& n);
 };
 
 class Alphabetic : public Token {
@@ -84,6 +87,7 @@ public:
 
     explicit Alphabetic(const Token::label type, const std::vector<Token>& children) : Token(type, children) {}
 protected:
+
     virtual bool is_capture(const char x) {
         if (std::isalpha(x)) {
              return true;
