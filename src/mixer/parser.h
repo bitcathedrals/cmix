@@ -14,6 +14,8 @@ public:
         symbol,
         text,
 
+        node,
+
         nothing,
         error,
         end
@@ -26,30 +28,25 @@ public:
                                tree(from.tree),
                                value(from.value) {}
 
-    Token(const Token::label label) : t {label} {}
+    explicit Token(const Token::label label) : t {label} {}
 
-    explicit Token(const Token::label type, const std::string capture) : t(type),
-                                                                         value(capture) {}
+    explicit Token(const Token::label type,
+                   const std::string capture) : t {type}, value(capture) {}
 
-    explicit Token(const Token::label type, const std::vector<Token>& children) : t(type),
-                                                                                  tokens(children) {}
-
+    explicit Token(const std::vector<Token>& children) : t(Token::label::node),
+                                                         tokens(children) {}
     virtual ~Token(void) {}
 
-    Token& operator=(const Token& from);
-    Token& operator=(const std::vector<Token> parse);
+    void operator=(const std::vector<Token> parse) {tree = parse;};
 
-    Token::label get_type(void) const {
-        return t;
+    Token& set_optional(void) {
+        optional = true;
+        return *this;
     }
 
-    const std::string get_match(void) const {
-        return value;
-    }
-
-    const std::vector<Token>& get_parse(void) const {
-        return tree;
-    }
+    Token::label get_type(void) const { return t; }
+    const std::string get_match(void) const { return value; }
+    const std::vector<Token>& get_parse(void) const { return tree; }
 
     Token match(std::string::const_iterator& i,
                 std::string::const_iterator& end);
@@ -62,7 +59,9 @@ protected:
 
 private:
     Token::label t;
+
     std::vector<Token> tokens;
+    bool optional = false;
 
     std::vector<Token> tree;
     std::string value;
@@ -77,17 +76,11 @@ private:
 
 class Alphabetic : public Token {
 public:
-    Alphabetic() : Token() {}
-
+    Alphabetic() : Token(Token::label::text) {}
     Alphabetic(const Alphabetic& from) : Token(from) {}
 
-    explicit Alphabetic(const Token::label label) : Token{label} {}
-
-    explicit Alphabetic(const Token::label type, const std::string capture) : Token(type, capture) {}
-
-    explicit Alphabetic(const Token::label type, const std::vector<Token>& children) : Token(type, children) {}
+    Alphabetic(const Token::label label) : Token(label) {}
 protected:
-
     virtual bool is_capture(const char x) {
         if (std::isalpha(x)) {
              return true;
@@ -99,15 +92,10 @@ protected:
 
 class Numeric : public Token {
 public:
-    Numeric() : Token() {}
-
+    Numeric() : Token(Token::label::number) {}
     Numeric(const Numeric& from) : Token(from) {}
 
-    explicit Numeric(const Token::label label) : Token{label} {}
-
-    explicit Numeric(const Token::label type, const std::string capture) : Token(type, capture) {}
-
-    explicit Numeric(const Token::label type, const std::vector<Token>& children) : Token(type, children) {}
+    Numeric(const Token::label label) : Token(label) {}
 
 protected:
     virtual bool is_capture(const char x) {
@@ -121,15 +109,10 @@ protected:
 
 class AlphaNumeric : public Token {
 public:
-    AlphaNumeric() : Token() {}
-
+    AlphaNumeric() : Token(Token::label::symbol) {}
     AlphaNumeric(const AlphaNumeric& from) : Token(from) {}
 
-    explicit AlphaNumeric(const Token::label label) : Token{label} {}
-
-    explicit AlphaNumeric(const Token::label type, const std::string capture) : Token(type, capture) {}
-
-    explicit AlphaNumeric(const Token::label type, const std::vector<Token>& children) : Token(type, children) {}
+    AlphaNumeric(const Token::label label) : Token(label) {}
 
 protected:
     virtual bool is_capture(const char x) {

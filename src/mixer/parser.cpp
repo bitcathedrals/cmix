@@ -60,9 +60,21 @@ Token Token::match(std::string::const_iterator& i,
     return Token(t, capture);
 }
 
+Token Token::parse(std::string::const_iterator& i,
+                   std::string::const_iterator& end) {
+    std::vector<Token> parse;
 
-Token Token::parse(std::string::const_iterator& i [[maybe_unused]],
-                   std::string::const_iterator& end [[maybe_unused]]) {
+    for(auto x : tokens) {
+        if (x.get_type() == Token::label::node) {
+            parse.push_back(x.parse(i, end));
+        }
+        else {
+            parse.push_back(x.match(i, end));
+        }
+    }
 
-    return Token();
+    Token tmp(Token::label::node);
+    tmp = parse;
+
+    return tmp;
 }

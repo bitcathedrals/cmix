@@ -9,7 +9,7 @@ TEST(MixerBasicToken, MatchNoInput) {
     std::string::const_iterator begin = empty.cbegin();
     std::string::const_iterator end = empty.cend();
 
-    Alphabetic alpha(Token::label::text);
+    Alphabetic alpha;
 
     Token token = alpha.match(begin, end);
 
@@ -23,7 +23,7 @@ TEST(MixerBasicToken, MatchLowerCase) {
     std::string::const_iterator begin = lower.cbegin();
     std::string::const_iterator end = lower.cend();
 
-    Alphabetic matcher(Token::label::text);
+    Alphabetic matcher;
 
     Token token = matcher.match(begin, end);
 
@@ -37,7 +37,7 @@ TEST(MixerBasicToken, MatchInjectNumbers) {
     std::string::const_iterator begin = lower.cbegin();
     std::string::const_iterator end = lower.cend();
 
-    Alphabetic matcher(Token::label::nothing);
+    Alphabetic matcher;
 
     Token token = matcher.match(begin, end);
 
@@ -55,7 +55,7 @@ TEST(MixerBasicToken, NumberMatchTest) {
     std::string::const_iterator begin = lower.cbegin();
     std::string::const_iterator end = lower.cend();
 
-    Numeric matcher(Token::label::number);
+    Numeric matcher;
 
     Token token = matcher.match(begin, end);
 
@@ -70,7 +70,7 @@ TEST(MixerBasicToken, NumberUnreachableTest) {
     std::string::const_iterator begin = lower.cbegin();
     std::string::const_iterator end = lower.cend();
 
-    Numeric matcher(Token::label::number);
+    Numeric matcher;
 
     Token token = matcher.match(begin, end);
 
@@ -84,7 +84,7 @@ TEST(MixerBasicToken, NumberGappedTest) {
     std::string::const_iterator begin = lower.cbegin();
     std::string::const_iterator end = lower.cend();
 
-    Numeric matcher(Token::label::number);
+    Numeric matcher;
 
     Token token = matcher.match(begin, end);
 
