@@ -14,7 +14,7 @@ TEST(MixerBasicToken, MatchNoInput) {
     Token token = alpha.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::nothing);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(0));
 }
 
 TEST(MixerBasicToken, MatchLowerCase) {
@@ -28,7 +28,7 @@ TEST(MixerBasicToken, MatchLowerCase) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::text);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
 }
 
 TEST(MixerBasicToken, MatchInjectNumbers) {
@@ -42,7 +42,7 @@ TEST(MixerBasicToken, MatchInjectNumbers) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::nothing);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(0));
 }
 
 //
@@ -60,9 +60,8 @@ TEST(MixerBasicToken, NumberMatchTest) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::number);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
 }
-
 
 TEST(MixerBasicToken, NumberUnreachableTest) {
     std::string lower("aa22");
@@ -75,7 +74,7 @@ TEST(MixerBasicToken, NumberUnreachableTest) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::nothing);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(0));
 }
 
 TEST(MixerBasicToken, NumberGappedTest) {
@@ -89,5 +88,5 @@ TEST(MixerBasicToken, NumberGappedTest) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::number);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
 }

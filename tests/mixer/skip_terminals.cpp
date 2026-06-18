@@ -13,7 +13,7 @@ TEST(MixerBasicToken, NumberAfterTerminals) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::number);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(2));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
 };
 
 
@@ -28,7 +28,7 @@ TEST(MixerBasicToken, EmptyString) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::nothing);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(0));
 };
 
 
@@ -43,5 +43,5 @@ TEST(MixerBasicToken, AillTerminals) {
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::nothing);
-    EXPECT_EQ(token.get_match().size(), static_cast<size_t>(0));
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(0));
 };

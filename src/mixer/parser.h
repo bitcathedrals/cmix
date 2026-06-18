@@ -6,6 +6,12 @@
 #include <string>
 #include <vector>
 #include <cctype>
+#include <stdexcept>
+#include <iostream>
+
+class Token;
+
+using production_t = std::vector<Token>;
 
 class Token {
 public:
@@ -35,7 +41,7 @@ public:
 
     explicit Token(const std::vector<Token>& children) : t(Token::label::node),
                                                          tokens(children) {}
-    virtual ~Token(void) {}
+    virtual ~Token(void) = default;
 
     void operator=(const std::vector<Token> parse) {tree = parse;};
 
@@ -45,17 +51,24 @@ public:
     }
 
     Token::label get_type(void) const { return t; }
-    const std::string get_match(void) const { return value; }
-    const std::vector<Token>& get_parse(void) const { return tree; }
+    const std::string get_token(void) const { return value; }
+    const std::vector<Token>& get_production(void) const { return tree; }
+
+    static Token descent(const Token& definition, const std::string text);
 
     Token match(std::string::const_iterator& i,
-                std::string::const_iterator& end);
+                std::string::const_iterator& end) const;
 
     Token parse(std::string::const_iterator& i,
-                std::string::const_iterator& end);
+                std::string::const_iterator& end) const;
+
+    friend std::ostream& operator<<(std::ostream& out, const Token& token);
 
 protected:
-    virtual bool is_capture(const char x [[maybe_unused]]) { return false; };
+    virtual bool is_capture(const char x [[maybe_unused]]) const {
+        throw std::logic_error("is_capture should never be called in the Token base class");
+        return false;
+    };
 
 private:
     Token::label t;
@@ -68,11 +81,13 @@ private:
 
     static const std::array<char,4> constexpr terminal {' ', '\t', '\n', ','};
 
-    bool is_terminal(const char x);
+    bool is_terminal(const char x) const;
 
     void skip_terminal(std::string::const_iterator& i,
-                       std::string::const_iterator& n);
+                       std::string::const_iterator& n) const;
 };
+
+std::ostream& operator<<(std::ostream& out, const Token& token);
 
 class Alphabetic : public Token {
 public:
@@ -80,13 +95,13 @@ public:
     Alphabetic(const Alphabetic& from) : Token(from) {}
 
     Alphabetic(const Token::label label) : Token(label) {}
-protected:
-    virtual bool is_capture(const char x) {
+private:
+    virtual bool is_capture(const char x) const override {
         if (std::isalpha(x)) {
              return true;
          }
 
-        return false;
+         return false;
     };
 };
 
@@ -97,8 +112,8 @@ public:
 
     Numeric(const Token::label label) : Token(label) {}
 
-protected:
-    virtual bool is_capture(const char x) {
+private:
+    virtual bool is_capture(const char x) const override {
          if (std::isdigit(x)) {
              return true;
          }
@@ -114,8 +129,8 @@ public:
 
     AlphaNumeric(const Token::label label) : Token(label) {}
 
-protected:
-    virtual bool is_capture(const char x) {
+private:
+    virtual bool is_capture(const char x) const override {
         if (std::isalnum(x)) {
             return true;
         }

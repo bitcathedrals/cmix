@@ -5,7 +5,7 @@
 
 #include "mixer/parser.h"
 
-bool Token::is_terminal(const char x) {
+bool Token::is_terminal(const char x) const {
     if(terminal[0] == x ||
        terminal[1] == x ||
        terminal[2] == x ||
@@ -17,7 +17,7 @@ bool Token::is_terminal(const char x) {
 }
 
 void Token::skip_terminal(std::string::const_iterator& i,
-                          std::string::const_iterator& end) {
+                          std::string::const_iterator& end) const {
 
     while(i != end) {
         char x = *i;
@@ -35,7 +35,7 @@ void Token::skip_terminal(std::string::const_iterator& i,
 }
 
 Token Token::match(std::string::const_iterator& i,
-                   std::string::const_iterator& end) {
+                   std::string::const_iterator& end) const {
 
     skip_terminal(i, end);
 
@@ -61,7 +61,7 @@ Token Token::match(std::string::const_iterator& i,
 }
 
 Token Token::parse(std::string::const_iterator& i,
-                   std::string::const_iterator& end) {
+                   std::string::const_iterator& end) const {
     std::vector<Token> parse;
 
     for(auto x : tokens) {
@@ -73,8 +73,62 @@ Token Token::parse(std::string::const_iterator& i,
         }
     }
 
+    if (parse.size() < 1) {
+        return Token(Token::label::nothing);
+    }
+
     Token tmp(Token::label::node);
     tmp = parse;
 
     return tmp;
+}
+
+Token Token::descent(const Token& definition, const std::string text) {
+    auto i = text.cbegin();
+    auto end = text.cend();
+
+    if (definition.get_type() == Token::label::node) {
+        return definition.parse(i, end);
+    }
+    else {
+        return definition.match(i, end);
+    }
+}
+
+std::ostream& operator<<(std::ostream& out, const Token& token) {
+    std::string label;
+
+    switch(token.t) {
+        case Token::label::number:
+            label = "number";
+            break;
+        case Token::label::text:
+            label = "text";
+            break;
+
+        case Token::label::symbol:
+            label = "symbol";
+            break;
+
+        case Token::label::node:
+            label = "node";
+            break;
+
+        case Token::label::nothing:
+            label = "nothing";
+            break;
+
+        case Token::label::error:
+            label = "error";
+            break;
+
+        case Token::label::end:
+            label = "end";
+            break;
+    }
+
+    out << " label = " << label
+        << " value = " << token.value;
+
+    return out;
 }

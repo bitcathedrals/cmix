@@ -6,7 +6,40 @@
 
 #include <repl/dispatch.h>
 
-int main() {
+#include <gtest/gtest.h>
+
+void parser_minimal_descent(void);
+
+int all_tests(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+
+    return RUN_ALL_TESTS();
+}
+
+bool run_debug(parse_t cli, int argc, char**argv) {
+    std::string command = cli[0];
+
+    if(command == "/help") {
+        std::cerr << "[help]" << std::endl
+                  << "/test-all = run all tests" << std::endl
+                  << "/parser-minimal = bare descent example" << std::endl;
+        return true;
+    }
+
+    if(command == "/test-all") {
+        all_tests(argc, argv);
+        return true;
+    }
+
+    if(command == "/parser-minimal") {
+        parser_minimal_descent();
+        return true;
+    }
+
+    return false;
+}
+
+int main(int argc, char**argv) {
     std::cerr << "Welcome to cmix Debugging, down the rabbit hole we go!" << std::endl;
 
     do {
@@ -16,6 +49,10 @@ int main() {
 
         if (parse.empty()) {
             std::cerr << "cmix: no command given.";
+            continue;
+        }
+
+        if (run_debug(parse, argc, argv)) {
             continue;
         }
 
