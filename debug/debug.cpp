@@ -9,6 +9,7 @@
 #include <gtest/gtest.h>
 
 void parser_minimal_descent(void);
+void parser_minimal_AST(void);
 
 int all_tests(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
@@ -22,6 +23,7 @@ bool run_debug(parse_t cli, int argc, char**argv) {
     if(command == "/help") {
         std::cerr << "[help]" << std::endl
                   << "/test-all = run all tests" << std::endl
+                  << "/parser-ast" << std::endl
                   << "/parser-minimal = bare descent example" << std::endl;
         return true;
     }
@@ -33,6 +35,11 @@ bool run_debug(parse_t cli, int argc, char**argv) {
 
     if(command == "/parser-minimal") {
         parser_minimal_descent();
+        return true;
+    }
+
+    if(command == "/parser-ast") {
+        parser_minimal_AST();
         return true;
     }
 

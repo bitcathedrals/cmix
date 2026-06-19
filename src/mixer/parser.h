@@ -2,16 +2,17 @@
 #define MIXER_PARSER_H
 
 #include <algorithm>
-#include <array>
 #include <string>
 #include <vector>
 #include <cctype>
 #include <stdexcept>
+#include <memory>
 #include <iostream>
 
 class Token;
 
-using production_t = std::vector<Token>;
+using production_t = std::vector<std::unique_ptr<Token>>;
+using AST_t = std::vector<Token>;
 
 class Token {
 public:
@@ -27,28 +28,23 @@ public:
         end
     };
 
-    Token() : t {Token::label::end} {}
+    Token();
+    Token(Token&& from) = default;
 
-    Token(const Token& from) : t(from.t) ,
-                               tokens(from.tokens),
-                               tree(from.tree),
-                               value(from.value) {}
-
-    explicit Token(const Token::label label) : t {label} {}
+    explicit Token(const Token::label label);
 
     explicit Token(const Token::label type,
-                   const std::string capture) : t {type}, value(capture) {}
+                   const std::string capture);
 
-    explicit Token(const std::vector<Token>& children) : t(Token::label::node),
-                                                         tokens(children) {}
+    explicit Token(AST_t&& parse);
+    explicit Token(production_t&& children);
+
     virtual ~Token(void) = default;
 
-    void operator=(const std::vector<Token> parse) {tree = parse;};
+    void operator=(AST_t&& parse);
+    const Token& operator[](int index) const;
 
-    Token& set_optional(void) {
-        optional = true;
-        return *this;
-    }
+    Token& set_optional(void);
 
     Token::label get_type(void) const { return t; }
     const std::string get_token(void) const { return value; }
@@ -65,18 +61,15 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const Token& token);
 
 protected:
-    virtual bool is_capture(const char x [[maybe_unused]]) const {
-        throw std::logic_error("is_capture should never be called in the Token base class");
-        return false;
-    };
+    virtual bool is_capture(const char x [[maybe_unused]]) const;
 
 private:
     Token::label t;
 
-    std::vector<Token> tokens;
+    production_t tokens;
     bool optional = false;
 
-    std::vector<Token> tree;
+    AST_t tree;
     std::string value;
 
     static const std::array<char,4> constexpr terminal {' ', '\t', '\n', ','};
@@ -92,9 +85,8 @@ std::ostream& operator<<(std::ostream& out, const Token& token);
 class Alphabetic : public Token {
 public:
     Alphabetic() : Token(Token::label::text) {}
-    Alphabetic(const Alphabetic& from) : Token(from) {}
-
     Alphabetic(const Token::label label) : Token(label) {}
+
 private:
     virtual bool is_capture(const char x) const override {
         if (std::isalpha(x)) {
@@ -108,8 +100,6 @@ private:
 class Numeric : public Token {
 public:
     Numeric() : Token(Token::label::number) {}
-    Numeric(const Numeric& from) : Token(from) {}
-
     Numeric(const Token::label label) : Token(label) {}
 
 private:
@@ -125,8 +115,6 @@ private:
 class AlphaNumeric : public Token {
 public:
     AlphaNumeric() : Token(Token::label::symbol) {}
-    AlphaNumeric(const AlphaNumeric& from) : Token(from) {}
-
     AlphaNumeric(const Token::label label) : Token(label) {}
 
 private:

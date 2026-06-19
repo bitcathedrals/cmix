@@ -14,3 +14,15 @@ void parser_minimal_descent(void) {
 
     std::cerr << "t is: " << static_cast<int>(t) << " token is: " << captured << std::endl;
 }
+
+void parser_minimal_AST(void) {
+    std::string test_string("12 34");
+
+    production_t def;
+
+    def.push_back(std::make_unique<Numeric>());
+    def.push_back(std::make_unique<Numeric>());
+
+    Token p = Token::descent(Token(std::move(def)), test_string);
+}
+

@@ -1,9 +1,39 @@
 #include <algorithm>
-#include <array>
-#include <string>
-#include <vector>
 
 #include "mixer/parser.h"
+
+Token::Token() : t {Token::label::end} {}
+
+Token::Token(const Token::label label) : t {label} {}
+
+Token::Token(const Token::label type,
+             const std::string capture) : t {type},
+                                          value(capture) {}
+
+Token::Token(AST_t&& parse) : t {Token::label::node},
+                              tree {std::move(parse)} {}
+
+Token::Token(production_t&& children) : t(Token::label::node) {
+    tokens = std::move(children);
+}
+
+void Token::operator=(AST_t&& parse) {
+    tree = std::move(parse);
+}
+
+const Token& Token::operator[](int index) const {
+    return tree[index];
+}
+
+Token& Token::set_optional(void) {
+    optional = true;
+    return *this;
+}
+
+bool Token::is_capture(const char x [[maybe_unused]]) const {
+    throw std::logic_error("is_capture should never be called in the Token base class");
+    return false;
+};
 
 bool Token::is_terminal(const char x) const {
     if(terminal[0] == x ||
@@ -62,14 +92,14 @@ Token Token::match(std::string::const_iterator& i,
 
 Token Token::parse(std::string::const_iterator& i,
                    std::string::const_iterator& end) const {
-    std::vector<Token> parse;
+    AST_t parse;
 
-    for(auto x : tokens) {
-        if (x.get_type() == Token::label::node) {
-            parse.push_back(x.parse(i, end));
+    for(const auto& x : tokens) {
+        if (x->get_type() == Token::label::node) {
+            parse.push_back(x->parse(i, end));
         }
         else {
-            parse.push_back(x.match(i, end));
+            parse.push_back(x->match(i, end));
         }
     }
 
@@ -77,10 +107,7 @@ Token Token::parse(std::string::const_iterator& i,
         return Token(Token::label::nothing);
     }
 
-    Token tmp(Token::label::node);
-    tmp = parse;
-
-    return tmp;
+    return Token(std::move(parse));
 }
 
 Token Token::descent(const Token& definition, const std::string text) {
