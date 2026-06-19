@@ -139,11 +139,12 @@ DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS)) \
 
 DEBUG_WITHOUT_MAIN=$(filter-out $(DBG_OBJ_DIR)/cmix.o , $(DBG_OBJS))
 
+$(info DEBUG_WITHOUT_MAIN is $(DEBUG_WITHOUT_MAIN))
+
 ifneq ($(findstring $(DEBUG_GOAL), $(MAKECMDGOALS)),)
 	DEBUG_DFILES = $(wildcard $(DBG_OBJ_DIR)/*.d $(DBG_OBJ_DIR)/*/*.d $(DBG_OBJ_DIR)/*/*/*.d)
 
   ifneq ($(DEBUG_DFILES),)
-    $(info DEBUG_DFILES is $(DEBUG_DFILES))
     include $(DEBUG_DFILES)
   endif
 endif
@@ -249,5 +250,4 @@ clean: prod-clean test-clean debug-clean perf-clean
 
 .PHONY: prod-clean test-clean debug-clean perf-clean default
 
-# $(info TEST_SRCS is $(TEST_SRCS))
 # $(info TEST_OBJS is $(TEST_OBJS))
