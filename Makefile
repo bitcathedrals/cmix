@@ -38,7 +38,6 @@ ifneq ($(findstring $(PROD_GOAL), $(MAKECMDGOALS)),)
   DFILES = $(wildcard $(OBJ_DIR)/*.d $(OBJ_DIR)/*/*.d $(OBJ_DIR)/*/*/*.d)
 
   ifneq ($(DFILES),)
-    $(info DFILES is $(DFILES))
     include $(DFILES)
   endif
 endif
@@ -90,7 +89,6 @@ TEST_WITHOUT_MAIN=$(filter-out $(TEST_OBJ)/cmix.o , $(TEST_CORE_OBJS))
 ifneq ($(findstring $(TEST_GOAL), $(MAKECMDGOALS)),)
   TEST_DFILES = $(wildcard $(TEST_OBJ)/*.d $(TEST_OBJ)/*/*.d $(TEST_OBJ)/*/*/*.d)
   ifneq ($(TEST_DFILES),)
-    $(info TEST_DFILES is $(TEST_DFILES))
     include $(TEST_DFILES)
   endif
 endif
@@ -138,8 +136,6 @@ DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS)) \
            $(patsubst $(DEBUG_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(DEBUG_SRCS))
 
 DEBUG_WITHOUT_MAIN=$(filter-out $(DBG_OBJ_DIR)/cmix.o , $(DBG_OBJS))
-
-$(info DEBUG_WITHOUT_MAIN is $(DEBUG_WITHOUT_MAIN))
 
 ifneq ($(findstring $(DEBUG_GOAL), $(MAKECMDGOALS)),)
 	DEBUG_DFILES = $(wildcard $(DBG_OBJ_DIR)/*.d $(DBG_OBJ_DIR)/*/*.d $(DBG_OBJ_DIR)/*/*/*.d)
@@ -194,7 +190,6 @@ ifneq ($(findstring $(PERF_GOAL), $(MAKECMDGOALS)),)
 	PERF_DFILES = $(wildcard $(PERF_OBJ)/*.d $(PERF_OBJ)/*/*.d $(PERF_OBJ)/*/*/*.d)
 
   ifneq ($(PERF_DFILES),)
-    $(info PERF_DFILES is $(PERF_DFILES))
     include $(PERF_DFILES)
   endif
 endif
