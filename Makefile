@@ -181,7 +181,7 @@ ifeq ($(DO_OPTMIZE), 1)
 PERF_PROFILE_FLAGS = -fprofile-generate
 endif
 
-PERF_FLAGS = -I$(SRC_DIR) -I$(PERF_DIR) -g -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
+PERF_FLAGS = -g -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
 
 PERF_SRCS = $(wildcard $(PERF_DIR)/*.cpp $(PERF_DIR)/*/*.cpp $(PERF_DIR)/*/*/*.cpp)
 

@@ -39,7 +39,6 @@ parse_t parse_core(const std::string& input, std::regex r) {
     }
 
     return parse;
-
 }
 
 parse_t parse_cli(const std::string& input) {
@@ -53,7 +52,6 @@ parse_t parse_word(const char* input) {
 parse_t parse_word(const std::string& input) {
     return parse_core(input, std::regex("[^:]+"));
 }
-
 
 // this is for variants to make a new parse_t with variable arguments.
 

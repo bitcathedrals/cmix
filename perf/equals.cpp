@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <randomized.h>
-#include <equals.h>
+#include "randomized.h"
+#include "equals.h"
 
 EqualsTest::EqualsTest () {
     for(auto i = 0; i < memory_capacity; i++) {

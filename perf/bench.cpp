@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
 
-#include <randomized.h>
-#include <wall_clock.h>
+#include "randomized.h"
+#include "wall_clock.h"
 
-#include <equals.h>
+#include "equals.h"
 
 void random_test() {
     Randomized r(0,3999);
