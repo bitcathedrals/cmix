@@ -1,6 +1,7 @@
 #ifndef MIXER_PARSER_H
 #define MIXER_PARSER_H
 
+#include <array>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -72,7 +73,7 @@ private:
     AST_t tree;
     std::string value;
 
-    static const std::array<char,4> constexpr terminal {' ', '\t', '\n', ','};
+    static constexpr std::array<char, 4> terminal {' ', '\t', '\n', ','};
 
     bool is_terminal(const char x) const;
 
