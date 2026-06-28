@@ -104,6 +104,10 @@ byte& Word::operator[](const byte index) {
     return data[index + data_offset];
 }
 
+byte& Word::operator[](const int index) {
+    return data[index + data_offset];
+}
+
 bool Word::overflowed(byte index) {
     if (data[index + data_offset] > positive_max ||
         data[index + data_offset] < negative_max) {

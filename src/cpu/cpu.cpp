@@ -9,4 +9,3 @@ Cpu::Cpu(const Cpu& other)  : A(other.A),
 
     std::copy(other.memory.begin(), other.memory.end(), memory.begin());
 }
-

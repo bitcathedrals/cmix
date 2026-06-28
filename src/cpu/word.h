@@ -56,6 +56,7 @@ public:
     bool operator==(const Word&) const = default;
 
     byte& operator[](const byte index);
+    byte& operator[](const int index);
 
     void sanitize(void);
 
