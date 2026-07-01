@@ -44,7 +44,7 @@ endif
 
 PROD_TARGET = cmix
 
-OPT_FLAGS ?= -O3 -flto -ffunction-sections -fdata-sections 
+OPT_FLAGS ?= -O3 -flto -ffunction-sections -fdata-sections -fno-rtti
 # -Wl,--gc-sections
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
