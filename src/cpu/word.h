@@ -2,6 +2,7 @@
 #define CPU_WORD_H
 
 #include <array>
+#include <vector>
 
 #include "parse.h"
 #include "cpu/defs.h"
@@ -37,6 +38,7 @@ inline constexpr byte sign_field = 0;
 inline constexpr byte sign_default = 1;
 
 inline constexpr byte sign_positive = 1;
+
 inline constexpr byte sign_negative = -1;
 
 class Word {
@@ -65,7 +67,8 @@ public:
     Word& unary(byte low, byte high, OpInfo info, Operation op);
     Word& binary(byte low, byte high, OpInfo info, Operation op, Word v);
 
-    Word& copy_subrange(Word& other, byte lower, byte upper);
+    std::vector<byte> copy_subrange(byte lower, byte upper);
+    Word& insert_subrange(Word& other, byte lower, byte upper);
 
     friend std::ostream& operator <<(std::ostream& output, const Word&);
     friend std::istream& operator >>(std::istream& input, Word& x);

@@ -1,5 +1,6 @@
 #include <iterator>
 #include <algorithm>
+#include <iterator>
 
 #include <sstream>
 
@@ -159,10 +160,37 @@ Word& Word::binary(byte low, byte high, OpInfo info, Operation op, Word v) {
     return *this;
 }
 
-Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
-    for(byte i = lower + data_offset; i <= upper; i++) {
-        data[i] = other[i];
-    }
+std::vector<byte> Word::copy_subrange(byte lower, byte upper) {
+    std::vector<byte> x(upper - lower);
+
+    auto i = data.begin();
+    auto n = data.end();
+
+    // mix counts from 1
+    std::advance(i, lower);
+    std::advance(n, upper);
+
+    auto copy_itr = x.begin();
+
+    std::copy(i, n, copy_itr);
+
+    return x;
+}
+
+Word& Word::insert_subrange(Word& other, byte lower, byte upper) {
+    auto x = other.copy_subrange(lower,upper);
+
+    auto i = x.begin();
+    auto n = x.end();
+
+    // mix counts from 1
+    std::advance(i, lower);
+    std::advance(n, upper);
+
+    auto target = data.begin();
+    std::advance(target, lower);
+
+    std::copy(i, n, target);
 
     return *this;
 }

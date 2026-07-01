@@ -1,18 +1,7 @@
+#include <vector>
+#include <iterator>
+
 #include "cpu/instruction.h"
-
-// public:
-
-//     void set_field(byte v);
-//     void set_field(byte upper, byte lower);
-//     void set_field(std::string value);
-
-//     byte get_field_lower();
-//     byte get_field_upper();
-
-//     byte get_opcode();
-//     void set_opcode(byte v);
-//     void set_opcode(std::string);
-//     void set_opcode(std::string value);
 
 int Instruction::get_address(void) {
     return

@@ -40,6 +40,9 @@ public:
 
     void set_opcode(byte v);
     void set_opcode(std::string value);
+
+
+    void copy_subrange(byte lower, byte upper);
 };
 
 class LDA : public Instruction {
