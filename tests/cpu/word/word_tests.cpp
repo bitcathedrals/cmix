@@ -11,11 +11,11 @@
 TEST(WordConstructorTests, DefaultConstructor) {
     Word test_word;
 
-    EXPECT_EQ(0, test_word[0]);
     EXPECT_EQ(0, test_word[1]);
     EXPECT_EQ(0, test_word[2]);
     EXPECT_EQ(0, test_word[3]);
     EXPECT_EQ(0, test_word[4]);
+    EXPECT_EQ(0, test_word[5]);
 }
 
 TEST(WordConstructorTests, CopyConstructor) {
@@ -23,22 +23,22 @@ TEST(WordConstructorTests, CopyConstructor) {
 
     Word test(other_word);
 
-    EXPECT_EQ(1, test[0]);
-    EXPECT_EQ(2, test[1]);
-    EXPECT_EQ(3, test[2]);
-    EXPECT_EQ(4, test[3]);
-    EXPECT_EQ(5, test[4]);
+    EXPECT_EQ(1, test[1]);
+    EXPECT_EQ(2, test[2]);
+    EXPECT_EQ(3, test[3]);
+    EXPECT_EQ(4, test[4]);
+    EXPECT_EQ(5, test[5]);
 }
 
 
 TEST(WordConstructorTests, InitSetAndReadBack) {
     Word mix_word(2,4,6,8,10);
 
-    EXPECT_EQ(2, mix_word[0]);
-    EXPECT_EQ(4, mix_word[1]);
-    EXPECT_EQ(6, mix_word[2]);
-    EXPECT_EQ(8, mix_word[3]);
-    EXPECT_EQ(10, mix_word[4]);
+    EXPECT_EQ(2, mix_word[1]);
+    EXPECT_EQ(4, mix_word[2]);
+    EXPECT_EQ(6, mix_word[3]);
+    EXPECT_EQ(8, mix_word[4]);
+    EXPECT_EQ(10, mix_word[5]);
 }
 
 //
@@ -76,11 +76,11 @@ TEST(WordReadWriteTests, AssignOperatorParse) {
 
     mix_word = parse_word("1::2::3::4::5");
 
-    EXPECT_EQ(mix_word[0], 1);
-    EXPECT_EQ(mix_word[1], 2);
-    EXPECT_EQ(mix_word[2], 3);
-    EXPECT_EQ(mix_word[3], 4);
-    EXPECT_EQ(mix_word[4], 5);
+    EXPECT_EQ(mix_word[1], 1);
+    EXPECT_EQ(mix_word[2], 2);
+    EXPECT_EQ(mix_word[3], 3);
+    EXPECT_EQ(mix_word[4], 4);
+    EXPECT_EQ(mix_word[5], 5);
 }
 
 TEST(WordOperatorEqual, SimpleEqualsTrueTest) {
@@ -103,7 +103,7 @@ TEST(WordOperatorEqual, SubrangeLeftBound) {
 
     to_word.insert_subrange(from_word,1,1);
 
-    EXPECT_EQ(to_word[0],1);
+    EXPECT_EQ(to_word[1],1);
 }
 
 TEST(WordOperatorEqual, SubrangeRightBound) {
@@ -112,7 +112,7 @@ TEST(WordOperatorEqual, SubrangeRightBound) {
 
      to_word.insert_subrange(from_word,5,5);
 
-     EXPECT_EQ(to_word[4], 5);
+     EXPECT_EQ(to_word[5], 5);
 }
 
 TEST(WordOperatorEqual, SimpleEqualsMiddle) {
@@ -121,7 +121,7 @@ TEST(WordOperatorEqual, SimpleEqualsMiddle) {
 
      to_word.insert_subrange(from_word,2,4);
 
-     EXPECT_EQ(to_word[1], 2);
-     EXPECT_EQ(to_word[2], 3);
-     EXPECT_EQ(to_word[3], 4);
+     EXPECT_EQ(to_word[2], 2);
+     EXPECT_EQ(to_word[3], 3);
+     EXPECT_EQ(to_word[4], 4);
 }

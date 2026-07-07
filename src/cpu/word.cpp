@@ -44,7 +44,7 @@ Word& Word::operator=(const std::string& x) {
     itr_b++; // skip over the sign
 
     std::transform(p.begin(), p.end(), itr_b, [](const std::string& x) {
-        return static_cast<byte>(std::atoi(x.c_str()));
+        return static_cast<byte>(std::stoi(x.c_str()));
     });
 
     sanitize();
@@ -91,7 +91,7 @@ Word::Word(Word& other, byte lower, byte upper) {
 
     lower += data_offset;
 
-    for(byte i = data_min; i <= data_max; i++) {
+    for(auto i = lower; i <= data_max; i++) {
         if(i >= lower && i <= upper) {
             data[i] = other[i];
         }
@@ -102,16 +102,16 @@ Word::Word(Word& other, byte lower, byte upper) {
 }
 
 byte& Word::operator[](const byte index) {
-    return data[index + data_offset];
+    return data[index];
 }
 
 byte& Word::operator[](const int index) {
-    return data[index + data_offset];
+    return data[index];
 }
 
 bool Word::overflowed(byte index) {
-    if (data[index + data_offset] > positive_max ||
-        data[index + data_offset] < negative_max) {
+    if (data[index] > positive_max ||
+        data[index] < negative_max) {
         return true;
     }
 
@@ -159,21 +159,6 @@ Word& Word::binary(byte low, byte high, OpInfo info, Operation op, Word v) {
 
     return *this;
 }
-
-// std::vector<byte> Word::copy_subrange(byte lower, byte upper) {
-//     std::vector<byte> x(upper - lower);
-
-//     auto i = data.begin();
-//     auto n = data.end();
-
-//     std::advance(n, 1);
-
-//     auto copy_itr = x.begin();
-
-//     std::copy(i, n, copy_itr);
-
-//     return x;
-// }
 
 Word& Word::insert_subrange(Word& other, byte lower, byte upper) {
     upper += 1;
