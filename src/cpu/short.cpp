@@ -41,7 +41,7 @@ Short& Short::operator=(const std::string& x) {
     itr_b++; // skip over the sign
 
     std::transform(p.begin(), p.end(), itr_b, [](const std::string& x) {
-        return static_cast<byte>(std::atoi(x.c_str()));
+        return static_cast<byte>(std::stoi(x.c_str()));
     });
 
     sanitize();
@@ -86,8 +86,6 @@ Short::Short(byte x1, byte x2) {
 Short::Short(Short& other, byte lower, byte upper) {
     data[short_sign_field] = short_sign_default;
 
-    lower += short_data_offset;
-
     for(byte i = short_data_min; i <= short_data_max; i++) {
         if(i >= lower && i <= upper) {
             data[i] = other[i];
@@ -99,12 +97,12 @@ Short::Short(Short& other, byte lower, byte upper) {
 }
 
 byte& Short::operator[](const byte index) {
-    return data[index + short_data_offset];
+    return data[index];
 }
 
 bool Short::overflowed(byte index) {
-    if (data[index + short_data_offset] > short_positive_max ||
-        data[index + short_data_offset] < short_negative_max) {
+    if (data[index] > short_positive_max ||
+        data[index] < short_negative_max) {
         return true;
     }
 
@@ -153,17 +151,9 @@ Short& Short::binary(byte low, byte high, OpInfo info, Operation op, Short v) {
     return *this;
 }
 
-// Short& Short::copy_subrange(Short& other, byte lower, byte upper) {
-//     for(byte i = lower + data_offset; i <= upper; i++) {
-//         data[i] = other[i];
-//     }
-
-//     return *this;
-// }
-
 std::ostream& operator<<(std::ostream& output, const Short& x) {
-    output << static_cast<int>(x.data[0]) << "-"
-           << static_cast<int>(x.data[1]) << "::";
+    output << static_cast<int>(x.data[1]) << "-"
+           << static_cast<int>(x.data[2]) << "::";
 
     return output;
 };

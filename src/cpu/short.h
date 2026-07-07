@@ -64,8 +64,6 @@ public:
     Short& unary(byte low, byte high, OpInfo info, Operation op);
     Short& binary(byte low, byte high, OpInfo info, Operation op, Short v);
 
-//    Short& copy_subrange(Short& other, byte lower, byte upper);
-
     friend std::ostream& operator <<(std::ostream& output, const Short&);
     friend std::istream& operator >>(std::istream& input, Short& x);
 

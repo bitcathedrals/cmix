@@ -11,8 +11,8 @@
 TEST(ShortConstructorTests, DefaultConstructor) {
     Short test_short;
 
-    EXPECT_EQ(0, test_short[0]);
     EXPECT_EQ(0, test_short[1]);
+    EXPECT_EQ(0, test_short[2]);
 }
 
 TEST(ShortConstructorTests, CopyConstructor) {
@@ -20,16 +20,16 @@ TEST(ShortConstructorTests, CopyConstructor) {
 
     Short test(other_short);
 
-    EXPECT_EQ(1, test[0]);
-    EXPECT_EQ(2, test[1]);
+    EXPECT_EQ(1, test[1]);
+    EXPECT_EQ(2, test[2]);
 }
 
 
 TEST(ShortConstructorTests, InitSetAndReadBack) {
     Short mix_short(2,4);
 
-    EXPECT_EQ(2, mix_short[0]);
-    EXPECT_EQ(4, mix_short[1]);
+    EXPECT_EQ(2, mix_short[1]);
+    EXPECT_EQ(4, mix_short[2]);
 }
 
 //
@@ -67,8 +67,8 @@ TEST(ShortReadWriteTests, AssignOperatorParse) {
 
     mix_short = parse_word("1::2");
 
-    EXPECT_EQ(mix_short[0], 1);
-    EXPECT_EQ(mix_short[1], 2);
+    EXPECT_EQ(mix_short[1], 1);
+    EXPECT_EQ(mix_short[2], 2);
 }
 
 TEST(ShortOperatorEqual, SimpleEqualsTrueTest) {
