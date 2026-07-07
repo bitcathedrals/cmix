@@ -160,37 +160,27 @@ Word& Word::binary(byte low, byte high, OpInfo info, Operation op, Word v) {
     return *this;
 }
 
-std::vector<byte> Word::copy_subrange(byte lower, byte upper) {
-    std::vector<byte> x(upper - lower);
+// std::vector<byte> Word::copy_subrange(byte lower, byte upper) {
+//     std::vector<byte> x(upper - lower);
 
-    auto i = data.begin();
-    auto n = data.end();
+//     auto i = data.begin();
+//     auto n = data.end();
 
-    // mix counts from 1
-    std::advance(i, lower);
-    std::advance(n, upper);
+//     std::advance(n, 1);
 
-    auto copy_itr = x.begin();
+//     auto copy_itr = x.begin();
 
-    std::copy(i, n, copy_itr);
+//     std::copy(i, n, copy_itr);
 
-    return x;
-}
+//     return x;
+// }
 
 Word& Word::insert_subrange(Word& other, byte lower, byte upper) {
-    auto x = other.copy_subrange(lower,upper);
+    upper += 1;
 
-    auto i = x.begin();
-    auto n = x.end();
-
-    // mix counts from 1
-    std::advance(i, lower);
-    std::advance(n, upper);
-
-    auto target = data.begin();
-    std::advance(target, lower);
-
-    std::copy(i, n, target);
+    for(;lower < upper; lower++) {
+        data[lower] = other.data[lower];
+    }
 
     return *this;
 }
