@@ -21,7 +21,7 @@ DIAGNOSTICS = $(CORE_DIAGNOSTICS) -ferror-limit=$(MAX_ERRORS)
 endif
 
 CXX ?= clang++
-CXXFLAGS = -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread -MMD
+CXXFLAGS = -g -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread -MMD
 LDFLAGS = -ledit -lncurses
 
 #
@@ -115,7 +115,7 @@ XCRUN =
 endif
 
 run:
-	runner --gtest_show_internal_stack_frames=0
+	./runner --gtest_show_internal_stack_frames=0
 
 coverage:
 	$(XCRUN) llvm-profdata merge -sparse *.profraw -o final.profdata
@@ -131,7 +131,7 @@ DEBUG_SRCS = $(wildcard $(DEBUG_DIR)/*.cpp $(DEBUG_DIR)/*/*.cpp $(DEBUG_DIR)/*/*
 
 DBG_OBJ_DIR = .build/dbg
 
-DEBUG_FLAGS = -g -O0 -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR)
+DEBUG_FLAGS = -O0 -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR)
 
 DEBUG_LDFLAGS = -L$(GOOGLE_TEST)/lib -lgtest
 
@@ -181,7 +181,7 @@ ifeq ($(DO_OPTMIZE), 1)
 PERF_PROFILE_FLAGS = -fprofile-generate
 endif
 
-PERF_FLAGS = -g -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
+PERF_FLAGS = -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
 
 PERF_SRCS = $(wildcard $(PERF_DIR)/*.cpp $(PERF_DIR)/*/*.cpp $(PERF_DIR)/*/*/*.cpp)
 
