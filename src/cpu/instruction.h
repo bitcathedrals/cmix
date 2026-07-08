@@ -2,10 +2,13 @@
 #define CPU_INSTRUCTION_H
 
 #include <string>
+#include <array>
+#include <stdexcept>
 
 #include "cpu/defs.h"
 #include "cpu/word.h"
-#include "mixer/parser.h"
+
+static inline constexpr byte op_table_length = 64;
 
 enum class InstructionFields : byte {
     address_begin = 0,
@@ -15,56 +18,41 @@ enum class InstructionFields : byte {
     opcode = 4
 };
 
+enum class InstructionOpCodes : byte {
+    LDA = 8
+};
+
 class Instruction : public Word {
 public:
-    int get_address();
+    int get_address() const;
 
     void set_address(int value);
     void set_address(byte upper, byte lower);
     void set_address(std::string value);
 
-    byte get_index();
+    byte get_index() const;
 
     void set_index(byte v);
     void set_index(std::string value);
 
-    byte get_field();
-    byte get_field_lower();
-    byte get_field_upper();
+    byte get_field() const;
+    byte get_field_lower() const;
+    byte get_field_upper() const;
 
     void set_field(byte v);
     void set_field(byte upper, byte lower);
     void set_field(std::string value);
 
-    byte get_opcode();
+    byte get_opcode() const;
 
     void set_opcode(byte v);
     void set_opcode(std::string value);
-};
 
-class LDA : public Instruction {
-public:
-//    "adr lda l r addr"
+    virtual void execute(void) const override;
 
-    void encode(std::string assembly) {
-        production_t def;
+    void opcode_handler(void) const;
 
-        // address to store instruction
-        def.push_back(std::make_unique<Numeric>());
-
-        // instruction name
-        def.push_back(std::make_unique<Alphabetic>());
-
-        // field upper, lower
-        def.push_back(std::make_unique<Numeric>());
-        def.push_back(std::make_unique<Numeric>());
-
-        // adr
-        def.push_back(std::make_unique<Numeric>());
-
-        Token p = Token::descent(Token(std::move(def)), assembly);
-    }
-
+    virtual ~Instruction() = default;
 };
 
 #endif

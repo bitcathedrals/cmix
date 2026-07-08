@@ -1,8 +1,9 @@
 #include <iterator>
 #include <algorithm>
-#include <iterator>
 
 #include <sstream>
+
+#include <stdexcept>
 
 #include "cpu/word.h"
 #include "cpu/operation.h"
@@ -101,6 +102,14 @@ Word::Word(Word& other, byte lower, byte upper) {
     }
 }
 
+byte Word::operator[](const byte index) const {
+    return data[index];
+}
+
+byte Word::operator[](const int index) const {
+    return data[index];
+}
+
 byte& Word::operator[](const byte index) {
     return data[index];
 }
@@ -168,6 +177,10 @@ Word& Word::insert_subrange(Word& other, byte lower, byte upper) {
     }
 
     return *this;
+}
+
+void Word::execute(void) const {
+    throw std::logic_error("execute not implemented");
 }
 
 std::ostream& operator<<(std::ostream& output, const Word& x) {

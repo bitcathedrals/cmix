@@ -60,6 +60,9 @@ public:
     byte& operator[](const byte index);
     byte& operator[](const int index);
 
+    byte operator[](const byte index) const;
+    byte operator[](const int index) const;
+
     void sanitize(void);
 
     bool overflowed(byte index);
@@ -69,6 +72,10 @@ public:
 
     std::vector<byte> copy_subrange(byte lower, byte upper);
     Word& insert_subrange(Word& other, byte lower, byte upper);
+
+    virtual void execute(void) const;
+
+    virtual ~Word() = default;
 
     friend std::ostream& operator <<(std::ostream& output, const Word&);
     friend std::istream& operator >>(std::istream& input, Word& x);
