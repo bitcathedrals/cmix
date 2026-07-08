@@ -70,9 +70,10 @@ public:
     Word& unary(byte low, byte high, OpInfo info, Operation op);
     Word& binary(byte low, byte high, OpInfo info, Operation op, Word v);
 
-    std::vector<byte> copy_subrange(byte lower, byte upper);
     Word& insert_subrange(Word& other, byte lower, byte upper);
 
+    // execute is one facet or downcast, others "virtual void foo()"
+    // could implement other facts of a Word.
     virtual void execute(void) const;
 
     virtual ~Word() = default;
