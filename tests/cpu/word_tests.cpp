@@ -174,7 +174,7 @@ TEST(WordCopySubRangeTo, InsertMiddle) {
      EXPECT_EQ(to_word[4],4);
 }
 
-TEST(WordSubRangeTo, SubRangeMiddle) {
+TEST(WordSubRangeTo, InsertAll) {
      Word from_word(1,2,3,4,5);
      Word to_word(10,8,6,4,2);
 
