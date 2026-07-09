@@ -90,3 +90,21 @@ TEST(MixerBasicToken, NumberGappedTest) {
     EXPECT_EQ(token.get_type(), Token::label::number);
     EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
 }
+
+//
+// punctuation
+//
+
+TEST(MixerBasicToken, PuncuationTest) {
+    std::string lower("!!");
+
+    std::string::const_iterator begin = lower.cbegin();
+    std::string::const_iterator end = lower.cend();
+
+    Punctuation matcher;
+
+    Token token = matcher.match(begin, end);
+
+    EXPECT_EQ(token.get_type(), Token::label::special);
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
+}

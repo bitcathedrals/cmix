@@ -21,6 +21,7 @@ public:
         number,
         symbol,
         text,
+        special,
 
         node,
 
@@ -105,6 +106,15 @@ class AlphaNumeric : public Token {
 public:
     AlphaNumeric() : Token(Token::label::symbol) {}
     AlphaNumeric(const Token::label label) : Token(label) {}
+
+private:
+    virtual bool is_capture(const char x) const override;
+};
+
+class Punctuation : public Token {
+public:
+    Punctuation() : Token(Token::label::special) {}
+    Punctuation(const Token::label label) : Token(label) {}
 
 private:
     virtual bool is_capture(const char x) const override;

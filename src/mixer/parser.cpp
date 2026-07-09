@@ -132,9 +132,11 @@ std::ostream& operator<<(std::ostream& out, const Token& token) {
         case Token::label::text:
             label = "text";
             break;
-
         case Token::label::symbol:
             label = "symbol";
+            break;
+        case Token::label::special:
+            label = "special";
             break;
 
         case Token::label::node:
@@ -144,11 +146,9 @@ std::ostream& operator<<(std::ostream& out, const Token& token) {
         case Token::label::nothing:
             label = "nothing";
             break;
-
         case Token::label::error:
             label = "error";
             break;
-
         case Token::label::end:
             label = "end";
             break;
@@ -183,3 +183,11 @@ bool Numeric::is_capture(const char x) const {
 
      return false;
  }
+
+ bool Punctuation::is_capture(const char x) const {
+     if (std::ispunct(x)) {
+         return true;
+     }
+
+     return false;
+  }
