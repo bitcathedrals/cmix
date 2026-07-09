@@ -66,7 +66,7 @@ public:
     Word& insert_subrange_from_to(Word& source, Word& destination, byte lower, byte upper);
 
     // execute is one facet or downcast, others "virtual void foo()"
-    // could implement other facts of a Word.
+    // could implement other facets of a Word.
     virtual void execute(void) const;
 
     virtual ~Word() = default;

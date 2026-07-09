@@ -72,3 +72,8 @@ Phase 3 is implementing a external assembler and a linker.
 ### Phase 4 is IO.
 
 Implement the disks first, and then the punch card reader.
+
+### Deps
+
+googletest - for testing
+- libreadline-dev  readline library

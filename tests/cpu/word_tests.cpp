@@ -115,7 +115,7 @@ TEST(WordSubRange, SubrangeRightBound) {
      EXPECT_EQ(to_word[5], 5);
 }
 
-TEST(WordSubRange, SimpleEqualsMiddle) {
+TEST(WordSubRange, SubRangeMiddle) {
      Word from_word(1,2,3,4,5);
      Word to_word(10,8,6,4,2);
 
@@ -124,6 +124,19 @@ TEST(WordSubRange, SimpleEqualsMiddle) {
      EXPECT_EQ(to_word[2], 2);
      EXPECT_EQ(to_word[3], 3);
      EXPECT_EQ(to_word[4], 4);
+}
+
+TEST(WordSubRange, SubRangeAll) {
+     Word from_word(1,2,3,4,5);
+     Word to_word(10,8,6,4,2);
+
+     to_word.insert_subrange(from_word,1,5);
+
+     EXPECT_EQ(to_word[1], 1);
+     EXPECT_EQ(to_word[2], 2);
+     EXPECT_EQ(to_word[3], 3);
+     EXPECT_EQ(to_word[4], 4);
+     EXPECT_EQ(to_word[5], 5);
 }
 
 TEST(WordCopySubRangeTo, InsertLeftBound) {
@@ -161,4 +174,16 @@ TEST(WordCopySubRangeTo, InsertMiddle) {
      EXPECT_EQ(to_word[4],4);
 }
 
+TEST(WordSubRangeTo, SubRangeMiddle) {
+     Word from_word(1,2,3,4,5);
+     Word to_word(10,8,6,4,2);
+
+     to_word.insert_subrange_from_to(from_word,to_word,1,5);
+
+     EXPECT_EQ(to_word[1], 1);
+     EXPECT_EQ(to_word[2], 2);
+     EXPECT_EQ(to_word[3], 3);
+     EXPECT_EQ(to_word[4], 4);
+     EXPECT_EQ(to_word[5], 5);
+}
 
