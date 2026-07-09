@@ -37,7 +37,7 @@ class Word {
 public:
     Word();
 
-    explicit Word(const Word& other);
+    Word(const Word& other);
 
     Word(Word& other, byte lower, byte upper);
 

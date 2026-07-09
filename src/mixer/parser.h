@@ -89,13 +89,7 @@ public:
     Alphabetic(const Token::label label) : Token(label) {}
 
 private:
-    virtual bool is_capture(const char x) const override {
-        if (std::isalpha(x)) {
-             return true;
-         }
-
-         return false;
-    };
+    virtual bool is_capture(const char x) const override;
 };
 
 class Numeric : public Token {
@@ -104,13 +98,7 @@ public:
     Numeric(const Token::label label) : Token(label) {}
 
 private:
-    virtual bool is_capture(const char x) const override {
-         if (std::isdigit(x)) {
-             return true;
-         }
-
-         return false;
-    };
+    virtual bool is_capture(const char x) const override;
 };
 
 class AlphaNumeric : public Token {
@@ -119,13 +107,7 @@ public:
     AlphaNumeric(const Token::label label) : Token(label) {}
 
 private:
-    virtual bool is_capture(const char x) const override {
-        if (std::isalnum(x)) {
-            return true;
-        }
-
-        return false;
-    };
+    virtual bool is_capture(const char x) const override;
 };
 
 #endif

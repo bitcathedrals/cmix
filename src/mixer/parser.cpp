@@ -159,3 +159,27 @@ std::ostream& operator<<(std::ostream& out, const Token& token) {
 
     return out;
 }
+
+bool Alphabetic::is_capture(const char x) const {
+    if (std::isalpha(x)) {
+        return true;
+    }
+
+    return false;
+}
+
+bool Numeric::is_capture(const char x) const {
+    if (std::isdigit(x)) {
+        return true;
+    }
+
+    return false;
+}
+
+ bool AlphaNumeric::is_capture(const char x) const {
+     if (std::isalnum(x)) {
+         return true;
+     }
+
+     return false;
+ }
