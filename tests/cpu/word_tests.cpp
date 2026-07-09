@@ -97,7 +97,7 @@ TEST(WordOperatorEqual, SimpleEqualsFalseTest) {
     EXPECT_EQ(left_word == right_word, false);
 }
 
-TEST(WordOperatorEqual, SubrangeLeftBound) {
+TEST(WordSubRange, SubrangeLeftBound) {
     Word from_word(1,2,3,4,5);
     Word to_word(10,8,6,4,2);
 
@@ -106,7 +106,7 @@ TEST(WordOperatorEqual, SubrangeLeftBound) {
     EXPECT_EQ(to_word[1],1);
 }
 
-TEST(WordOperatorEqual, SubrangeRightBound) {
+TEST(WordSubRange, SubrangeRightBound) {
      Word from_word(1,2,3,4,5);
      Word to_word(10,8,6,4,2);
 
@@ -115,7 +115,7 @@ TEST(WordOperatorEqual, SubrangeRightBound) {
      EXPECT_EQ(to_word[5], 5);
 }
 
-TEST(WordOperatorEqual, SimpleEqualsMiddle) {
+TEST(WordSubRange, SimpleEqualsMiddle) {
      Word from_word(1,2,3,4,5);
      Word to_word(10,8,6,4,2);
 
@@ -125,3 +125,40 @@ TEST(WordOperatorEqual, SimpleEqualsMiddle) {
      EXPECT_EQ(to_word[3], 3);
      EXPECT_EQ(to_word[4], 4);
 }
+
+TEST(WordCopySubRangeTo, InsertLeftBound) {
+     Word from_word(1,2,3,4,5);
+     Word to_word(10,8,6,4,2);
+
+     Word control_word(3,6,9,11,13);
+
+     control_word.insert_subrange_from_to(from_word, to_word,1,1);
+
+     EXPECT_EQ(to_word[1],1);
+}
+
+TEST(WordCopySubRangeTo, InsertRightBound) {
+     Word from_word(1,2,3,4,5);
+     Word to_word(10,8,6,4,2);
+
+     Word control_word(3,6,9,11,13);
+
+     control_word.insert_subrange_from_to(from_word, to_word,5,5);
+
+     EXPECT_EQ(to_word[5],5);
+}
+
+TEST(WordCopySubRangeTo, InsertMiddle) {
+     Word from_word(1,2,3,4,5);
+     Word to_word(10,8,6,4,2);
+
+     Word control_word(3,6,9,11,13);
+
+     control_word.insert_subrange_from_to(from_word, to_word,2,4);
+
+     EXPECT_EQ(to_word[2],2);
+     EXPECT_EQ(to_word[3],3);
+     EXPECT_EQ(to_word[4],4);
+}
+
+

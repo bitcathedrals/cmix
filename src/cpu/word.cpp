@@ -179,6 +179,17 @@ Word& Word::insert_subrange(Word& other, byte lower, byte upper) {
     return *this;
 }
 
+
+Word& Word::insert_subrange_from_to(Word& source, Word& destination, byte lower, byte upper) {
+    upper += 1;
+
+    for(;lower < upper; lower++) {
+        destination.data[lower] = source.data[lower];
+    }
+
+    return *this;
+}
+
 void Word::execute(void) const {
     throw std::logic_error("execute not implemented");
 }

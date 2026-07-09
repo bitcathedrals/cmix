@@ -8,20 +8,12 @@
 #include "cpu/defs.h"
 #include "cpu/operation.h"
 
-//
-// word = data + sign
-//
-
 inline constexpr byte word_size = 6;
 
 inline constexpr byte data_bits = 6;
 
 inline constexpr byte positive_max = 64;
 inline constexpr byte negative_max = -64;
-
-//
-// data = word - sign
-//
 
 inline constexpr byte data_size = 5;
 
@@ -71,6 +63,7 @@ public:
     Word& binary(byte low, byte high, OpInfo info, Operation op, Word v);
 
     Word& insert_subrange(Word& other, byte lower, byte upper);
+    Word& insert_subrange_from_to(Word& source, Word& destination, byte lower, byte upper);
 
     // execute is one facet or downcast, others "virtual void foo()"
     // could implement other facts of a Word.
