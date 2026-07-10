@@ -7,6 +7,8 @@
 #include "cpu/instruction.h"
 #include "mixer/parser.h"
 
+#include "cpu/instructions/lda.h"
+
 std::map<std::string, std::unique_ptr<Instruction>> InstructionFactory;
 std::map<int, std::unique_ptr<Instruction>> InstructionTable;
 
@@ -116,6 +118,16 @@ std::unique_ptr<Instruction> Instruction::assemble(std::string::const_iterator b
 }
 
 void Instruction::execute(void) const {
-    throw std::logic_error("execute base class virtual called");
+    switch(get_opcode()) {
+    case static_cast<byte>(InstructionOpCodes::LDA):
+        dynamic_cast<const LDA*>(this)->opcode();
+        break;
+
+    default:
+        throw std::logic_error("Instruction::execute fell off execute switch()");
+    }
 }
 
+void Instruction::opcode(void) const {
+    throw std::logic_error("Instruction::opcode base class method reached");
+}

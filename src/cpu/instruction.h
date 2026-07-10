@@ -47,7 +47,8 @@ public:
     virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator begin,
                                                   std::string::const_iterator end) const;
 
-    virtual void execute(void) const;
+    void execute(void) const;
+    void opcode(void) const;
 
     virtual ~Instruction() = default;
 };

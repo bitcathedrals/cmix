@@ -10,7 +10,7 @@ struct insert_table {
 
 static insert_table insert;
 
-void LDA::execute(void) const {
+void LDA::opcode(void) const {
     insert_subrange_from_to(CPU.memory[get_address() + get_index()],
                             CPU.A,
                             get_field_lower(),

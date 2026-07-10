@@ -9,7 +9,7 @@
 
 class LDA : public Instruction {
 public:
-    virtual void execute(void) const;
+    void opcode(void) const;
 
     virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator begin,
                                                   std::string::const_iterator end) const;
