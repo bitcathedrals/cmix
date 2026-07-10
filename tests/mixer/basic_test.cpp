@@ -17,6 +17,20 @@ TEST(MixerBasicToken, MatchNoInput) {
     EXPECT_EQ(token.get_token().size(), static_cast<size_t>(0));
 }
 
+TEST(MixerBasicToken, MatchWhitespaceSkip) {
+    std::string ws("  ");
+
+    std::string::const_iterator ws_start = ws.cbegin();
+
+    std::string::const_iterator ws_begin = ws.cbegin();
+    std::string::const_iterator ws_end = ws.cend();
+
+    Alphabetic ws_skip;
+    ws_skip.match(ws_begin, ws_end);
+
+    EXPECT_EQ(std::distance(ws_start,ws_begin), 2);
+}
+
 TEST(MixerBasicToken, MatchLowerCase) {
     std::string lower("aa");
 

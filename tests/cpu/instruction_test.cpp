@@ -77,32 +77,32 @@ TEST(InstructionBasic, GetField) {
     EXPECT_EQ(x.get_field(), 22);
 }
 
-TEST(InstructionBasic, GetFieldLowerUpper) {
+TEST(InstructionBasic, GetFieldLowerAndUpper) {
     Instruction x;
 
-    x[static_cast<byte>(InstructionFields::field)] = 22;
+    x[static_cast<byte>(InstructionFields::field)] = 13;
 
-    EXPECT_EQ(x.get_field_upper(), 2);
-    EXPECT_EQ(x.get_field_lower(), 6);
+    EXPECT_EQ(x.get_field_lower(), 1);
+    EXPECT_EQ(x.get_field_upper(), 5);
 }
 
 
 TEST(InstructionBasic, SetFieldByte) {
     Instruction x;
 
-    x.set_field(42);
+    x.set_field(11);
 
-    EXPECT_EQ(x.get_field_upper(), 5);
-    EXPECT_EQ(x.get_field_lower(), 2);
+    EXPECT_EQ(x.get_field_lower(), 1);
+    EXPECT_EQ(x.get_field_upper(), 3);
 }
 
 TEST(InstructionBasic, SetFieldString) {
     Instruction x;
 
-    x.set_field("42");
+    x.set_field("13");
 
+    EXPECT_EQ(x.get_field_lower(), 1);
     EXPECT_EQ(x.get_field_upper(), 5);
-    EXPECT_EQ(x.get_field_lower(), 2);
 }
 
 TEST(InstructionBasic, SetOpcode) {

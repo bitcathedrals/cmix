@@ -1,47 +1,31 @@
 #ifndef CPU_INSTRUCTIONS_LDA
 #define CPU_INSTRUCTIONS_LDA
 
+#include <memory>
+
 #include "cpu/word.h"
 #include "mixer/parser.h"
+#include "cpu/instruction.h"
 
 class LDA : public Instruction {
 public:
-//    "adr lda l r addr"
+    virtual void execute(void) const;
 
-    // void assemble(std::string assembly) {
-    //     production_t def;
+    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator begin,
+                                                  std::string::const_iterator end) const;
 
-    //     // address to store instruction
-    //     def.push_back(std::make_unique<Numeric>());
+    virtual ~LDA() = default;
 
-    //     // instruction name
-    //     def.push_back(std::make_unique<Alphabetic>());
+private:
+    void parse_field_spec(std::string::const_iterator begin,
+                          std::string::const_iterator end,
+                          int& lower,
+                          int& upper) const;
 
-    //     // field upper, lower
-    //     def.push_back(std::make_unique<Numeric>());
-    //     def.push_back(std::make_unique<Numeric>());
-
-    //     // adr
-    //     def.push_back(std::make_unique<Numeric>());
-
-    //     Token p = Token::descent(Token(std::move(def)), assembly);
-    // }
-
-    Word assemble(const std::string assembly) const;
-
-    void opcode_handler(void) const {};
+    std::unique_ptr<Instruction> encode(int address,
+                                        int index,
+                                        int field_lower,
+                                        int field_upper) const;
 };
-
-Word LDA::assemble(const std::string assembly [[maybe_unused]]) const {
-    production_t definition;
-
-    // instruction name
-
-    definition.push_back(std::make_unique<Alphabetic>());
-
-    Word rvalue {1,2,3,4,5};
-
-    return rvalue;
-}
 
 #endif

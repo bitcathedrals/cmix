@@ -2,24 +2,18 @@
 #define CPU_INSTRUCTION_H
 
 #include <string>
-#include <array>
-#include <stdexcept>
+#include <utility>
+#include <memory>
 
 #include "cpu/defs.h"
 #include "cpu/word.h"
 
-static inline constexpr byte op_table_length = 64;
-
 enum class InstructionFields : byte {
-    address_begin = 0,
-    address_end = 1,
-    index = 2,
-    field = 3,
-    opcode = 4
-};
-
-enum class InstructionOpCodes : byte {
-    LDA = 8
+    address_begin = 1,
+    address_end = 2,
+    index = 3,
+    field = 4,
+    opcode = 5
 };
 
 class Instruction : public Word {
@@ -40,7 +34,7 @@ public:
     byte get_field_upper() const;
 
     void set_field(byte v);
-    void set_field(byte upper, byte lower);
+    void set_field(byte lower, byte upper);
     void set_field(std::string value);
 
     byte get_opcode() const;
@@ -48,11 +42,21 @@ public:
     void set_opcode(byte v);
     void set_opcode(std::string value);
 
-    virtual void execute(void) const override;
+    std::pair<int, std::unique_ptr<Instruction>> assemble(const std::string assembly) const;
 
-    void opcode_handler(void) const;
+    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator begin,
+                                                  std::string::const_iterator end) const;
+
+    virtual void execute(void) const;
 
     virtual ~Instruction() = default;
 };
+
+enum class InstructionOpCodes : byte {
+    LDA = 8
+};
+
+extern std::map<std::string, std::unique_ptr<Instruction>> InstructionFactory;
+extern std::map<int, std::unique_ptr<Instruction>> InstructionTable;
 
 #endif

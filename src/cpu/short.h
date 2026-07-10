@@ -1,49 +1,38 @@
 #ifndef CPU_SHORT_H
 #define CPU_SHORT_H
 
+#include <iostream>
 #include <array>
 
 #include "parse.h"
 #include "cpu/defs.h"
 #include "cpu/operation.h"
 
-//
-// short = data + sign
-//
+static inline constexpr byte short_word_size = 3;
 
-inline constexpr byte short_word_size = 3;
+static inline constexpr byte short_data_bits = 2;
 
-inline constexpr byte short_data_bits = 2;
+static inline constexpr byte short_positive_max = 64;
+static inline constexpr byte short_negative_max = -64;
 
-inline constexpr byte short_positive_max = 64;
-inline constexpr byte short_negative_max = -64;
+static inline constexpr byte short_data_size = 2;
 
-//
-// data = short - sign
-//
+static inline constexpr byte short_data_min = 1;
+static inline constexpr byte short_data_max = 3;
 
-inline constexpr byte short_data_size = 2;
+static inline constexpr byte short_data_offset = 1;
 
-inline constexpr byte short_data_min = 1;
-inline constexpr byte short_data_max = 3;
+static inline constexpr byte short_sign_field = 0;
+static inline constexpr byte short_sign_default = 1;
 
-inline constexpr byte short_data_offset = 1;
-
-//
-// sign is a -1 || 1 depending on the sign.
-//
-
-inline constexpr byte short_sign_field = 0;
-inline constexpr byte short_sign_default = 1;
-
-inline constexpr byte short_sign_positive = 1;
-inline constexpr byte short_sign_negative = -1;
+static inline constexpr byte short_sign_positive = 1;
+static inline constexpr byte short_sign_negative = -1;
 
 class Short {
 public:
     Short();
 
-    explicit Short(const Short& other);
+    Short(const Short& other);
 
     Short(Short& other, byte lower, byte upper);
 
@@ -71,7 +60,7 @@ private:
     std::array<byte, short_word_size> data;
 };
 
-std::ostream& operator<<(std::ostream& output, const Short& x);
-std::istream& operator>>(std::istream& input, Short& x);
+// std::ostream& operator<<(std::ostream& output, const Short& x);
+// std::istream& operator>>(std::istream& input, Short& x);
 
 #endif
