@@ -36,6 +36,9 @@ public:
     bool overflow_toggle;
 
     ComparisonIndicator compare;
+
+    void run(int address);
+
 };
 
 extern Cpu CPU;
