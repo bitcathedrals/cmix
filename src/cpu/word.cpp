@@ -188,10 +188,6 @@ void Word::insert_subrange_from_to(const Word& source, Word& destination, byte l
     }
 }
 
-void Word::execute(void) const {
-    throw std::logic_error("execute not implemented");
-}
-
 std::ostream& operator<<(std::ostream& output, const Word& x) {
     output << static_cast<int>(x.data[0]) << "::"
            << static_cast<int>(x.data[1]) << "::"

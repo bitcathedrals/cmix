@@ -44,7 +44,7 @@ endif
 
 PROD_TARGET = cmix
 
-OPT_FLAGS ?= -O3 -flto -ffunction-sections -fdata-sections -fno-rtti
+OPT_FLAGS ?= -O3 -flto -ffunction-sections -fdata-sections
 
 ifeq ($(CXX),g++) 
 OPT_FLAGS=$(OPT_FLAGS) -Wl,--gc-sections

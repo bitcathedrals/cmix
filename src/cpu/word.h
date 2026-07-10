@@ -65,12 +65,6 @@ public:
     Word& insert_subrange(Word& other, byte lower, byte upper);
     void insert_subrange_from_to(const Word& source, Word& destination, byte lower, byte upper) const;
 
-    // execute is one facet or downcast, others "virtual void foo()"
-    // could implement other facets of a Word.
-    virtual void execute(void) const;
-
-    virtual ~Word() = default;
-
     friend std::ostream& operator <<(std::ostream& output, const Word&);
     friend std::istream& operator >>(std::istream& input, Word& x);
 

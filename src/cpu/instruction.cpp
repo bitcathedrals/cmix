@@ -120,7 +120,7 @@ std::unique_ptr<Instruction> Instruction::assemble(std::string::const_iterator b
 void Instruction::execute(void) const {
     switch(get_opcode()) {
     case static_cast<byte>(InstructionOpCodes::LDA):
-        dynamic_cast<const LDA*>(this)->opcode();
+        static_cast<const LDA*>(this)->opcode();
         break;
 
     default:
