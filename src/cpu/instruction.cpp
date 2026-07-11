@@ -119,12 +119,12 @@ std::unique_ptr<Instruction> Instruction::assemble(std::string::const_iterator b
 
 void Instruction::execute(void) const {
     switch(get_opcode()) {
-    case static_cast<byte>(InstructionOpCodes::LDA):
-        static_cast<const LDA*>(this)->opcode();
-        break;
+        case static_cast<byte>(InstructionOpCodes::LDA):
+            static_cast<const LDA*>(this)->opcode();
+            break;
 
-    default:
-        throw std::logic_error("Instruction::execute fell off execute switch()");
+        default:
+            throw std::logic_error("Instruction::execute fell off execute switch()");
     }
 }
 
