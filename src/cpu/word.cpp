@@ -27,7 +27,19 @@ void Word::sanitize(void) {
 
 Word::Word() : data {sign_default, 0, 0, 0, 0, 0} {}
 
-Word::Word(const Word& other) : data(other.data) {}
+Word::Word(const Word& other) {
+    for(auto i = 0; i < word_size; i++) {
+        data[i] = other.data[i];
+    }
+}
+
+void Word::reset() {
+    data[0] = sign_default;
+
+    for(auto i = data_offset; i < word_size; i++) {
+        data[i] = 0;
+    }
+}
 
 Word& Word::operator=(const Word& other) {
     data = other.data;

@@ -31,6 +31,7 @@ TEST(WordConstructorTests, CopyConstructor) {
 }
 
 
+
 TEST(WordConstructorTests, InitSetAndReadBack) {
     Word mix_word(2,4,6,8,10);
 
@@ -39,6 +40,18 @@ TEST(WordConstructorTests, InitSetAndReadBack) {
     EXPECT_EQ(6, mix_word[3]);
     EXPECT_EQ(8, mix_word[4]);
     EXPECT_EQ(10, mix_word[5]);
+}
+
+TEST(WordUtilities, Reset) {
+    Word mix_word(2,4,6,8,10);
+
+    mix_word.reset();
+
+    EXPECT_EQ(0, mix_word[1]);
+    EXPECT_EQ(0, mix_word[2]);
+    EXPECT_EQ(0, mix_word[3]);
+    EXPECT_EQ(0, mix_word[4]);
+    EXPECT_EQ(0, mix_word[5]);
 }
 
 //
