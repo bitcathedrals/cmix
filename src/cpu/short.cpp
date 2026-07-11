@@ -25,6 +25,15 @@ Short::Short() : data {short_sign_default, 0, 0} {}
 
 Short::Short(const Short& other) : data(other.data) {}
 
+
+void Short::reset() {
+    data[0] = short_sign_default;
+
+    for(auto i = short_data_offset; i < short_word_size; i++) {
+        data[i] = 0;
+    }
+}
+
 Short& Short::operator=(const Short& other) {
     data = other.data;
     return *this;

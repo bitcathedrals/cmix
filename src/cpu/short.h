@@ -38,6 +38,8 @@ public:
 
     Short(byte x1, byte x2);
 
+    void reset(void);
+
     Short& operator=(const Short& right);
     Short& operator=(const parse_t& p);
     Short& operator=(const std::string& x);

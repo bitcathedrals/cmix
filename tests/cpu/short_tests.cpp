@@ -32,6 +32,15 @@ TEST(ShortConstructorTests, InitSetAndReadBack) {
     EXPECT_EQ(4, mix_short[2]);
 }
 
+TEST(ShortUtilityTests, Reset) {
+    Short mix_short(2,4);
+
+    mix_short.reset();
+
+    EXPECT_EQ(0, mix_short[1]);
+    EXPECT_EQ(0, mix_short[2]);
+}
+
 //
 // overflow
 //
