@@ -16,8 +16,13 @@ public:
     enum class ComparisonIndicator {
         LESS,
         EQUAL,
-        GREATER
+        GREATER,
+        UNSET
     };
+
+    Cpu();
+
+    void reset(void);
 
     std::array<Word, memory_capacity> memory;
 
@@ -33,12 +38,11 @@ public:
 
     Short J;
 
-    bool overflow_toggle;
+    bool overflow;
 
     ComparisonIndicator compare;
 
     void run(int address);
-
 };
 
 extern Cpu CPU;
