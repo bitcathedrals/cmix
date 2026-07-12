@@ -22,6 +22,17 @@ TEST(InstructionBasic, SetAddressInt) {
     EXPECT_EQ(x.get_address(), 1242);
 };
 
+TEST(InstructionBasic, SetAddressZero) {
+    Instruction x;
+
+    x.set_address(0);
+
+    EXPECT_EQ(x[static_cast<byte>(InstructionFields::address_begin)], 0);
+    EXPECT_EQ(x[static_cast<byte>(InstructionFields::address_end)], 0);
+
+    EXPECT_EQ(x.get_address(), 0);
+};
+
 TEST(InstructionBasic, SetAddressUpperLower) {
     Instruction x;
 
