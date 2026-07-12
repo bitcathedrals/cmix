@@ -115,7 +115,8 @@ XCRUN =
 endif
 
 run:
-	./runner --gtest_show_internal_stack_frames=0
+	find $(TEST_OBJ) -name '*.gcda' -print | xargs rm
+	./runner
 
 coverage:
 	$(XCRUN) llvm-profdata merge -sparse *.profraw -o final.profdata
