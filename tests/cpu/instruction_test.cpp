@@ -116,6 +116,14 @@ TEST(InstructionBasic, SetFieldString) {
     EXPECT_EQ(x.get_field_upper(), 5);
 }
 
+TEST(InstructionBasic, SetFieldWithUpperLowerSetters) {
+    Instruction x;
+
+    x.set_field(1, 5);
+
+    EXPECT_EQ(x.get_field(), 13);
+}
+
 TEST(InstructionBasic, SetOpcode) {
     Instruction x;
 
