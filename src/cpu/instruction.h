@@ -20,37 +20,43 @@ class Instruction : public Word {
 public:
     int get_address() const;
 
-    void set_address(int value);
-    void set_address(byte upper, byte lower);
-    void set_address(std::string value);
+    Instruction& set_address(int value);
+    Instruction& set_address(byte upper, byte lower);
+    Instruction& set_address(std::string value);
 
     byte get_index() const;
 
-    void set_index(byte v);
-    void set_index(std::string value);
+    Instruction& set_index(byte v);
+    Instruction& set_index(std::string value);
 
     byte get_field() const;
     byte get_field_lower() const;
     byte get_field_upper() const;
 
-    void set_field(byte v);
-    void set_field(byte lower, byte upper);
-    void set_field(std::string value);
+    Instruction& set_field(byte v);
+    Instruction& set_field(byte lower, byte upper);
+    Instruction& set_field(std::string value);
 
     byte get_opcode() const;
 
-    void set_opcode(byte v);
-    void set_opcode(std::string value);
+    Instruction& set_opcode(byte v);
+    Instruction& set_opcode(std::string value);
 
     std::pair<int, std::unique_ptr<Instruction>> assemble(const std::string assembly) const;
 
-    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator begin,
-                                                  std::string::const_iterator end) const;
-
+    virtual std::unique_ptr<Instruction> encode(int address,
+                                                int index,
+                                                int field_lower,
+                                                int field_upper) const;
     void execute(void) const;
     void opcode(void) const;
 
     virtual ~Instruction() = default;
+
+protected:
+    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator begin,
+                                                  std::string::const_iterator end) const;
+
 };
 
 enum class InstructionOpCodes : byte {

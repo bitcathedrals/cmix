@@ -18,34 +18,44 @@ int Instruction::get_address(void) const {
         + operator[](static_cast<byte>(InstructionFields::address_end));
 }
 
-void Instruction::set_address(int v) {
+Instruction& Instruction::set_address(int v) {
     byte upper = v / 100;
     byte lower = v % 100;
 
     operator[](static_cast<byte>(InstructionFields::address_begin)) = upper;
     operator[](static_cast<byte>(InstructionFields::address_end)) = lower;
+
+    return *this;
 }
 
-void Instruction::set_address(byte upper, byte lower) {
+Instruction& Instruction::set_address(byte upper, byte lower) {
     operator[](static_cast<byte>(InstructionFields::address_begin)) = upper;
     operator[](static_cast<byte>(InstructionFields::address_end)) = lower;
+
+    return *this;
 }
 
-void Instruction::set_address(std::string value) {
+Instruction& Instruction::set_address(std::string value) {
     int v = std::stoi(value);
     set_address(v);
+
+    return *this;
 }
 
 byte Instruction::get_index(void) const {
     return operator[](static_cast<byte>(InstructionFields::index));
 }
 
-void Instruction::set_index(byte v) {
+Instruction& Instruction::set_index(byte v) {
     operator[](static_cast<byte>(InstructionFields::index)) = v;
+
+    return *this;
 }
 
-void Instruction::set_index(std::string value) {
+Instruction& Instruction::set_index(std::string value) {
     operator[](static_cast<byte>(InstructionFields::index)) = std::stoi(value);
+
+    return *this;
 }
 
 byte Instruction::get_field(void) const {
@@ -60,31 +70,41 @@ byte Instruction::get_field_upper(void) const {
     return get_field() % 8;
 }
 
-void Instruction::set_field(byte v) {
+Instruction& Instruction::set_field(byte v) {
     operator[](static_cast<byte>(InstructionFields::field)) = v;
+
+    return *this;
 }
 
-void Instruction::set_field(std::string value) {
+Instruction& Instruction::set_field(std::string value) {
     operator[](static_cast<byte>(InstructionFields::field)) = std::stoi(value);
+
+    return *this;
 }
 
-void Instruction::set_field(byte lower, byte upper) {
+Instruction& Instruction::set_field(byte lower, byte upper) {
     byte v = upper * 8;
     v = v + lower;
 
     operator[](static_cast<byte>(InstructionFields::field)) = v;
+
+    return *this;
 }
 
 byte Instruction::get_opcode(void) const {
     return operator[](static_cast<byte>(InstructionFields::opcode));
 }
 
-void Instruction::set_opcode(byte x) {
+Instruction& Instruction::set_opcode(byte x) {
     operator[](static_cast<byte>(InstructionFields::opcode)) = x;
+
+    return *this;
 }
 
-void Instruction::set_opcode(std::string value) {
+Instruction& Instruction::set_opcode(std::string value) {
     operator[](static_cast<byte>(InstructionFields::field)) = static_cast<byte>(std::stoi(value));
+
+    return *this;
 }
 
 std::pair<int, std::unique_ptr<Instruction>> Instruction::assemble(const std::string assembly) const {
@@ -117,6 +137,12 @@ std::unique_ptr<Instruction> Instruction::assemble(std::string::const_iterator b
     throw std::logic_error("assemble base class virtual called");
 }
 
+std::unique_ptr<Instruction> Instruction::encode(int address [[maybe_unused]],
+                                    int index [[maybe_unused]],
+                                    int field_lower [[maybe_unused]],
+                                    int field_upper [[maybe_unused]]) const {
+    throw std::logic_error("assemble base class virtual called");
+}
 void Instruction::execute(void) const {
     switch(get_opcode()) {
         case static_cast<byte>(InstructionOpCodes::LDA):
