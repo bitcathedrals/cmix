@@ -16,16 +16,16 @@ public:
 
     virtual ~LDA() = default;
 
+    virtual std::unique_ptr<Instruction> encode(int address,
+                                                int index,
+                                                int field_lower,
+                                                int field_upper) const;
+
 private:
     void parse_field_spec(std::string::const_iterator begin,
                           std::string::const_iterator end,
                           int& lower,
                           int& upper) const;
-
-    std::unique_ptr<Instruction> encode(int address,
-                                        int index,
-                                        int field_lower,
-                                        int field_upper) const;
 };
 
 #endif

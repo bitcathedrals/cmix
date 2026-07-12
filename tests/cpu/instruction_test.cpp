@@ -131,3 +131,17 @@ TEST(InstructionBasic, GetOpcode) {
 
     EXPECT_EQ(x.get_opcode(), 42);
 }
+
+TEST(InstructionBasic, ChainSetters) {
+    Instruction x;
+
+    x.set_address(1)
+        .set_index(1)
+        .set_field(11)
+        .set_opcode(8);
+
+    EXPECT_EQ(x.get_address(), 1);
+    EXPECT_EQ(x.get_index(), 1);
+    EXPECT_EQ(x.get_field(), 11);
+    EXPECT_EQ(x.get_opcode(), 8);
+}

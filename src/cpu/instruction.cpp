@@ -83,8 +83,8 @@ Instruction& Instruction::set_field(std::string value) {
 }
 
 Instruction& Instruction::set_field(byte lower, byte upper) {
-    byte v = upper * 8;
-    v = v + lower;
+    byte v = lower * 8;
+    v = v + upper;
 
     operator[](static_cast<byte>(InstructionFields::field)) = v;
 
