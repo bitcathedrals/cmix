@@ -53,3 +53,44 @@ TEST(CpuData, RegisterXTestSetAndRead) {
     CPU.X[0] = 16;
     ASSERT_EQ(CPU.X[0], 16);
 }
+
+TEST(CpuData, Reset) {
+    CPU.memory[0][1] = 42;
+
+    CPU.X[1] = 16;
+    CPU.A[1] = 16;
+
+    CPU.I1[1] = 42;
+    CPU.I2[1] = 42;
+    CPU.I3[1] = 42;
+    CPU.I4[1] = 42;
+    CPU.I5[1] = 42;
+    CPU.I6[1] = 42;
+
+    CPU.J[1] = 42;
+
+    CPU.overflow = true;
+
+    CPU.compare = Cpu::ComparisonIndicator::LESS;
+
+    CPU.reset();
+
+    EXPECT_EQ(CPU.memory[0][1], 0);
+
+    EXPECT_EQ(CPU.X[1], 0);
+    EXPECT_EQ(CPU.A[1], 0);
+
+    EXPECT_EQ(CPU.I1[1], 0);
+    EXPECT_EQ(CPU.I2[1], 0);
+    EXPECT_EQ(CPU.I3[1], 0);
+    EXPECT_EQ(CPU.I4[1], 0);
+    EXPECT_EQ(CPU.I5[1], 0);
+    EXPECT_EQ(CPU.I6[1], 0);
+
+    EXPECT_EQ(CPU.J[1], 0);
+
+    EXPECT_EQ(CPU.overflow, false);
+
+    EXPECT_EQ(CPU.compare, Cpu::ComparisonIndicator::UNSET);
+
+}
