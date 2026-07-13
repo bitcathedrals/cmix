@@ -218,6 +218,9 @@ $(PERF_TARGET): $(PERF_WITHOUT_MAIN)
 # project scope
 #
 
+kloc:
+	wc -l `find src tests perf debug -type f -print`
+
 prod: $(PROD_TARGET)
 
 test: $(TEST_TARGET)
