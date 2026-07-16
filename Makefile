@@ -123,51 +123,6 @@ coverage:
 	$(XCRUN) llvm-cov show -ignore-filename-regex "vendor/*" -instr-profile=final.profdata ./runner >coverage.txt
 
 #
-# debug
-#
-
-DEBUG_DIR = debug/
-
-DEBUG_SRCS = $(wildcard $(DEBUG_DIR)/*.cpp $(DEBUG_DIR)/*/*.cpp $(DEBUG_DIR)/*/*/*.cpp)
-
-DBG_OBJ_DIR = .build/dbg
-
-DEBUG_FLAGS = -O0 -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR)
-
-DEBUG_LDFLAGS = -L$(GOOGLE_TEST)/lib -lgtest
-
-DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS)) \
-           $(patsubst $(TEST_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(TEST_SRCS)) \
-           $(patsubst $(DEBUG_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(DEBUG_SRCS))
-
-DEBUG_WITHOUT_MAIN=$(filter-out $(DBG_OBJ_DIR)/cmix.o , $(DBG_OBJS))
-
-ifneq ($(findstring $(DEBUG_GOAL), $(MAKECMDGOALS)),)
-	DEBUG_DFILES = $(wildcard $(DBG_OBJ_DIR)/*.d $(DBG_OBJ_DIR)/*/*.d $(DBG_OBJ_DIR)/*/*/*.d)
-
-  ifneq ($(DEBUG_DFILES),)
-    include $(DEBUG_DFILES)
-  endif
-endif
-
-DEBUG_TARGET = buggy
-
-$(DBG_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
-
-$(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
-
-$(DBG_OBJ_DIR)/%.o: $(DEBUG_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
-
-$(DEBUG_TARGET): $(DEBUG_WITHOUT_MAIN)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(DEBUG_FLAGS) $(LDFLAGS) $(DEBUG_LDFLAGS)
-
-#
 # perf
 # 
 
@@ -225,8 +180,6 @@ prod: $(PROD_TARGET)
 
 test: $(TEST_TARGET)
 
-debug: $(DEBUG_TARGET)
-
 benchmark: $(PERF_TARGET)
 
 default: prod
@@ -241,16 +194,12 @@ test-clean:
 	-rm -f *.profraw
 	-rm -f *.profdata
 
-debug-clean:
-	-rm -f $(DEBUG_TARGET)
-	-rm -rf $(DBG_OBJ_DIR)
-
 benchmark-clean:
 	-rm -rf $(PERF_OBJ)
 	-rm -f $(PERF_TARGET)
 
-clean: prod-clean test-clean debug-clean perf-clean
+clean: prod-clean test-clean perf-clean
 
-.PHONY: prod-clean test-clean debug-clean perf-clean default
+.PHONY: prod-clean test-clean perf-clean default
 
 # $(info TEST_OBJS is $(TEST_OBJS))
