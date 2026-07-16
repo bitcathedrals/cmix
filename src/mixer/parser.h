@@ -41,15 +41,20 @@ public:
     explicit Token(AST_t&& parse);
     explicit Token(production_t&& children);
 
+    Token(const Token& t) = default;
+
     virtual ~Token(void) = default;
 
     void operator=(AST_t&& parse);
     const Token& operator[](int index) const;
 
+    Token& set_name(const std::string name);
     Token& set_optional(void);
 
+    std::string get_name(void) const;
+    bool get_optional(void) { return optional; };
     Token::label get_type(void) const { return t; }
-    const std::string get_token(void) const { return value; }
+    const std::string get_token(void) const;
     const std::vector<Token>& get_production(void) const { return tree; }
 
     static Token descent(const Token& definition, const std::string text);
@@ -66,6 +71,8 @@ protected:
     virtual bool is_capture(const char x [[maybe_unused]]) const;
 
 private:
+    std::string name;
+
     Token::label t;
 
     production_t tokens;

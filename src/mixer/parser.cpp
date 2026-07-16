@@ -1,8 +1,9 @@
 #include <algorithm>
+#include <stdexcept>
 
 #include "mixer/parser.h"
 
-Token::Token() : t {Token::label::end} {}
+Token::Token() : t {Token::label::end}  {}
 
 Token::Token(const Token::label label) : t {label} {}
 
@@ -17,12 +18,35 @@ Token::Token(production_t&& children) : t(Token::label::node) {
     tokens = std::move(children);
 }
 
+Token& Token::set_name(const std::string ast_name) {
+    name = ast_name;
+    return *this;
+}
+
+std::string Token::get_name(void) const {
+    return name;
+}
+
 void Token::operator=(AST_t&& parse) {
     tree = std::move(parse);
 }
 
 const Token& Token::operator[](int index) const {
     return tree[index];
+}
+
+const std::string Token::get_token(void) const {
+    if(t == Token::label::node) {
+        std::string traversed;
+
+        for(size_t i = 0; i < tree.size(); i++) {
+            traversed += tree[i].get_token();
+        }
+
+        return traversed;
+    }
+
+    return value;
 }
 
 Token& Token::set_optional(void) {
@@ -90,16 +114,28 @@ Token Token::match(std::string::const_iterator& i,
     return Token(t, capture);
 }
 
-Token Token::parse(std::string::const_iterator& i,
+Token Token::parse(std::string::const_iterator& begin,
                    std::string::const_iterator& end) const {
     AST_t parse;
 
-    for(const auto& x : tokens) {
-        if (x->get_type() == Token::label::node) {
-            parse.push_back(x->parse(i, end));
+    for(size_t i = 0; i < tokens.size(); i++) {
+        if (tokens[i]->get_type() == Token::label::node) {
+            auto ascent = tokens[i]->parse(begin, end);
+
+            if(ascent.get_type() == Token::label::nothing && (!ascent.get_optional())) {
+                throw std::invalid_argument("Token::parse failed on: " + tokens[i]->get_name());
+            }
+
+            parse.push_back(std::move(ascent));
         }
         else {
-            parse.push_back(x->match(i, end));
+            auto ascent = tokens[i]->match(begin, end);
+
+            if(ascent.get_type() == Token::label::nothing && (!ascent.get_optional())) {
+                throw std::invalid_argument("Token::match failed on: " + tokens[i]->get_name());
+            }
+
+            parse.push_back(std::move(ascent));
         }
     }
 
