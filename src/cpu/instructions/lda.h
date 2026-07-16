@@ -11,21 +11,17 @@ class LDA : public Instruction {
 public:
     void opcode(void) const;
 
-    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator begin,
-                                                  std::string::const_iterator end) const;
-
     virtual ~LDA() = default;
+
+
+ protected:
+    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator& begin,
+                                                  std::string::const_iterator& end) const override;
 
     virtual std::unique_ptr<Instruction> encode(int address,
                                                 int index,
                                                 int field_lower,
-                                                int field_upper) const;
-
-private:
-    void parse_field_spec(std::string::const_iterator begin,
-                          std::string::const_iterator end,
-                          int& lower,
-                          int& upper) const;
+                                                int field_upper) const override;
 };
 
 #endif

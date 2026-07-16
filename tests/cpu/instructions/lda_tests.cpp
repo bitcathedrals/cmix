@@ -5,8 +5,12 @@
 #include "cpu/instructions/lda.h"
 #include "cpu/cpu.h"
 
+struct LDA_winch : public LDA {
+    using LDA::encode;
+};
+
 TEST(LDACpuTest, Encode) {
-    LDA x;
+    LDA_winch x;
 
     std::unique_ptr<Instruction> encoded = x.encode(12,  // address
                                                     13,  // index
@@ -20,13 +24,13 @@ TEST(LDACpuTest, Encode) {
 }
 
 TEST(LDACpuTest, CpuTest) {
+    LDA_winch x;
+
     CPU.reset();
 
     CPU.A = Word(12,12,12,12,12);
 
     CPU.memory[1] = Word(2,4,6,8,10);
-
-    LDA x;
 
     CPU.memory[0] = *x.encode(1,
                               0,

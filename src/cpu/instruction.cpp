@@ -3,6 +3,7 @@
 #include <iterator>
 #include <map>
 #include <memory>
+#include <string>
 
 #include "cpu/instruction.h"
 #include "mixer/parser.h"
@@ -131,9 +132,8 @@ std::pair<int, std::unique_ptr<Instruction>> Instruction::assemble(const std::st
                                                        InstructionFactory[opcode.get_token()]->assemble(begin, end));
 }
 
-
-std::unique_ptr<Instruction> Instruction::assemble(std::string::const_iterator begin [[maybe_unused]],
-                                                   std::string::const_iterator end [[maybe_unused]]) const {
+std::unique_ptr<Instruction> Instruction::assemble(std::string::const_iterator& begin [[maybe_unused]],
+                                                   std::string::const_iterator& end [[maybe_unused]]) const {
     throw std::logic_error("assemble base class virtual called");
 }
 
@@ -156,4 +156,87 @@ void Instruction::execute(void) const {
 
 void Instruction::opcode(void) const {
     throw std::logic_error("Instruction::opcode base class method reached");
+}
+
+void Instruction::assemble_field(std::string::const_iterator& begin,
+                                 std::string::const_iterator& end,
+
+                                 int& lower,
+                                 int& upper) const {
+
+    Numeric left_match;
+    Token left_token = left_match.match(begin, end);
+
+    if(left_token.get_type() != Token::label::number) {
+        throw std::invalid_argument("invalid assembly: left field missing or mangled.");
+    }
+
+    Punctuation field_splitter;
+    Token split = field_splitter.match(begin,end);
+
+    if(split.get_type() != Token::label::special) {
+        throw std::invalid_argument("invalid assembly: middle \":\" split missing");
+    }
+
+    Numeric right_match;
+    Token right_token = right_match.match(begin, end);
+
+    if(right_token.get_type() != Token::label::number) {
+        throw std::invalid_argument("invalid assembly: right numeric missing or mangled.");
+    }
+
+    lower = std::stoi(left_token.get_token());
+    upper = std::stoi(right_token.get_token());
+}
+
+void Instruction::assemble_address(std::string::const_iterator& begin,
+                                   std::string::const_iterator& end,
+
+                                   int& address,
+                                   int& index,
+                                   int& field_lower,
+                                   int& field_upper) const {
+    address = 0;
+    index = 0;
+
+    field_lower = 0;
+    field_upper = 5;
+
+    Numeric adr_match;
+    adr_match.match(begin, end);
+
+    if(adr_match.get_type() != Token::label::number) {
+        throw std::invalid_argument("invalid assembly: address missing or mangled.");
+    }
+
+    address = std::stoi(adr_match.get_token());
+
+    Punctuation comma_or_lparen;
+    comma_or_lparen.match(begin,end);
+
+    if(comma_or_lparen.get_type() == Token::label::nothing) {
+        encode(address, index, field_lower, field_upper);
+        return;
+    }
+
+    if(comma_or_lparen.get_type() != Token::label::special) {
+        throw std::invalid_argument("invalid assembly: after address is not: ,(");
+    }
+
+    if(comma_or_lparen.get_token() == ",") {
+        Numeric index_value;
+        index_value.match(begin,end);
+
+        if(index_value.get_type() != Token::label::number) {
+            throw std::invalid_argument("invalid assembly: after comma an index value is required");
+        }
+
+        index = std::stoi(index_value.get_token());
+    }
+    else if(comma_or_lparen.get_token() == "(") {
+        assemble_field(begin, end, field_lower, field_upper);
+    }
+    else {
+        throw std::invalid_argument("invalid assembly: expected ( or ,");
+    }
 }

@@ -49,14 +49,28 @@ public:
                                                 int field_lower,
                                                 int field_upper) const;
     void execute(void) const;
+
     void opcode(void) const;
 
     virtual ~Instruction() = default;
 
 protected:
-    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator begin,
-                                                  std::string::const_iterator end) const;
+    void assemble_field(std::string::const_iterator& begin,
+                        std::string::const_iterator& end,
 
+                        int& lower,
+                        int& upper) const;
+
+    void assemble_address(std::string::const_iterator& begin,
+                          std::string::const_iterator& end,
+
+                          int& address,
+                          int& index,
+                          int& field_lower,
+                          int& field_upper) const;
+
+    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator& begin,
+                                                  std::string::const_iterator& end) const;
 };
 
 enum class InstructionOpCodes : byte {

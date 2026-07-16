@@ -43,6 +43,7 @@ TEST(MixerBasicToken, MatchLowerCase) {
 
     EXPECT_EQ(token.get_type(), Token::label::text);
     EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
+    EXPECT_EQ(token.get_token(), "aa");
 }
 
 TEST(MixerBasicToken, MatchInjectNumbers) {
@@ -75,6 +76,7 @@ TEST(MixerBasicToken, NumberMatchTest) {
 
     EXPECT_EQ(token.get_type(), Token::label::number);
     EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
+    EXPECT_EQ(token.get_token(), "22");
 }
 
 TEST(MixerBasicToken, NumberUnreachableTest) {
@@ -121,4 +123,5 @@ TEST(MixerBasicToken, PuncuationTest) {
 
     EXPECT_EQ(token.get_type(), Token::label::special);
     EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
+    EXPECT_EQ(token.get_token(), "!!");
 }
