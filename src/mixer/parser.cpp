@@ -18,9 +18,9 @@ Token::Token(production_t&& children) : t(Token::label::node) {
     tokens = std::move(children);
 }
 
-Token& Token::set_name(const std::string ast_name) {
+Token* Token::set_name(const std::string ast_name) {
     name = ast_name;
-    return *this;
+    return this;
 }
 
 std::string Token::get_name(void) const {
@@ -49,9 +49,9 @@ const std::string Token::get_token(void) const {
     return value;
 }
 
-Token& Token::set_optional(void) {
+Token* Token::set_optional(void) {
     optional = true;
-    return *this;
+    return this;
 }
 
 bool Token::is_capture(const char x [[maybe_unused]]) const {
@@ -204,6 +204,14 @@ bool Alphabetic::is_capture(const char x) const {
     return false;
 }
 
+bool NumSign::is_capture(const char x) const {
+    if (x == '+' || x == '-') {
+        return true;
+    }
+
+    return false;
+}
+
 bool Numeric::is_capture(const char x) const {
     if (std::isdigit(x)) {
         return true;
@@ -226,4 +234,4 @@ bool Numeric::is_capture(const char x) const {
      }
 
      return false;
-  }
+ }

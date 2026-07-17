@@ -48,8 +48,8 @@ public:
     void operator=(AST_t&& parse);
     const Token& operator[](int index) const;
 
-    Token& set_name(const std::string name);
-    Token& set_optional(void);
+    Token* set_name(const std::string name);
+    Token* set_optional(void);
 
     std::string get_name(void) const;
     bool get_optional(void) { return optional; };
@@ -95,6 +95,15 @@ class Alphabetic : public Token {
 public:
     Alphabetic() : Token(Token::label::text) {}
     Alphabetic(const Token::label label) : Token(label) {}
+
+private:
+    virtual bool is_capture(const char x) const override;
+};
+
+class NumSign : public Token {
+public:
+    NumSign() : Token(Token::label::special) {}
+    NumSign(const Token::label label) : Token(label) {}
 
 private:
     virtual bool is_capture(const char x) const override;
