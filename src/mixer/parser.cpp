@@ -122,7 +122,7 @@ Token Token::parse(std::string::const_iterator& begin,
         if (tokens[i]->get_type() == Token::label::node) {
             auto ascent = tokens[i]->parse(begin, end);
 
-            if(ascent.get_type() == Token::label::nothing && (!ascent.get_optional())) {
+            if(ascent.get_type() == Token::label::nothing && (!tokens[i]->get_optional())) {
                 throw std::invalid_argument("Token::parse failed on: " + tokens[i]->get_name());
             }
 
@@ -131,7 +131,7 @@ Token Token::parse(std::string::const_iterator& begin,
         else {
             auto ascent = tokens[i]->match(begin, end);
 
-            if(ascent.get_type() == Token::label::nothing && (!ascent.get_optional())) {
+            if(ascent.get_type() == Token::label::nothing && (!tokens[i]->get_optional())) {
                 throw std::invalid_argument("Token::match failed on: " + tokens[i]->get_name());
             }
 
