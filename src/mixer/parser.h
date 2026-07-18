@@ -52,7 +52,7 @@ public:
     Token* set_optional(void);
 
     std::string get_name(void) const;
-    bool get_optional(void) { return optional; };
+    bool get_optional(void) const { return optional; };
     Token::label get_type(void) const { return t; }
     const std::string get_token(void) const;
     const std::vector<Token>& get_production(void) const { return tree; }

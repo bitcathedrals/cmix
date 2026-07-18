@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <stdexcept>
-
+#include <iostream>
+    
 #include "mixer/parser.h"
 
 Token::Token() : t {Token::label::end}  {}
@@ -60,11 +61,10 @@ bool Token::is_capture(const char x [[maybe_unused]]) const {
 };
 
 bool Token::is_terminal(const char x) const {
-    if(terminal[0] == x ||
-       terminal[1] == x ||
-       terminal[2] == x ||
-       terminal[3] == x) {
-        return true;
+    for(auto t : terminal) {
+        if(x == t) {
+            return true;
+        }
     }
 
     return false;
@@ -118,14 +118,21 @@ Token Token::parse(std::string::const_iterator& begin,
                    std::string::const_iterator& end) const {
     AST_t parse;
 
-    // need to copy the iterators, and do a rollback if the productions fail without
-    // optional
+    auto rollback_begin = begin;
+    auto rollback_end = end;
 
     for(size_t i = 0; i < tokens.size(); i++) {
         if (tokens[i]->get_type() == Token::label::node) {
             auto ascent = tokens[i]->parse(begin, end);
 
             if(ascent.get_type() == Token::label::nothing && (!tokens[i]->get_optional())) {
+                if(get_optional()) {
+                    begin = rollback_begin;
+                    end = rollback_end;
+
+                    return Token(Token::label::nothing);
+                }
+
                 throw std::invalid_argument("Token::parse failed on: " + tokens[i]->get_name());
             }
 
@@ -135,6 +142,13 @@ Token Token::parse(std::string::const_iterator& begin,
             auto ascent = tokens[i]->match(begin, end);
 
             if(ascent.get_type() == Token::label::nothing && (!tokens[i]->get_optional())) {
+                if(get_optional()) {
+                    begin = rollback_begin;
+                    end = rollback_end;
+
+                    return Token(Token::label::nothing);
+                }
+
                 throw std::invalid_argument("Token::match failed on: " + tokens[i]->get_name());
             }
 
@@ -157,11 +171,16 @@ Token Token::descent(const Token& definition, const std::string text) {
     auto i = text.cbegin();
     auto end = text.cend();
 
-    if (definition.get_type() == Token::label::node) {
-        return definition.parse(i, end);
-    }
-    else {
-        return definition.match(i, end);
+    try {
+        if (definition.get_type() == Token::label::node) {
+            return definition.parse(i, end);
+        }
+        else {
+            return definition.match(i, end);
+        }
+    } catch(std::invalid_argument exception) {
+        std::cerr << "cmix parser fail: " << exception.what() << "on input: " << text << std::endl;
+        throw;
     }
 }
 
