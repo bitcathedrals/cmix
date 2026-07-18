@@ -13,6 +13,10 @@
 std::map<std::string, std::unique_ptr<Instruction>> InstructionFactory;
 std::map<int, std::unique_ptr<Instruction>> InstructionTable;
 
+Instruction::Instruction(void) : address_parser(build_address_parser()) {
+
+}
+
 int Instruction::get_address(void) const {
     return
         (operator[](static_cast<byte>(InstructionFields::address_begin)) * 100)
@@ -187,6 +191,22 @@ void Instruction::assemble_field(std::string::const_iterator& begin,
 
     lower = std::stoi(left_token.get_token());
     upper = std::stoi(right_token.get_token());
+}
+
+std::unique_ptr<Token> Instruction::build_address_parser(void) {
+    production_t def;
+
+    auto sign = std::make_unique<NumSign>();
+    sign->set_optional()->set_name("Address sign");
+
+    def.push_back(std::move(sign));
+
+    auto address = std::make_unique<Numeric>();
+    address->set_name("Address numeric");
+
+    def.push_back(std::move(address));
+
+    return std::make_unique<Token>(std::move(def));
 }
 
 void Instruction::assemble_address(std::string::const_iterator& begin,

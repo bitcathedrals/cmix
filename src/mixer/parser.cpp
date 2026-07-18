@@ -118,6 +118,9 @@ Token Token::parse(std::string::const_iterator& begin,
                    std::string::const_iterator& end) const {
     AST_t parse;
 
+    // need to copy the iterators, and do a rollback if the productions fail without
+    // optional
+
     for(size_t i = 0; i < tokens.size(); i++) {
         if (tokens[i]->get_type() == Token::label::node) {
             auto ascent = tokens[i]->parse(begin, end);
@@ -136,6 +139,10 @@ Token Token::parse(std::string::const_iterator& begin,
             }
 
             parse.push_back(std::move(ascent));
+        }
+
+        if(begin == end) {
+            break;
         }
     }
 

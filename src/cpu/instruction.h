@@ -7,6 +7,7 @@
 
 #include "cpu/defs.h"
 #include "cpu/word.h"
+#include "mixer/parser.h"
 
 enum class InstructionFields : byte {
     address_begin = 1,
@@ -18,6 +19,8 @@ enum class InstructionFields : byte {
 
 class Instruction : public Word {
 public:
+    Instruction(void);
+
     int get_address() const;
 
     Instruction& set_address(int value);
@@ -71,6 +74,10 @@ protected:
 
     virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator& begin,
                                                   std::string::const_iterator& end) const;
+
+    std::unique_ptr<Token> address_parser;
+
+    std::unique_ptr<Token> build_address_parser(void);
 };
 
 enum class InstructionOpCodes : byte {
