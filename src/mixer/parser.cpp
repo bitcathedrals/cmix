@@ -1,7 +1,8 @@
+#include <format>
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
-    
+
 #include "mixer/parser.h"
 
 Token::Token() : t {Token::label::end}  {}
@@ -118,40 +119,63 @@ Token Token::parse(std::string::const_iterator& begin,
                    std::string::const_iterator& end) const {
     AST_t parse;
 
-    auto rollback_begin = begin;
-    auto rollback_end = end;
+    auto backtrack = begin;
 
     for(size_t i = 0; i < tokens.size(); i++) {
         if (tokens[i]->get_type() == Token::label::node) {
             auto ascent = tokens[i]->parse(begin, end);
 
-            if(ascent.get_type() == Token::label::nothing && (!tokens[i]->get_optional())) {
-                if(get_optional()) {
-                    begin = rollback_begin;
-                    end = rollback_end;
-
-                    return Token(Token::label::nothing);
+            if(ascent.get_type() == Token::label::nothing) {
+                if(tokens[i]->optional) {
+                    begin = backtrack;
+                    continue;
                 }
 
-                throw std::invalid_argument("Token::parse failed on: " + tokens[i]->get_name());
+                std::string diagnostic;
+
+                if(parse.size() < 1) {
+                    diagnostic = "<none>";
+                }
+                else {
+                    const Token& last = parse.back();
+                    diagnostic = last.get_token();
+                }
+
+                throw std::invalid_argument(std::format("Token::parse {} failed {} characters after checkpoint \"{}\"",
+                                                        tokens[i]->get_name(),
+                                                        std::distance(backtrack, begin),
+                                                        diagnostic));
             }
 
+            backtrack = begin;
             parse.push_back(std::move(ascent));
         }
         else {
             auto ascent = tokens[i]->match(begin, end);
 
-            if(ascent.get_type() == Token::label::nothing && (!tokens[i]->get_optional())) {
-                if(get_optional()) {
-                    begin = rollback_begin;
-                    end = rollback_end;
-
-                    return Token(Token::label::nothing);
+            if(ascent.get_type() == Token::label::nothing) {
+                if(tokens[i]->get_optional()) {
+                    begin = backtrack;
+                    continue;
                 }
 
-                throw std::invalid_argument("Token::match failed on: " + tokens[i]->get_name());
+                std::string diagnostic;
+
+                if(parse.size() < 1) {
+                    diagnostic = "<none>";
+                }
+                else {
+                    const Token& last = parse.back();
+                    diagnostic = last.get_token();
+                }
+
+                throw std::invalid_argument(std::format("Token::match {} failed {} characters after checkpoint \"{}\"",
+                                                        tokens[i]->get_name(),
+                                                        std::distance(backtrack, begin),
+                                                        diagnostic));
             }
 
+            backtrack = begin;
             parse.push_back(std::move(ascent));
         }
 

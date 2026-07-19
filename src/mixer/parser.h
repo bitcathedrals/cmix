@@ -46,6 +46,8 @@ public:
     virtual ~Token(void) = default;
 
     void operator=(AST_t&& parse);
+
+    int size(void) const { return tree.size(); }
     const Token& operator[](int index) const;
 
     Token* set_name(const std::string name);

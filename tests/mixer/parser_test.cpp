@@ -31,7 +31,6 @@ TEST(MixerParserSimple, SimpleAST) {
     EXPECT_EQ(p[1].get_token(), "34");
 }
 
-
 TEST(MixerParserSimple, OptionalPresent) {
     std::string test_string("-1234");
 
@@ -50,7 +49,6 @@ TEST(MixerParserSimple, OptionalPresent) {
     EXPECT_EQ(std::stoi(p.get_token()), -1234);
 }
 
-
 TEST(MixerParserSimple, OptionalNotPresent) {
     std::string test_string("1234");
 
@@ -67,4 +65,53 @@ TEST(MixerParserSimple, OptionalNotPresent) {
     EXPECT_EQ(p.get_type(), Token::label::node);
     EXPECT_EQ(p.get_token(), "1234");
     EXPECT_EQ(std::stoi(p.get_token()), 1234);
+}
+
+TEST(MixerParserSimple, ComplexOk) {
+    std::string test_string("1234 (10:2)");
+
+    auto left_paren = std::make_unique<Punctuation>();
+    left_paren->set_name("left_paren");
+
+    auto left_number = std::make_unique<Numeric>();
+    left_number->set_name("left_number");
+
+    auto field_middle = std::make_unique<Punctuation>();
+    field_middle->set_name("field_middle");
+
+    auto right_number = std::make_unique<Numeric>();
+    right_number->set_name("right_number");
+
+    auto right_paren = std::make_unique<Punctuation>();
+    right_paren->set_name("right_paren");
+
+    production_t field_def;
+
+    field_def.push_back(std::move(left_paren));
+    field_def.push_back(std::move(left_number));
+    field_def.push_back(std::move(field_middle));
+    field_def.push_back(std::move(right_number));
+    field_def.push_back(std::move(right_paren));
+
+    auto field_group = std::make_unique<Token>(std::move(field_def));
+    field_group->set_name("field_group");
+
+    production_t parser_def;
+
+    auto leading_number = std::make_unique<Numeric>();
+    leading_number->set_name("leading_number");
+
+    parser_def.push_back(std::move(leading_number));
+    parser_def.push_back(std::move(field_group));
+
+    Token parser(std::move(parser_def));
+
+    // descend
+
+    Token AST = Token::descent(parser, test_string);
+
+    EXPECT_EQ(AST.get_type(), Token::label::node);
+    EXPECT_EQ(AST.size(), 2);
+    EXPECT_EQ(AST[0].get_token(), "1234");
+    EXPECT_EQ(AST[1].get_token(), "(10:2)");
 }
