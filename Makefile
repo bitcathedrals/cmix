@@ -115,7 +115,7 @@ XCRUN =
 endif
 
 run:
-	find $(TEST_OBJ) -name '*.gcda' -print | xargs rm
+	find $(TEST_OBJ) -name '*.gcda' -exec "{}" \;
 	./runner
 
 coverage:

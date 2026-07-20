@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "mixer/parser.h"
+#include "mixer/address.h"
 
 TEST(MixerParserSimple, MatchTopLevel) {
     std::string test_string("1234");
