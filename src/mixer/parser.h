@@ -60,6 +60,7 @@ public:
     const std::vector<Token>& get_production(void) const { return tree; }
 
     static Token descent(const Token& definition, const std::string text);
+    static Token descent(const std::unique_ptr<const Token> definition, const std::string text);
 
     Token match(std::string::const_iterator& i,
                 std::string::const_iterator& end) const;

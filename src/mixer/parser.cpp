@@ -208,6 +208,23 @@ Token Token::descent(const Token& definition, const std::string text) {
     }
 }
 
+Token Token::descent(const std::unique_ptr<const Token> definition, const std::string text) {
+    auto i = text.cbegin();
+    auto end = text.cend();
+
+    try {
+        if (definition->get_type() == Token::label::node) {
+            return definition->parse(i, end);
+        }
+        else {
+            return definition->match(i, end);
+        }
+    } catch(std::invalid_argument exception) {
+        std::cerr << "cmix parser fail: " << exception.what() << "on input: " << text << std::endl;
+        throw;
+    }
+}
+
 std::ostream& operator<<(std::ostream& out, const Token& token) {
     std::string label;
 

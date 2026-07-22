@@ -116,3 +116,13 @@ TEST(MixerParserSimple, ComplexOk) {
     EXPECT_EQ(AST[0].get_token(), "1234");
     EXPECT_EQ(AST[1].get_token(), "(10:2)");
 }
+
+TEST(MixerParserSimple, AddressSignedAddressOnly) {
+    std::string test_string("1234");
+
+    Token p = Token::descent(build_signed_number_parser(), test_string);
+
+    EXPECT_EQ(p.get_type(), Token::label::node);
+    EXPECT_EQ(p.get_token(), "1234");
+    EXPECT_EQ(std::stoi(p.get_token()), 1234);
+}
