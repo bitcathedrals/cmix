@@ -206,7 +206,7 @@ Token Token::descent(const Token& definition, const std::string text) {
         else {
             return definition.match(i, end);
         }
-    } catch(std::invalid_argument exception) {
+    } catch(const std::invalid_argument& exception) {
         std::cerr << "cmix parser fail: " << exception.what() << "on input: " << text << std::endl;
         throw;
     }
@@ -223,7 +223,7 @@ Token Token::descent(const std::unique_ptr<const Token> definition, const std::s
         else {
             return definition->match(i, end);
         }
-    } catch(std::invalid_argument exception) {
+    } catch(const std::invalid_argument& exception) {
         std::cerr << "cmix parser fail: " << exception.what() << "on input: " << text << std::endl;
         throw;
     }
