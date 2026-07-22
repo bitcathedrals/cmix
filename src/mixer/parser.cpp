@@ -125,6 +125,10 @@ Token Token::parse(std::string::const_iterator& begin,
         if (tokens[i]->get_type() == Token::label::node) {
             auto ascent = tokens[i]->parse(begin, end);
 
+            if(ascent.get_type() == Token::label::end) {
+                return Token(std::move(parse));
+            }
+
             if(ascent.get_type() == Token::label::nothing) {
                 if(tokens[i]->optional) {
                     begin = backtrack;
