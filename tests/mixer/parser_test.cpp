@@ -71,19 +71,19 @@ TEST(MixerParserSimple, OptionalNotPresent) {
 TEST(MixerParserSimple, ComplexOk) {
     std::string test_string("1234 (10:2)");
 
-    auto left_paren = std::make_unique<Punctuation>();
+    auto left_paren = std::make_unique<Special>();
     left_paren->set_name("left_paren");
 
     auto left_number = std::make_unique<Numeric>();
     left_number->set_name("left_number");
 
-    auto field_middle = std::make_unique<Punctuation>();
+    auto field_middle = std::make_unique<Special>();
     field_middle->set_name("field_middle");
 
     auto right_number = std::make_unique<Numeric>();
     right_number->set_name("right_number");
 
-    auto right_paren = std::make_unique<Punctuation>();
+    auto right_paren = std::make_unique<Special>();
     right_paren->set_name("right_paren");
 
     production_t field_def;
@@ -126,3 +126,26 @@ TEST(MixerParserSimple, AddressSignedAddressOnly) {
     EXPECT_EQ(p.get_token(), "1234");
     EXPECT_EQ(std::stoi(p.get_token()), 1234);
 }
+
+// TEST(MixerParserAddress, AddressCommaIndexOk) {
+//     std::string test_string("1234,4");
+
+//     production_t define;
+
+//     define.push_back(build_signed_number_parser());
+//     define.push_back(build_comma_index_parser());
+
+//     Token p = Token::descent(Token(std::move(define)), test_string);
+
+//     EXPECT_EQ(p.get_type(), Token::label::node);
+
+//     EXPECT_EQ(p[0].get_type(), Token::label::number);
+//     EXPECT_EQ(p[0].get_token(), "1234");
+
+//     EXPECT_EQ(p[1].get_type(), Token::label::node);
+//     EXPECT_EQ(p[1][0].get_type(), Token::label::special);
+//     EXPECT_EQ(p[1][1].get_type(), Token::label::number);
+
+//     EXPECT_EQ(std::stoi(p[0].get_token()), 1234);
+//     EXPECT_EQ(std::stoi(p[1][1].get_token()), 4);
+// }

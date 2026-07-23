@@ -18,16 +18,16 @@ using AST_t = std::vector<Token>;
 class Token {
 public:
     enum class label {
-        number,
-        symbol,
-        text,
-        special,
+        number = 0,
+        symbol = 1,
+        text = 2,
+        special = 3,
 
-        node,
+        node = 4,
 
-        nothing,
-        error,
-        end
+        nothing = 5,
+        error = 6,
+        end = 7
     };
 
     Token();
@@ -48,7 +48,7 @@ public:
     void operator=(AST_t&& parse);
 
     int size(void) const { return tree.size(); }
-    const Token& operator[](int index) const;
+    const Token& operator[](size_t index) const;
 
     Token* set_name(const std::string name);
     Token* set_optional(void);
@@ -70,6 +70,8 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const Token& token);
 
+    void graph_tree(std::ostream& out);
+
 protected:
     virtual bool is_capture(const char x [[maybe_unused]]) const;
 
@@ -90,6 +92,12 @@ private:
 
     void skip_terminal(std::string::const_iterator& i,
                        std::string::const_iterator& n) const;
+
+    void graph_header(std::ostream& output);
+    void graph_footer(std::ostream& output);
+
+    void graph_define(std::string label, std::ostream& output);
+    void graph_node(std::string parent, std::ostream& output);
 };
 
 std::ostream& operator<<(std::ostream& out, const Token& token);
@@ -130,10 +138,10 @@ private:
     virtual bool is_capture(const char x) const override;
 };
 
-class Punctuation : public Token {
+class Special : public Token {
 public:
-    Punctuation() : Token(Token::label::special) {}
-    Punctuation(const Token::label label) : Token(label) {}
+    Special() : Token(Token::label::special) {}
+    Special(const Token::label label) : Token(label) {}
 
 private:
     virtual bool is_capture(const char x) const override;

@@ -33,7 +33,11 @@ void Token::operator=(AST_t&& parse) {
     tree = std::move(parse);
 }
 
-const Token& Token::operator[](int index) const {
+const Token& Token::operator[](size_t index) const {
+    if(index >= tree.size()) {
+        throw std::out_of_range(std::format("bad Token index {} in {}",index,tree.size()));
+    }
+
     return tree[index];
 }
 
@@ -115,6 +119,30 @@ Token Token::match(std::string::const_iterator& i,
     return Token(t, capture);
 }
 
+static void parse_fail_throw(const AST_t& parse,
+                             const Token& token,
+
+                             const std::string::const_iterator& backtrack,
+                             const std::string::const_iterator& begin) {
+    std::string diagnostic;
+
+    std::string type((token.get_type() == Token::label::node) ? "parse" : "match");
+
+    if(parse.size() < 1) {
+        diagnostic = "<nothing emitted>";
+    }
+    else {
+        const Token& last = parse.back();
+        diagnostic = last.get_token();
+    }
+
+    throw std::invalid_argument(std::format("{} {} failed {} characters after checkpoint \"{}\"",
+                                            type,
+                                            token.get_name(),
+                                            std::distance(backtrack, begin),
+                                            diagnostic));
+}
+
 Token Token::parse(std::string::const_iterator& begin,
                    std::string::const_iterator& end) const {
     AST_t parse;
@@ -122,11 +150,19 @@ Token Token::parse(std::string::const_iterator& begin,
     auto backtrack = begin;
 
     for(size_t i = 0; i < tokens.size(); i++) {
+        if(begin == end) {
+            if(i == (tokens.size() - 1)) {
+                break;
+            }
+
+            return Token {};
+        }
+
         if (tokens[i]->get_type() == Token::label::node) {
             auto ascent = tokens[i]->parse(begin, end);
 
             if(ascent.get_type() == Token::label::end) {
-                return Token(std::move(parse));
+                return ascent;
             }
 
             if(ascent.get_type() == Token::label::nothing) {
@@ -135,57 +171,28 @@ Token Token::parse(std::string::const_iterator& begin,
                     continue;
                 }
 
-                std::string diagnostic;
-
-                if(parse.size() < 1) {
-                    diagnostic = "<none>";
-                }
-                else {
-                    const Token& last = parse.back();
-                    diagnostic = last.get_token();
-                }
-
-                throw std::invalid_argument(std::format("Token::parse {} failed {} characters after checkpoint \"{}\"",
-                                                        tokens[i]->get_name(),
-                                                        std::distance(backtrack, begin),
-                                                        diagnostic));
+                parse_fail_throw(parse, *tokens[i], backtrack, begin);
             }
 
             backtrack = begin;
             parse.push_back(std::move(ascent));
+
+            continue;
         }
-        else {
-            auto ascent = tokens[i]->match(begin, end);
 
-            if(ascent.get_type() == Token::label::nothing) {
-                if(tokens[i]->get_optional()) {
-                    begin = backtrack;
-                    continue;
-                }
+        auto ascent = tokens[i]->match(begin, end);
 
-                std::string diagnostic;
-
-                if(parse.size() < 1) {
-                    diagnostic = "<none>";
-                }
-                else {
-                    const Token& last = parse.back();
-                    diagnostic = last.get_token();
-                }
-
-                throw std::invalid_argument(std::format("Token::match {} failed {} characters after checkpoint \"{}\"",
-                                                        tokens[i]->get_name(),
-                                                        std::distance(backtrack, begin),
-                                                        diagnostic));
+        if(ascent.get_type() == Token::label::nothing) {
+            if(tokens[i]->get_optional()) {
+                begin = backtrack;
+                continue;
             }
 
-            backtrack = begin;
-            parse.push_back(std::move(ascent));
+            parse_fail_throw(parse, *tokens[i], backtrack, begin);
         }
 
-        if(begin == end) {
-            break;
-        }
+        backtrack = begin;
+        parse.push_back(std::move(ascent));
     }
 
     if (parse.size() < 1) {
@@ -267,6 +274,40 @@ std::ostream& operator<<(std::ostream& out, const Token& token) {
     return out;
 }
 
+void Token::graph_header(std::ostream& output) {
+    output << "print digraph { "
+           << "    rank=TB" << std::endl;
+}
+
+void Token::graph_footer(std::ostream& output) {
+    output << "}" << std::endl;
+}
+
+void Token::graph_define(std::string label, std::ostream& output) {
+    output << name
+           << "[label = \"" << label << "\"]" << std::endl;
+}
+
+void Token::graph_node(std::string parent,
+                       std::ostream& output) {
+    graph_define(get_name(), output);
+
+    for(size_t i = 0; i < tokens.size(); i++) {
+        output << "    " << get_name() <<  " -> "<< parent << std::endl;
+        tokens[i]->graph_node(get_name(), output);
+    }
+}
+
+void Token::graph_tree(std::ostream& output) {
+    graph_header(output);
+
+    graph_define(get_name(), output);
+
+    graph_node(get_name(), output);
+
+    graph_footer(output);
+}
+
 bool Alphabetic::is_capture(const char x) const {
     if (std::isalpha(x)) {
         return true;
@@ -299,10 +340,11 @@ bool Numeric::is_capture(const char x) const {
      return false;
  }
 
- bool Punctuation::is_capture(const char x) const {
+ bool Special::is_capture(const char x) const {
      if (std::ispunct(x)) {
          return true;
      }
 
      return false;
  }
+

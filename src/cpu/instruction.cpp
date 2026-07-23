@@ -175,7 +175,7 @@ void Instruction::assemble_field(std::string::const_iterator& begin,
         throw std::invalid_argument("invalid assembly: left field missing or mangled.");
     }
 
-    Punctuation field_splitter;
+    Special field_splitter;
     Token split = field_splitter.match(begin,end);
 
     if(split.get_type() != Token::label::special) {
@@ -231,7 +231,7 @@ void Instruction::assemble_address(std::string::const_iterator& begin,
 
     address = std::stoi(adr_match.get_token());
 
-    Punctuation comma_or_lparen;
+    Special comma_or_lparen;
     comma_or_lparen.match(begin,end);
 
     if(comma_or_lparen.get_type() == Token::label::nothing) {

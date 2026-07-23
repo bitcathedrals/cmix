@@ -10,7 +10,7 @@ case $1 in
     ;;
     "fail")
         lldb ./runner -- \
-             --gtest_filter=${SUITE}.${TEST} \
+             --gtest_filter="${SUITE}.${TEST}" \
              --gtest_break_on_failure \
              --gtest_catch_exceptions=0
     ;;

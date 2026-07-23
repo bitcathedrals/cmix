@@ -111,17 +111,33 @@ TEST(MixerBasicToken, NumberGappedTest) {
 // punctuation
 //
 
-TEST(MixerBasicToken, PuncuationTest) {
+TEST(MixerBasicToken, SpecialTest) {
     std::string lower("!!");
 
     std::string::const_iterator begin = lower.cbegin();
     std::string::const_iterator end = lower.cend();
 
-    Punctuation matcher;
+    Special matcher;
 
     Token token = matcher.match(begin, end);
 
     EXPECT_EQ(token.get_type(), Token::label::special);
     EXPECT_EQ(token.get_token().size(), static_cast<size_t>(2));
     EXPECT_EQ(token.get_token(), "!!");
+}
+
+TEST(MixerBasicToken, StopBeforeEndAndReturn) {
+    Numeric matcher;
+    
+    std::string input("1234,");
+
+    std::string::const_iterator begin = input.cbegin();
+    std::string::const_iterator end = input.cend();
+
+    Token token = matcher.match(begin, end);
+
+    EXPECT_EQ(token.get_type(), Token::label::number);
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(4));
+    EXPECT_EQ(token.get_token(), "1234");
+
 }
