@@ -65,13 +65,17 @@ std::unique_ptr<Token> build_comma_index_parser(void) {
     production_t define;
 
     auto comma = std::make_unique<Special>();
-    comma->set_name("comma_index: comma");
+    comma->set_name("CommaIndex_comma");
+
+    define.push_back(std::move(comma));
 
     auto index = std::make_unique<Numeric>();
-    index->set_name("comma_index: index");
+    index->set_name("CommaIndex_index");
+
+    define.push_back(std::move(index));
 
     auto p = std::make_unique<Token>(std::move(define));
-    p->set_name("comma_index production");
+    p->set_name("CommaIndex");
 
     return p;
 }

@@ -275,8 +275,8 @@ std::ostream& operator<<(std::ostream& out, const Token& token) {
 }
 
 void Token::graph_header(std::ostream& output) {
-    output << "print digraph { "
-           << "    rank=TB" << std::endl;
+    output << "digraph { "
+           << std::endl << "    rank=TB" << std::endl;
 }
 
 void Token::graph_footer(std::ostream& output) {
@@ -284,26 +284,22 @@ void Token::graph_footer(std::ostream& output) {
 }
 
 void Token::graph_define(std::string label, std::ostream& output) {
-    output << name
-           << "[label = \"" << label << "\"]" << std::endl;
+    output << label << " [label = \"" << label << "\"]" << std::endl;
 }
 
-void Token::graph_node(std::string parent,
-                       std::ostream& output) {
+void Token::graph_node(std::ostream& output) {
     graph_define(get_name(), output);
 
     for(size_t i = 0; i < tokens.size(); i++) {
-        output << "    " << get_name() <<  " -> "<< parent << std::endl;
-        tokens[i]->graph_node(get_name(), output);
+        output << "    " << tokens[i]->get_name() <<  " -> " <<   get_name() << std::endl;
+        tokens[i]->graph_node(output);
     }
 }
 
 void Token::graph(std::ostream& output) {
     graph_header(output);
 
-    graph_define(get_name(), output);
-
-    graph_node(get_name(), output);
+    graph_node(output);
 
     graph_footer(output);
 }

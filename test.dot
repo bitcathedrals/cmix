@@ -1,0 +1,8 @@
+digraph { 
+    rank=TB
+CommaIndex [label = "CommaIndex"]
+    CommaIndex_comma -> CommaIndex
+CommaIndex_comma [label = "CommaIndex_comma"]
+    CommaIndex_index -> CommaIndex
+CommaIndex_index [label = "CommaIndex_index"]
+}

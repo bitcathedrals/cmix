@@ -97,7 +97,7 @@ private:
     void graph_footer(std::ostream& output);
 
     void graph_define(std::string label, std::ostream& output);
-    void graph_node(std::string parent, std::ostream& output);
+    void graph_node(std::ostream& output);
 };
 
 std::ostream& operator<<(std::ostream& out, const Token& token);
