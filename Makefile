@@ -6,7 +6,7 @@ OS := $(shell uname -s)
 
 PROD_GOAL = prod
 TEST_GOAL = test
-DEBUG_GOAL = debug
+UTIL_GOAL = util
 PERF_GOAL = benchmark
 
 MAX_ERRORS=3
@@ -170,6 +170,47 @@ $(PERF_TARGET): $(PERF_WITHOUT_MAIN)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(PERF_FLAGS) $(LDFLAGS)
 
 #
+# util
+# 
+
+UTIL_TOOLS = perf/graph
+
+UTIL_DIR = util/
+UTIL_OBJ = .build/util
+
+UTIL_FLAGS = -O2 -fno-omit-frame-pointer
+
+UTIL_SRCS = $(wildcard $(UTIL_DIR)/*.cpp $(UTIL_DIR)/*/*.cpp $(UTIL_DIR)/*/*/*.cpp)
+
+UTIL_CORE_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(UTIL_OBJ)/%.o,$(SRCS))
+UTIL_PROG_OBJS = $(patsubst $(UTIL_DIR)/%.cpp,$(UTIL_OBJ)/%.o,$(UTIL_SRCS))
+
+UTIL_OBJS = $(UTIL_CORE_OBJS) $(UTIL_PROG_OBJS)
+
+ifneq ($(findstring $(UTIL_GOAL), $(MAKECMDGOALS)),)
+	UTIL_DFILES = $(wildcard $(UTIL_OBJ)/*.d $(UTIL_OBJ)/*/*.d $(UTIL_OBJ)/*/*/*.d)
+
+  ifneq ($(UTIL_DFILES),)
+    include $(UTIL_DFILES)
+  endif
+endif
+
+UTIL_WITHOUT_MAIN=$(filter-out $(UTIL_OBJ)/cmix.o , $(UTIL_OBJS))
+
+$(UTIL_OBJ)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(UTIL_FLAGS) -c $< -o $@
+
+$(UTIL_OBJ)/%.o: $(UTIL_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(UTIL_FLAGS) -c $< -o $@
+
+util/graph: $(UTIL_WITHOUT_MAIN) util/graph
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+util: util/graph
+
+#
 # project scope
 #
 
@@ -198,8 +239,12 @@ benchmark-clean:
 	-rm -rf $(PERF_OBJ)
 	-rm -f $(PERF_TARGET)
 
-clean: prod-clean test-clean perf-clean
+util-clean:
+	-rm -rf $(UTIL_OBJ)
+	-rm -f $(UTIL_TOOLs)
 
-.PHONY: prod-clean test-clean perf-clean default
+clean: prod-clean test-clean perf-clean util-clean
+
+.PHONY: prod-clean test-clean perf-clean default util
 
 # $(info TEST_OBJS is $(TEST_OBJS))
