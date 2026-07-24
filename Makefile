@@ -208,7 +208,7 @@ $(UTIL_OBJ)/%.o: $(UTIL_DIR)/%.cpp
 tools/graph: $(UTIL_WITHOUT_MAIN) $(UTIL_OBJ)/graph.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-util: tools/graph
+tools: tools/graph
 
 #
 # project scope
@@ -239,12 +239,12 @@ benchmark-clean:
 	-rm -rf $(PERF_OBJ)
 	-rm -f $(PERF_TARGET)
 
-util-clean:
+tools-clean:
 	-rm -rf $(UTIL_OBJ)
-	-rm -f $(UTIL_TOOLs)
+	-rm -f tools/*
 
-clean: prod-clean test-clean perf-clean util-clean
+clean: prod-clean test-clean perf-clean tools-clean
 
-.PHONY: prod-clean test-clean perf-clean default util
+.PHONY: prod-clean test-clean perf-clean default tools
 
 # $(info TEST_OBJS is $(TEST_OBJS))
