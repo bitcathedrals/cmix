@@ -70,7 +70,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const Token& token);
 
-    void graph_tree(std::ostream& out);
+    void graph(std::ostream& out);
 
 protected:
     virtual bool is_capture(const char x [[maybe_unused]]) const;

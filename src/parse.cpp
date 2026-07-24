@@ -58,25 +58,13 @@ parse_t parse_word(const std::string& input) {
 parse_t make_parse(const std::string& x1,
                    const std::string& x2,
                    const std::string& x3) {
-    parse_t p;
-
-    p[0] = x1;
-    p[1] = x2;
-    p[2] = x3;
-
-    return p;
+    return parse_t { x1, x2, x3 };
 }
 
 parse_t make_parse(const std::string& x1,
                    const std::string& x2,
                    const std::string& x3,
                    const std::string& x4) {
-    parse_t p;
 
-    p[0] = x1;
-    p[1] = x2;
-    p[2] = x3;
-    p[3] = x4;
-
-    return p;
+    return parse_t { x1, x2, x3, x4 };
 }

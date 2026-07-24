@@ -298,7 +298,7 @@ void Token::graph_node(std::string parent,
     }
 }
 
-void Token::graph_tree(std::ostream& output) {
+void Token::graph(std::ostream& output) {
     graph_header(output);
 
     graph_define(get_name(), output);
