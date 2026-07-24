@@ -1,7 +1,7 @@
 cmix
 runner
 bench
-util/graph
+tools/*
 .build
 *.profdata
 *.profraw

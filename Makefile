@@ -195,7 +195,7 @@ ifneq ($(findstring $(UTIL_GOAL), $(MAKECMDGOALS)),)
   endif
 endif
 
-UTIL_WITHOUT_MAIN=$(filter-out $(UTIL_OBJ)/cmix.o , $(UTIL_OBJS))
+UTIL_WITHOUT_MAIN=$(filter-out $(UTIL_OBJ)/cmix.o $(UTIL_OBJ)/util/graph.o, $(UTIL_OBJS))
 
 $(UTIL_OBJ)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
@@ -205,10 +205,10 @@ $(UTIL_OBJ)/%.o: $(UTIL_DIR)/%.cpp
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(UTIL_FLAGS) -c $< -o $@
 
-util/graph: $(UTIL_WITHOUT_MAIN) util/graph
+tools/graph: $(UTIL_WITHOUT_MAIN) $(UTIL_OBJ)/graph.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-util: util/graph
+util: tools/graph
 
 #
 # project scope
