@@ -75,7 +75,7 @@ std::unique_ptr<Token> build_comma_index_parser(void) {
     define.push_back(std::move(index));
 
     auto p = std::make_unique<Token>(std::move(define));
-    p->set_name("CommaIndex");
+    p->set_optional()->set_name("CommaIndex");
 
     return p;
 }
