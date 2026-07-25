@@ -136,11 +136,12 @@ static void parse_fail_throw(const AST_t& parse,
         diagnostic = last.get_token();
     }
 
-    throw std::invalid_argument(std::format("{} {} failed {} characters after checkpoint \"{}\"",
+    throw std::invalid_argument(std::format("{} {} failed {} characters after checkpoint \"{}\" over: \"{}\" ",
                                             type,
                                             token.get_name(),
                                             std::distance(backtrack, begin),
-                                            diagnostic));
+                                            diagnostic,
+                                           *begin));
 }
 
 Token Token::parse(std::string::const_iterator& begin,
@@ -288,7 +289,12 @@ void Token::graph_define(std::string label, std::ostream& output) {
 }
 
 void Token::graph_node(std::ostream& output) {
-    graph_define(get_name(), output);
+    std::string name = get_name();
+    if (get_optional()) {
+        name = name + " :optional";
+    }
+
+    graph_define(name, output);
 
     for(size_t i = 0; i < tokens.size(); i++) {
         output << "    " << tokens[i]->get_name() <<  " -> " <<   get_name() << std::endl;
