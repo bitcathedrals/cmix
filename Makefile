@@ -241,7 +241,7 @@ benchmark-clean:
 
 tools-clean:
 	-rm -rf $(UTIL_OBJ)
-	-rm -f tools/*
+	-rm -f tools/graph
 
 clean: prod-clean test-clean perf-clean tools-clean
 

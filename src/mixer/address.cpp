@@ -87,8 +87,8 @@ std::unique_ptr<Token> build_address_parser(void) {
     address.back()->set_name("address_address");
 
     // variants on term suffixes
-    address.push_back(build_field_parser());
-    address.back()->set_optional()->set_name("address_comma_field");
+    address.push_back(build_comma_index_parser());
+    address.back()->set_optional()->set_name("address_comma_index");
 
     auto finished = std::make_unique<Token>(std::move(address));
     finished->set_name("address");
