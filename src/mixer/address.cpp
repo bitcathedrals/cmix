@@ -82,33 +82,16 @@ std::unique_ptr<Token> build_comma_index_parser(void) {
 
 std::unique_ptr<Token> build_address_parser(void) {
     // address
+    production_t address;
+    address.push_back(build_signed_number_parser());
+    address.back()->set_name("address_address");
 
-    production_t define_address;
-    define_address.push_back(build_signed_number_parser());
+    // variants on term suffixes
+    address.push_back(build_field_parser());
+    address.back()->set_optional()->set_name("address_comma_field");
 
-    // variants
+    auto finished = std::make_unique<Token>(std::move(address));
+    finished->set_name("address");
 
-    auto comma_index_field = build_comma_index_field_parser();
-    comma_index_field->set_optional()->set_name("comma_index_field_parser");
-
-    auto comma_index = build_comma_index_parser();
-    comma_index->set_optional()->set_name("comma_index_parser");
-
-    auto field_only = build_field_parser();
-    field_only->set_optional()->set_name("field_only_parser");
-
-    // populate variants
-
-    production_t define_variants;
-
-    define_variants.push_back(std::move(comma_index_field));
-    define_variants.push_back(std::move(comma_index));
-    define_variants.push_back(std::move(field_only));
-
-    auto variants = make_unique<Token>(std::move(define_variants));
-    variants->set_optional()->set_name("address variants");
-
-    define_address.push_back(std::make_unique<Token>(std::move(define_variants)));
-
-    return std::make_unique<Token>(std::move(define_address));
+    return finished;
 }
