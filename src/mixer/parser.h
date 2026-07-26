@@ -86,7 +86,7 @@ private:
     AST_t tree;
     std::string value;
 
-    static constexpr std::array<char, 4> terminal {' ', '\t', '\n', ','};
+    static constexpr std::array<char, 4> terminal {' ', '\t', '\n'};
 
     bool is_terminal(const char x) const;
 

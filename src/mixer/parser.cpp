@@ -176,7 +176,9 @@ Token Token::parse(std::string::const_iterator& begin,
             }
 
             backtrack = begin;
+
             parse.push_back(std::move(ascent));
+            parse.back().set_name(tokens[i]->get_name());
 
             continue;
         }
@@ -193,7 +195,9 @@ Token Token::parse(std::string::const_iterator& begin,
         }
 
         backtrack = begin;
+
         parse.push_back(std::move(ascent));
+        parse.back().set_name(tokens[i]->get_name());
     }
 
     if (parse.size() < 1) {

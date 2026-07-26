@@ -127,25 +127,20 @@ TEST(MixerParserSimple, AddressSignedAddressOnly) {
     EXPECT_EQ(std::stoi(p.get_token()), 1234);
 }
 
-// TEST(MixerParserAddress, AddressCommaIndexOk) {
-//     std::string test_string("1234,4");
+TEST(MixerParserAddress, AddressCommaIndexOk) {
+    std::string test_string("1234,4");
 
-//     production_t define;
+    production_t define;
 
-//     define.push_back(build_signed_number_parser());
-//     define.push_back(build_comma_index_parser());
+    auto p = Token::descent(build_address_parser(), test_string);
 
-//     Token p = Token::descent(Token(std::move(define)), test_string);
 
-//     EXPECT_EQ(p.get_type(), Token::label::node);
+    EXPECT_EQ(p[0].get_type(), Token::label::node);
 
-//     EXPECT_EQ(p[0].get_type(), Token::label::number);
-//     EXPECT_EQ(p[0].get_token(), "1234");
+    EXPECT_EQ(p[0][0].get_type(), Token::label::number);
+    EXPECT_EQ(p[0][0].get_token(), "1234");
 
-//     EXPECT_EQ(p[1].get_type(), Token::label::node);
-//     EXPECT_EQ(p[1][0].get_type(), Token::label::special);
-//     EXPECT_EQ(p[1][1].get_type(), Token::label::number);
-
-//     EXPECT_EQ(std::stoi(p[0].get_token()), 1234);
-//     EXPECT_EQ(std::stoi(p[1][1].get_token()), 4);
-// }
+    EXPECT_EQ(p[1].get_type(), Token::label::node);
+    // EXPECT_EQ(p[1][0].get_type(), Token::label::special);
+    // EXPECT_EQ(p[1][1].get_type(), Token::label::number);
+}
