@@ -141,6 +141,6 @@ TEST(MixerParserAddress, AddressCommaIndexOk) {
     EXPECT_EQ(p[0][0].get_token(), "1234");
 
     EXPECT_EQ(p[1].get_type(), Token::label::node);
-    // EXPECT_EQ(p[1][0].get_type(), Token::label::special);
-    // EXPECT_EQ(p[1][1].get_type(), Token::label::number);
+    EXPECT_EQ(p[1][0].get_type(), Token::label::special);
+    EXPECT_EQ(p[1][1].get_type(), Token::label::number);
 }
