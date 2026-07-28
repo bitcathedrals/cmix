@@ -87,7 +87,7 @@ TEST(WordReadWriteTests, AssignOperatorNumber) {
 TEST(WordReadWriteTests, AssignOperatorParse) {
     Word mix_word;
 
-    mix_word = parse_word("1::2::3::4::5");
+    mix_word = split_word("1::2::3::4::5");
 
     EXPECT_EQ(mix_word[1], 1);
     EXPECT_EQ(mix_word[2], 2);

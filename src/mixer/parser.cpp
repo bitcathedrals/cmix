@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
+#include <ranges>
+#include <string_view>
 
 #include "mixer/parser.h"
 
@@ -313,6 +315,18 @@ void Token::graph(std::ostream& output) {
 
     graph_footer(output);
 }
+
+// Token Token::walk(const std::string path) {
+    
+//     // C++20 range view split
+//     auto split_view = text | std::ranges::views::split('-');
+    
+//     for (auto&& chunk : split_view) {
+//         // C++23 allows easy construction of string_view directly from a subrange
+//         std::cout << std::string_view(chunk) << "\n";
+//     }
+
+// }
 
 bool Alphabetic::is_capture(const char x) const {
     if (std::isalpha(x)) {

@@ -74,7 +74,7 @@ TEST(ShortReadWriteTests, AssignOperatorNumber) {
 TEST(ShortReadWriteTests, AssignOperatorParse) {
     Short mix_short;
 
-    mix_short = parse_word("1::2");
+    mix_short = split_word("1::2");
 
     EXPECT_EQ(mix_short[1], 1);
     EXPECT_EQ(mix_short[2], 2);

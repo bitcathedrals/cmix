@@ -1,9 +1,9 @@
 #include <sstream>
 #include <regex>
 
-#include "parse.h"
+#include "split.h"
 
-std::ostream& operator<<(std::ostream& output, const parse_t p) {
+std::ostream& operator<<(std::ostream& output, const split_t p) {
     output << p[0]
            << p[1]
            << p[2]
@@ -19,8 +19,8 @@ std::istringstream istream_from_string(const std::string input) {
     return std::istringstream(input);
 }
 
-parse_t parse_core(const std::string& input, std::regex r) {
-    parse_t parse;
+split_t parse_core(const std::string& input, std::regex r) {
+    split_t parse;
 
     if(input == "") { return parse; };
 
@@ -41,30 +41,30 @@ parse_t parse_core(const std::string& input, std::regex r) {
     return parse;
 }
 
-parse_t parse_cli(const std::string& input) {
+split_t split_cli(const std::string& input) {
     return parse_core(input, std::regex("\\S+"));
 }
 
-parse_t parse_word(const char* input) {
+split_t split_word(const char* input) {
     return parse_core(std::string(input), std::regex("[^:]+"));
 }
 
-parse_t parse_word(const std::string& input) {
+split_t split_word(const std::string& input) {
     return parse_core(input, std::regex("[^:]+"));
 }
 
-// this is for variants to make a new parse_t with variable arguments.
+// this is for variants to make a new split_t with variable arguments.
 
-parse_t make_parse(const std::string& x1,
+split_t make_spit(const std::string& x1,
                    const std::string& x2,
                    const std::string& x3) {
-    return parse_t { x1, x2, x3 };
+    return split_t { x1, x2, x3 };
 }
 
-parse_t make_parse(const std::string& x1,
+split_t make_spit(const std::string& x1,
                    const std::string& x2,
                    const std::string& x3,
                    const std::string& x4) {
 
-    return parse_t { x1, x2, x3, x4 };
+    return split_t { x1, x2, x3, x4 };
 }

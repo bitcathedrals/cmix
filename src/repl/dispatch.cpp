@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "parse.h"
+#include "split.h"
 #include "cpu/cpu.h"
 #include "repl/dispatch.h"
 
@@ -13,8 +13,8 @@ const constexpr byte data_field = 3;
 const constexpr byte read_parse_size = 3;
 const constexpr byte write_parse_size = 4;
 
-static CmdStatus exec_read(const parse_t p);
-static CmdStatus exec_write(const parse_t p);
+static CmdStatus exec_read(const split_t p);
+static CmdStatus exec_write(const split_t p);
 
 std::string status_string(const CmdStatus s) {
     switch(s) {
@@ -33,11 +33,11 @@ std::string status_string(const CmdStatus s) {
     return std::string("unknown CmdStatus in cmd_status_string");
 }
 
-std::string cmd_string(const parse_t p) {
+std::string cmd_string(const split_t p) {
     return p[cmd_field];
 }
 
-CmdStatus run_command(const parse_t p) {
+CmdStatus run_command(const split_t p) {
     char size = p.size();
 
     if(size < 1) {
@@ -71,7 +71,7 @@ CmdStatus run_command(const parse_t p) {
     return CmdStatus::bad_input;
 }
 
-static CmdStatus exec_read(const parse_t p) {
+static CmdStatus exec_read(const split_t p) {
     int size = p.size();
 
     if (size != read_parse_size) {
@@ -109,7 +109,7 @@ static CmdStatus exec_read(const parse_t p) {
     return CmdStatus::bad_input;
 }
 
-static CmdStatus exec_write(const parse_t p) {
+static CmdStatus exec_write(const split_t p) {
     byte size = p.size();
 
     if (size != write_parse_size) {

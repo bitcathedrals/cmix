@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 
-#include "parse.h"
+#include "split.h"
 #include "cpu/defs.h"
 #include "cpu/operation.h"
 
@@ -46,7 +46,7 @@ public:
     void reset(void);
 
     Word& operator=(const Word& right);
-    Word& operator=(const parse_t& p);
+    Word& operator=(const split_t& p);
     Word& operator=(const std::string& x);
 
     bool operator==(const Word&) const = default;

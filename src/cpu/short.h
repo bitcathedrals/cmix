@@ -4,7 +4,7 @@
 #include <iostream>
 #include <array>
 
-#include "parse.h"
+#include "split.h"
 #include "cpu/defs.h"
 #include "cpu/operation.h"
 
@@ -41,7 +41,7 @@ public:
     void reset(void);
 
     Short& operator=(const Short& right);
-    Short& operator=(const parse_t& p);
+    Short& operator=(const split_t& p);
     Short& operator=(const std::string& x);
 
     bool operator==(const Short&) const = default;

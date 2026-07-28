@@ -8,7 +8,7 @@
 #include "cpu/word.h"
 #include "cpu/operation.h"
 #include "cpu/overflow.h"
-#include "parse.h"
+#include "split.h"
 
 void Word::sanitize(void) {
     auto itr_b = data.begin();
@@ -47,7 +47,7 @@ Word& Word::operator=(const Word& other) {
 }
 
 Word& Word::operator=(const std::string& x) {
-    parse_t p = parse_word(x);
+    split_t p = split_word(x);
 
     if(!(p.size() == data_size)) {
         throw std::out_of_range("word::operator=(const std::string& x) parse is the wrong size");
@@ -65,14 +65,14 @@ Word& Word::operator=(const std::string& x) {
     return *this;
 }
 
-Word& Word::operator=(const parse_t& p) {
+Word& Word::operator=(const split_t& p) {
     auto dest_itr_b = data.begin();
     dest_itr_b++;  // skip over sign
 
     if(!(p.size() == data_size)) {
         std::ostringstream fmt;
 
-        fmt << "word::operator=(const std::parse_t& x) parse is the wrong size: "
+        fmt << "word::operator=(const std::split_t& x) parse is the wrong size: "
             << p.size();
 
         throw std::out_of_range(fmt.str());
@@ -219,7 +219,7 @@ std::istream& operator>>(std::istream& input, Word& x) {
 
     std::string in(begin, end);
 
-    x = parse_word(in);
+    x = split_word(in);
 
     return input;
 };

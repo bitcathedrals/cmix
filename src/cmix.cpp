@@ -2,7 +2,7 @@
 #include <edit.h>
 
 #include "repl/dispatch.h"
-#include "parse.h"
+#include "split.h"
 
 int main() {
     std::cerr << "Welcome to cmix." << std::endl;
@@ -10,7 +10,7 @@ int main() {
     do {
         std::string input = get_input();
 
-        parse_t parse = parse_cli(input);
+        split_t parse = split_cli(input);
 
         if (parse.empty()) {
             std::cerr << "cmix: no command given.";
