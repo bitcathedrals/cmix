@@ -130,8 +130,6 @@ TEST(MixerParserSimple, AddressSignedAddressOnly) {
 TEST(MixerParserAddress, AddressCommaIndexOk) {
     std::string test_string("1234,4");
 
-    production_t define;
-
     auto p = Token::descent(build_address_parser(), test_string);
 
     EXPECT_EQ(p[0].get_type(), Token::label::node);
