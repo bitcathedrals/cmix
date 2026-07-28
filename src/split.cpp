@@ -35,6 +35,11 @@ split_t parse_core(const std::string& input, std::regex r) {
 
     for(std::sregex_iterator i = words_begin; i != words_end; ++i) {
         std::smatch match = *i;
+
+        if(match.str().size() < 1) {
+            continue;
+        }
+
         parse.push_back(match.str());
     }
 
@@ -46,7 +51,7 @@ split_t split_cli(const std::string& input) {
 }
 
 split_t split_path(const std::string& input) {
-    return parse_core(input, std::regex("/"));
+    return parse_core(input, std::regex("[^/]+"));
 }
 
 split_t split_word(const char* input) {
