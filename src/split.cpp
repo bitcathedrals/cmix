@@ -45,6 +45,10 @@ split_t split_cli(const std::string& input) {
     return parse_core(input, std::regex("\\S+"));
 }
 
+split_t split_path(const std::string& input) {
+    return parse_core(input, std::regex("/"));
+}
+
 split_t split_word(const char* input) {
     return parse_core(std::string(input), std::regex("[^:]+"));
 }

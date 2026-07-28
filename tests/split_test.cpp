@@ -38,7 +38,7 @@ TEST(ParseWordParsing, EmptyStringTest) {
 }
 
 TEST(ParseWordParsing, SeperatorOnly) {
-    std::string sep { "::" };
+    std::string sep { ":" };
     split_t p = split_word(sep);
 
     EXPECT_EQ(p.size(), static_cast<cmp_type>(0));
@@ -53,7 +53,7 @@ TEST(ParseWordParsing, OneByteValue) {
 }
 
 TEST(ParseWordParsing, TwoByteValue) {
-    std::string byte { "16::32" };
+    std::string byte { "16:32" };
     split_t p = split_word(byte);
 
     EXPECT_EQ(p.size(), static_cast<cmp_type>(2));
@@ -62,7 +62,7 @@ TEST(ParseWordParsing, TwoByteValue) {
 }
 
 TEST(ParseWordParsing, FullWord) {
-    std::string input { "8::12::24::36::48" };
+    std::string input { "8:12:24:36:48" };
     split_t p = split_word(input);
 
     EXPECT_EQ(p.size(), static_cast<cmp_type>(5));

@@ -2,12 +2,25 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
-#include <ranges>
-#include <string_view>
 
 #include "mixer/parser.h"
 
 Token::Token() : t {Token::label::end}  {}
+
+Token::Token(const Token& other) : name(other.name),
+                                   t(other.t),
+                                   optional(other.optional),
+                                   tree(other.tree),
+                                   value(other.value) {
+
+    for (const auto& token_ptr : other.tokens) {
+        if (token_ptr) {
+            tokens.push_back(token_ptr->clone());
+        } else {
+            tokens.push_back(nullptr);
+        }
+    }
+}
 
 Token::Token(const Token::label label) : t {label} {}
 
@@ -62,13 +75,43 @@ Token* Token::set_optional(void) {
     return this;
 }
 
+const std::unique_ptr<Token> Token::walk(const Token& node, split_t path) {
+    if(path.size() < 1) {
+        return nullptr;
+    }
+
+    for(size_t i = 0; i < tree.size(); i++) {
+        if(node.tree[i].get_name() == path.front()) {
+            if(path.size() < 1) {
+                return node.tree[i].clone();
+            }
+
+            path.erase(path.begin());
+            return walk(tree[i], path);
+        }
+    }
+
+    return nullptr;
+}
+
+const std::unique_ptr<Token> Token::walk(const std::string path) {
+    split_t split = split_path(path);
+
+    if(split.size() < 1) {
+        return nullptr;
+    }
+
+    return walk(*this, split);
+}
+
+
 bool Token::is_capture(const char x [[maybe_unused]]) const {
     throw std::logic_error("is_capture should never be called in the Token base class");
     return false;
 };
 
 bool Token::is_terminal(const char x) const {
-    for(auto t : terminal) {
+    for(const auto& t : terminal) {
         if(x == t) {
             return true;
         }
@@ -315,18 +358,6 @@ void Token::graph(std::ostream& output) {
 
     graph_footer(output);
 }
-
-// Token Token::walk(const std::string path) {
-    
-//     // C++20 range view split
-//     auto split_view = text | std::ranges::views::split('-');
-    
-//     for (auto&& chunk : split_view) {
-//         // C++23 allows easy construction of string_view directly from a subrange
-//         std::cout << std::string_view(chunk) << "\n";
-//     }
-
-// }
 
 bool Alphabetic::is_capture(const char x) const {
     if (std::isalpha(x)) {

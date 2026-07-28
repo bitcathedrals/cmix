@@ -12,6 +12,8 @@ std::istringstream istream_from_string(const std::string input);
 
 split_t split_cli(const std::string& input);
 
+split_t split_path(const std::string& input);
+
 split_t split_word(const std::string& input);
 
 split_t make_spit(const std::string& x1,

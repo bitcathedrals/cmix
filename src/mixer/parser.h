@@ -10,6 +10,8 @@
 #include <memory>
 #include <iostream>
 
+#include "split.h"
+
 class Token;
 
 using production_t = std::vector<std::unique_ptr<Token>>;
@@ -41,7 +43,11 @@ public:
     explicit Token(AST_t&& parse);
     explicit Token(production_t&& children);
 
-    Token(const Token& t) = default;
+    Token(const Token& other);
+
+    virtual std::unique_ptr<Token> clone(void) const {
+        return std::make_unique<Token>(*this);
+    }
 
     virtual ~Token(void) = default;
 
@@ -72,6 +78,8 @@ public:
 
     void graph(std::ostream& out);
 
+    const std::unique_ptr<Token> walk(const std::string node_path);
+
 protected:
     virtual bool is_capture(const char x [[maybe_unused]]) const;
 
@@ -85,6 +93,8 @@ private:
 
     AST_t tree;
     std::string value;
+
+    const std::unique_ptr<Token> walk(const Token& node, split_t path);
 
     static constexpr std::array<char, 4> terminal {' ', '\t', '\n'};
 
@@ -107,6 +117,10 @@ public:
     Alphabetic() : Token(Token::label::text) {}
     Alphabetic(const Token::label label) : Token(label) {}
 
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<Alphabetic>(*this);
+    }
+
 private:
     virtual bool is_capture(const char x) const override;
 };
@@ -115,6 +129,10 @@ class NumSign : public Token {
 public:
     NumSign() : Token(Token::label::special) {}
     NumSign(const Token::label label) : Token(label) {}
+
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<NumSign>(*this);
+    }
 
 private:
     virtual bool is_capture(const char x) const override;
@@ -125,6 +143,10 @@ public:
     Numeric() : Token(Token::label::number) {}
     Numeric(const Token::label label) : Token(label) {}
 
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<Numeric>(*this);
+    }
+
 private:
     virtual bool is_capture(const char x) const override;
 };
@@ -134,6 +156,10 @@ public:
     AlphaNumeric() : Token(Token::label::symbol) {}
     AlphaNumeric(const Token::label label) : Token(label) {}
 
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<AlphaNumeric>(*this);
+    }
+
 private:
     virtual bool is_capture(const char x) const override;
 };
@@ -142,6 +168,10 @@ class Special : public Token {
 public:
     Special() : Token(Token::label::special) {}
     Special(const Token::label label) : Token(label) {}
+
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<Special>(*this);
+    }
 
 private:
     virtual bool is_capture(const char x) const override;
