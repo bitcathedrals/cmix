@@ -7,7 +7,7 @@ std::unique_ptr<Token> build_signed_number_parser(void) {
     sign->set_optional()->set_name("address_sign");
 
     auto number = std::make_unique<Numeric>();
-    number->set_name("address number");
+    number->set_name("address_number");
 
     define.push_back(std::move(sign));
     define.push_back(std::move(number));

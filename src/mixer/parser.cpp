@@ -76,25 +76,21 @@ Token* Token::set_optional(void) {
 }
 
 const std::unique_ptr<Token> Token::walk(const Token& node, split_t path) {
-    // empty on entry
     if(path.empty()) {
         return nullptr;
     }
 
     for(size_t i = 0; i < tree.size(); i++) {
         if(node.tree[i].get_name() == path.front()) {
-            // we are at the last element and we are a hit
             if(path.size() == 1) {
                 return node.tree[i].clone();
             }
 
-            // hit, but not last
             path.erase(path.begin());
             return walk(tree[i], path);
         }
     }
 
-    // some how fell off.
     return nullptr;
 }
 
