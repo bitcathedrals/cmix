@@ -102,7 +102,7 @@ std::unique_ptr<Token> build_address_parser(void) {
     address.back()->set_optional()->set_name("address_comma_index");
 
     auto finished = std::make_unique<Token>(std::move(address));
-    finished->set_name("address");
+    finished->set_name("root");
 
     return finished;
 }
