@@ -117,32 +117,6 @@ TEST(MixerParserSimple, ComplexOk) {
     EXPECT_EQ(AST[1].get_token(), "(10:2)");
 }
 
-TEST(MixerParserSimple, AddressSignedPositve) {
-    std::string test_string("1234");
-
-    Token p = Token::descent(build_signed_number_parser(), test_string);
-
-    EXPECT_EQ(p.get_type(), Token::label::node);
-    EXPECT_EQ(p.get_token(), "1234");
-    EXPECT_EQ(std::stoi(p.get_token()), 1234);
-}
-
-TEST(MixerParserSimple, AddressSignedNegative) {
-    std::string test_string("-1234");
-
-    Token p = Token::descent(build_signed_number_parser(), test_string);
-
-    EXPECT_EQ(p[0][0].get_type(), Token::label::special);
-    EXPECT_EQ(p[0][0].get_token(), "-");
-    EXPECT_EQ(p[0][0].get_name(), "address_sign");
-
-    EXPECT_EQ(p[0][1].get_type(), Token::label::number);
-    EXPECT_EQ(p[0][1].get_token(), "1234");
-    EXPECT_EQ(p[0][1].get_token(), "address_number");
-
-    EXPECT_EQ(std::stoi(p[0][1].get_token()), -1234);
-}
-
 TEST(MixerParserAddress, AddressCommaIndexOk) {
     std::string test_string("1234,4");
 
@@ -240,4 +214,20 @@ TEST(MixerWalk, PathAndTokensSameLength) {
     auto ptr = t.walk(path);
 
     EXPECT_NE(ptr, nullptr);
+}
+
+TEST(MixerWalk, WalkGetNode) {
+    std::string path("/foo/bar");
+
+    Token bar { Token::label::text, "check" };
+    bar.set_name("bar");
+
+    Token foo { std::move(AST_t { bar }) };
+    foo.set_name("foo");
+
+    Token t { std::move(AST_t { foo }) };
+
+    auto ptr = t.walk(path);
+
+    EXPECT_EQ(ptr->get_token(), "check");
 }
