@@ -117,7 +117,7 @@ TEST(MixerParserSimple, ComplexOk) {
     EXPECT_EQ(AST[1].get_token(), "(10:2)");
 }
 
-TEST(MixerParserAddress, AddressCommaIndexOk) {
+TEST(MixerParserSimple, AddressCommaIndexOk) {
     std::string test_string("1234,4");
 
     auto p = Token::descent(build_address_parser(), test_string);
@@ -134,28 +134,26 @@ TEST(MixerParserAddress, AddressCommaIndexOk) {
     EXPECT_EQ(p[1][1].get_token(), "4");
 }
 
-TEST(MixerWalk, WalkEmptyPathAndToken) {
+TEST(MixerWalk, WalkEmptySlash) {
+    std::string path("/");
+
+    auto t = Token {};
+    t.set_name("foo");
+
+    auto ptr = t.walk(path);
+
+    EXPECT_EQ(ptr->get_name(), "foo");
+}
+
+TEST(MixerWalk, WalkEmptyPath) {
     std::string path("");
 
     auto t = Token {};
-    auto ptr = t.walk(path);
-
-    EXPECT_EQ(ptr, nullptr);
-}
-
-TEST(MixerWalk, WalkEmptyPathAndFullToken) {
-    std::string path("");
-
-    AST_t test_AST = std::vector<Token> {
-        Token {},
-        Token {}
-    };
-
-    Token t { std::move(test_AST) };
+    t.set_name("foo");
 
     auto ptr = t.walk(path);
 
-    EXPECT_EQ(ptr, nullptr);
+    EXPECT_EQ(ptr->get_name(), "foo");
 }
 
 TEST(MixerWalk, PathAndNoTokens) {

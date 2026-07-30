@@ -12,7 +12,10 @@ std::unique_ptr<Token> build_signed_number_parser(void) {
     define.push_back(std::move(sign));
     define.push_back(std::move(number));
 
-    return std::make_unique<Token>(std::move(define));
+    auto adr = std::make_unique<Token>(std::move(define));
+    adr->set_name("address");
+
+    return adr;
 }
 
 std::unique_ptr<Token> build_field_parser(void) {
@@ -46,13 +49,13 @@ std::unique_ptr<Token> build_comma_index_field_parser(void) {
     production_t define;
 
     auto comma = std::make_unique<Special>();
-    comma->set_name("comma_index_field_comma");
+    comma->set_name("index_field_comma");
 
     auto index = std::make_unique<Numeric>();
-    index->set_name("comma_index_field_index");
+    index->set_name("index_field_index");
 
     auto field = build_field_parser();
-    field->set_name("comma_index_field_field");
+    field->set_name("index_field_field");
 
     define.push_back(std::move(comma));
     define.push_back(std::move(index));
@@ -75,7 +78,7 @@ std::unique_ptr<Token> build_comma_index_parser(void) {
     define.push_back(std::move(index));
 
     auto p = std::make_unique<Token>(std::move(define));
-    p->set_optional()->set_name("comma_Index");
+    p->set_optional()->set_name("comma_index");
 
     return p;
 }
@@ -83,13 +86,14 @@ std::unique_ptr<Token> build_comma_index_parser(void) {
 std::unique_ptr<Token> build_address_parser(void) {
     // address
     production_t address;
+
     address.push_back(build_signed_number_parser());
     address.back()->set_name("address");
 
     // address comma index field
 
     address.push_back(build_comma_index_field_parser());
-    address.back()->set_optional()->set_name("address_comma_index_field");
+    address.back()->set_optional()->set_name("address_index_field");
 
     // address field
 

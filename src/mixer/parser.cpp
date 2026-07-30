@@ -50,7 +50,10 @@ void Token::operator=(AST_t&& parse) {
 
 const Token& Token::operator[](size_t index) const {
     if(index >= tree.size()) {
-        throw std::out_of_range(std::format("bad Token index {} in {}",index,tree.size()));
+        throw std::out_of_range(std::format("id: \"{}\" out of range Token& [] index = {} in tree.size() {}",
+                                            get_name(),
+                                            index,
+                                            tree.size()));
     }
 
     return tree[index];
@@ -87,7 +90,7 @@ const std::unique_ptr<Token> Token::walk(const Token& node, split_t path) {
             }
 
             path.erase(path.begin());
-            return walk(tree[i], path);
+            return walk(node.tree[i], path);
         }
     }
 
@@ -98,7 +101,7 @@ const std::unique_ptr<Token> Token::walk(const std::string path) {
     split_t split = split_path(path);
 
     if(split.size() < 1) {
-        return nullptr;
+        return std::make_unique<Token>(*this);
     }
 
     return walk(*this, split);
@@ -189,6 +192,16 @@ static void parse_fail_throw(const AST_t& parse,
                                            *begin));
 }
 
+bool Token::rest_are_optional(const size_t i) const {
+    for(auto y = i + 1; y < tokens.size(); y++) {
+        if(!tokens[y]->get_optional()) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 Token Token::parse(std::string::const_iterator& begin,
                    std::string::const_iterator& end) const {
     AST_t parse;
@@ -197,31 +210,47 @@ Token Token::parse(std::string::const_iterator& begin,
 
     for(size_t i = 0; i < tokens.size(); i++) {
         if(begin == end) {
-            break;
+            if(rest_are_optional(i)) {
+                break;
+            }
+
+            return Token { Token::label::rollback };
         }
 
         if (tokens[i]->get_type() == Token::label::node) {
             auto ascent = tokens[i]->parse(begin, end);
 
-            if(ascent.get_type() == Token::label::end) {
-                return ascent;
-            }
+            switch(ascent.get_type()) {
+                using enum Token::label;
 
-            if(ascent.get_type() == Token::label::nothing) {
-                if(tokens[i]->get_optional()) {
-                    begin = backtrack;
+                case rollback:
+                    if(tokens[i]->get_optional()) {
+                        begin = backtrack;
+                        continue;
+                    }
+
+                    return Token { Token::label::rollback };
+
+                    break;
+
+                case nothing:
+                    if(tokens[i]->get_optional()) {
+                        begin = backtrack;
+                        continue;
+                    }
+
+                    parse_fail_throw(parse, *tokens[i], backtrack, begin);
+
+                    break;
+
+                default:
+                    backtrack = begin;
+
+                    parse.push_back(std::move(ascent));
+                    parse.back().set_name(tokens[i]->get_name());
+
                     continue;
-                }
-
-                parse_fail_throw(parse, *tokens[i], backtrack, begin);
-            }
-
-            backtrack = begin;
-
-            parse.push_back(std::move(ascent));
-            parse.back().set_name(tokens[i]->get_name());
-
-            continue;
+            };
         }
 
         auto ascent = tokens[i]->match(begin, end);
@@ -298,19 +327,14 @@ std::ostream& operator<<(std::ostream& out, const Token& token) {
         case Token::label::special:
             label = "special";
             break;
-
         case Token::label::node:
             label = "node";
             break;
-
         case Token::label::nothing:
             label = "nothing";
             break;
-        case Token::label::error:
-            label = "error";
-            break;
-        case Token::label::end:
-            label = "end";
+        case Token::label::rollback:
+            label = "rollback";
             break;
     }
 

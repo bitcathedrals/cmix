@@ -28,8 +28,7 @@ public:
         node = 4,
 
         nothing = 5,
-        error = 6,
-        end = 7
+        rollback = 6
     };
 
     Token();
@@ -94,6 +93,8 @@ private:
 
     AST_t tree;
     std::string value;
+
+    bool rest_are_optional(const size_t i) const;
 
     const std::unique_ptr<Token> walk(const Token& node, split_t path);
 
