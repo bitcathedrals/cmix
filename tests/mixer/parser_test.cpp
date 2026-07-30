@@ -117,7 +117,7 @@ TEST(MixerParserSimple, ComplexOk) {
     EXPECT_EQ(AST[1].get_token(), "(10:2)");
 }
 
-TEST(MixerParserSimple, AddressSignedAddressOnly) {
+TEST(MixerParserSimple, AddressSignedPositve) {
     std::string test_string("1234");
 
     Token p = Token::descent(build_signed_number_parser(), test_string);
@@ -125,6 +125,22 @@ TEST(MixerParserSimple, AddressSignedAddressOnly) {
     EXPECT_EQ(p.get_type(), Token::label::node);
     EXPECT_EQ(p.get_token(), "1234");
     EXPECT_EQ(std::stoi(p.get_token()), 1234);
+}
+
+TEST(MixerParserSimple, AddressSignedNegative) {
+    std::string test_string("-1234");
+
+    Token p = Token::descent(build_signed_number_parser(), test_string);
+
+    EXPECT_EQ(p[0][0].get_type(), Token::label::special);
+    EXPECT_EQ(p[0][0].get_token(), "-");
+    EXPECT_EQ(p[0][0].get_name(), "address_sign");
+
+    EXPECT_EQ(p[0][1].get_type(), Token::label::number);
+    EXPECT_EQ(p[0][1].get_token(), "1234");
+    EXPECT_EQ(p[0][1].get_token(), "address_number");
+
+    EXPECT_EQ(std::stoi(p[0][1].get_token()), -1234);
 }
 
 TEST(MixerParserAddress, AddressCommaIndexOk) {
