@@ -159,3 +159,85 @@ TEST(MixerParserAddress, AddressCommaIndexOk) {
     EXPECT_EQ(p[1][1].get_type(), Token::label::number);
     EXPECT_EQ(p[1][1].get_token(), "4");
 }
+
+TEST(MixerWalk, WalkEmptyPathAndToken) {
+    std::string path("");
+
+    auto t = Token {};
+    auto ptr = t.walk(path);
+
+    EXPECT_EQ(ptr, nullptr);
+}
+
+TEST(MixerWalk, WalkEmptyPathAndFullToken) {
+    std::string path("");
+
+    AST_t test_AST = std::vector<Token> {
+        Token {},
+        Token {}
+    };
+
+    Token t { std::move(test_AST) };
+
+    auto ptr = t.walk(path);
+
+    EXPECT_EQ(ptr, nullptr);
+}
+
+TEST(MixerWalk, PathAndNoTokens) {
+    std::string path("/foo/bar/baz");
+
+    Token t {};
+
+    auto ptr = t.walk(path);
+
+    EXPECT_EQ(ptr, nullptr);
+}
+
+TEST(MixerWalk,LongerPathThanTokens) {
+    std::string path("/foo/bar/baz");
+
+    Token t {};
+
+    AST_t test_AST = std::vector<Token> {};
+
+    test_AST.push_back(Token {});
+
+    test_AST.back().set_name("foo");
+
+    auto ptr = t.walk(path);
+
+    EXPECT_EQ(ptr, nullptr);
+}
+
+TEST(MixerWalk,ShorterPathThanTokens) {
+    std::string path("/foo");
+
+    Token bar {};
+    bar.set_name("bar");
+
+    Token foo { std::move(AST_t { bar }) };
+    foo.set_name("foo");
+
+    Token t { std::move(AST_t { foo }) };
+
+    auto ptr = t.walk(path);
+
+    EXPECT_NE(ptr, nullptr);
+}
+
+TEST(MixerWalk, PathAndTokensSameLength) {
+    std::string path("/foo/bar");
+
+    Token bar {};
+    bar.set_name("bar");
+
+    Token foo { std::move(AST_t { bar }) };
+    foo.set_name("foo");
+
+    Token t { std::move(AST_t { foo }) };
+
+    auto ptr = t.walk(path);
+
+    EXPECT_NE(ptr, nullptr);
+}
