@@ -347,10 +347,29 @@ void Token::graph_node(std::ostream& output) {
     }
 }
 
+void Token::graph_ast_internal(std::ostream& output) {
+    std::string name = get_name();
+
+    graph_define(name, output);
+
+    for(size_t i = 0; i < tree.size(); i++) {
+        output << "    " << tree[i].get_name() <<  " -> " <<   get_name() << std::endl;
+        tree[i].graph_ast_internal(output);
+    }
+}
+
 void Token::graph(std::ostream& output) {
     graph_header(output);
 
     graph_node(output);
+
+    graph_footer(output);
+}
+
+void Token::graph_ast(std::ostream& output) {
+    graph_header(output);
+
+    graph_ast_internal(output);
 
     graph_footer(output);
 }

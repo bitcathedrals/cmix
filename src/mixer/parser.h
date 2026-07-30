@@ -77,6 +77,7 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const Token& token);
 
     void graph(std::ostream& out);
+    void graph_ast(std::ostream& output);
 
     const std::unique_ptr<Token> walk(const std::string node_path);
 
@@ -108,6 +109,8 @@ private:
 
     void graph_define(std::string label, std::ostream& output);
     void graph_node(std::ostream& output);
+
+    void graph_ast_internal(std::ostream& output);
 };
 
 std::ostream& operator<<(std::ostream& out, const Token& token);
