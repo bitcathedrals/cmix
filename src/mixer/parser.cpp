@@ -80,7 +80,7 @@ const std::unique_ptr<Token> Token::walk(const Token& node, split_t path) {
         return nullptr;
     }
 
-    for(size_t i = 0; i < tree.size(); i++) {
+    for(size_t i = 0; i < node.tree.size(); i++) {
         if(node.tree[i].get_name() == path.front()) {
             if(path.size() == 1) {
                 return node.tree[i].clone();
