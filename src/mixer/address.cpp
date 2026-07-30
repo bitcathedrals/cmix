@@ -3,7 +3,7 @@
 std::unique_ptr<Token> build_signed_number_parser(void) {
     production_t define;
 
-    auto sign = std::make_unique<Special>();
+    auto sign = std::make_unique<NumSign>();
     sign->set_optional()->set_name("address_sign");
 
     auto number = std::make_unique<Numeric>();
