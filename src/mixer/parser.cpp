@@ -5,7 +5,7 @@
 
 #include "mixer/parser.h"
 
-Token::Token() : t {Token::label::end}  {}
+Token::Token() : t {Token::label::nothing}  {}
 
 Token::Token(const Token& other) : name(other.name),
                                    t(other.t),
@@ -197,11 +197,7 @@ Token Token::parse(std::string::const_iterator& begin,
 
     for(size_t i = 0; i < tokens.size(); i++) {
         if(begin == end) {
-            if(i == (tokens.size() - 1)) {
-                break;
-            }
-
-            return Token {};
+            break;
         }
 
         if (tokens[i]->get_type() == Token::label::node) {
@@ -212,7 +208,7 @@ Token Token::parse(std::string::const_iterator& begin,
             }
 
             if(ascent.get_type() == Token::label::nothing) {
-                if(tokens[i]->optional) {
+                if(tokens[i]->get_optional()) {
                     begin = backtrack;
                     continue;
                 }
