@@ -52,7 +52,7 @@ TEST(MixerAddress, AddressCommaIndexCorrect) {
     EXPECT_EQ(address->get_type(), Token::label::number);
     EXPECT_EQ(address->get_token(), "1234");
 
-    auto index = p.walk("address_index_field/index_field_index");
+    auto index = p.walk("index_field/idx_index");
 
     ASSERT_NE(index, nullptr);
 
@@ -99,21 +99,21 @@ TEST(MixerAddress, CommaAddressIndexFieldCorrect) {
     EXPECT_EQ(address->get_type(), Token::label::number);
     EXPECT_EQ(address->get_token(), "1234");
 
-    auto index = p.walk("address_index_field/index_field_index");
+    auto index = p.walk("index_field/idx_index");
 
     ASSERT_NE(index, nullptr);
 
     EXPECT_EQ(index->get_type(), Token::label::number);
     EXPECT_EQ(index->get_token(), "5");
 
-    auto field_left = p.walk("address_index_field/index_field_field/field_left_number");
+    auto field_left = p.walk("index_field/idx_field/field_left_number");
 
     ASSERT_NE(field_left, nullptr);
 
     EXPECT_EQ(field_left->get_type(), Token::label::number);
     EXPECT_EQ(field_left->get_token(), "6");
 
-    auto field_right = p.walk("address_index_field/index_field_field/field_right_number");
+    auto field_right = p.walk("index_field/idx_field/field_right_number");
 
     ASSERT_NE(field_right, nullptr);
 
