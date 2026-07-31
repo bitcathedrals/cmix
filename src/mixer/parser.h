@@ -80,6 +80,8 @@ public:
 
     const std::unique_ptr<Token> walk(const std::string node_path);
 
+    split_t depth(void);
+
 protected:
     virtual bool is_capture(const char x [[maybe_unused]]) const;
 
@@ -112,6 +114,8 @@ private:
     void graph_node(std::ostream& output);
 
     void graph_ast_internal(std::ostream& output);
+
+    void depth_inner(const AST_t x, split_t& deepest, split_t stack);
 };
 
 std::ostream& operator<<(std::ostream& out, const Token& token);

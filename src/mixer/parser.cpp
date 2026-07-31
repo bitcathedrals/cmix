@@ -398,6 +398,29 @@ void Token::graph_ast(std::ostream& output) {
     graph_footer(output);
 }
 
+void Token::depth_inner(const AST_t x, split_t& deepest, split_t stack) {
+    for(size_t i = 0; i < x.size(); i++) {
+        if(x[i].get_type() == Token::label::node) {
+            stack.push_back(x[i].get_name());
+
+            if(stack.size() >= deepest.size()) {
+                deepest = stack;
+            }
+
+            depth_inner(x[i].tree, deepest, stack);
+        }
+    }
+}
+
+split_t Token::depth(void) {
+    split_t deepest;
+    split_t stack;
+
+    depth_inner(tree, deepest, stack);
+
+    return deepest;
+}
+
 bool Alphabetic::is_capture(const char x) const {
     if (std::isalpha(x)) {
         return true;

@@ -229,3 +229,13 @@ TEST(MixerWalk, WalkGetNode) {
 
     EXPECT_EQ(ptr->get_token(), "check");
 }
+
+TEST(MixerDepth, DepthSimple) {
+    std::string test_string("1234,5");
+
+    auto p = Token::descent(build_address_parser(), test_string);
+
+    split_t depth = p.depth();
+
+    EXPECT_EQ(depth.back(), "index_field");
+}

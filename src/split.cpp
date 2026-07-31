@@ -14,12 +14,30 @@ std::ostream& operator<<(std::ostream& output, const split_t p) {
     return output;
 }
 
-
 std::istringstream istream_from_string(const std::string input) {
     return std::istringstream(input);
 }
 
-split_t parse_core(const std::string& input, std::regex r) {
+std::string split_join(const split_t& split, const std::string delimiter) {
+    std::string output;
+
+    auto i = split.begin();
+    auto n = split.end();
+
+    auto d = split.end() - 1;
+
+    while(i != n) {
+        output += *i;
+
+        if(i != d) {
+            output += delimiter;
+        }
+    }
+
+    return output;
+}
+
+split_t split_core(const std::string& input, std::regex r) {
     split_t parse;
 
     if(input == "") { return parse; };
@@ -47,22 +65,22 @@ split_t parse_core(const std::string& input, std::regex r) {
 }
 
 split_t split_cli(const std::string& input) {
-    return parse_core(input, std::regex("\\S+"));
+    return split_core(input, std::regex("\\S+"));
 }
 
 split_t split_path(const std::string& input) {
-    return parse_core(input, std::regex("[^/]+"));
+    return split_core(input, std::regex("[^/]+"));
 }
 
 split_t split_word(const char* input) {
-    return parse_core(std::string(input), std::regex("[^:]+"));
+    return split_core(std::string(input), std::regex("[^:]+"));
 }
 
 split_t split_word(const std::string& input) {
-    return parse_core(input, std::regex("[^:]+"));
+    return split_core(input, std::regex("[^:]+"));
 }
 
-// this is for variants to make a new split_t with variable arguments.
+// variants to make a new split_t with lengths for cmix types.
 
 split_t make_spit(const std::string& x1,
                    const std::string& x2,
