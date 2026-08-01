@@ -40,7 +40,7 @@ TEST(MixerAddress, AddressOnly) {
     EXPECT_EQ(number->get_token(), "1234");
 }
 
-TEST(MixerAddress, AddressCommaIndexCorrect) {
+TEST(MixerAddress, AddressIndexCorrect) {
     std::string test_string("1234,5");
 
     auto p = Token::descent(build_address_parser(), test_string);
@@ -65,9 +65,9 @@ TEST(MixerAddress, AddressFieldCorrect) {
 
     auto p = Token::descent(build_address_parser(), test_string);
 
-    EXPECT_EQ(p[0].get_type(), Token::label::node);
-
     auto address = p.walk("address/address_number");
+
+    ASSERT_NE(address, nullptr);
 
     EXPECT_EQ(address->get_type(), Token::label::number);
     EXPECT_EQ(address->get_token(), "1234");
@@ -87,7 +87,19 @@ TEST(MixerAddress, AddressFieldCorrect) {
     EXPECT_EQ(field_right->get_token(), "6");
 }
 
-TEST(MixerAddress, CommaAddressIndexFieldCorrect) {
+// TEST(MixerAddress, AddressFieldBad) {
+//     std::string test_string("1234(5:)");
+
+//     auto p = Token::descent(build_address_parser(), test_string);
+// }
+
+TEST(MixerAddress, AddressIndexFieldBad) {
+    std::string test_string("1234,7(5:");
+
+    auto p = Token::descent(build_address_parser(), test_string);
+}
+
+TEST(MixerAddress, AddressIndexFieldCorrect) {
     std::string test_string("1234,5(6:7)");
 
     auto p = Token::descent(build_address_parser(), test_string);

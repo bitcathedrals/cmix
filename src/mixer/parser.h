@@ -79,6 +79,7 @@ public:
     void graph_ast(std::ostream& output);
 
     const std::unique_ptr<Token> walk(const std::string node_path);
+    const std::unique_ptr<Token> safe_walk(const Token& node, split_t path);
 
     split_t depth(void);
 

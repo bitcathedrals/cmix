@@ -97,6 +97,20 @@ const std::unique_ptr<Token> Token::walk(const Token& node, split_t path) {
     return nullptr;
 }
 
+const std::unique_ptr<Token> Token::safe_walk(const Token& node, split_t path) {
+    auto ptr = walk(node, path);
+
+    if(ptr == nullptr) {
+        throw std::invalid_argument(std::format("{} node bad path: {}",
+                                                node.get_name(),
+                                                split_join(path, "/")));
+
+    }
+
+    return ptr;
+}
+
+
 const std::unique_ptr<Token> Token::walk(const std::string path) {
     split_t split = split_path(path);
 
