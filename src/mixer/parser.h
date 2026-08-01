@@ -186,4 +186,19 @@ private:
     virtual bool is_capture(const char x) const override;
 };
 
+class Literal : public Token {
+public:
+    explicit Literal(const char lit) : Token(Token::label::special),
+                                       literal(lit) {}
+
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<Literal>(*this);
+    }
+
+private:
+    const char literal;
+
+    virtual bool is_capture(const char x) const override;
+};
+
 #endif

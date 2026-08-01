@@ -87,16 +87,16 @@ TEST(MixerAddress, AddressFieldCorrect) {
     EXPECT_EQ(field_right->get_token(), "6");
 }
 
-// TEST(MixerAddress, AddressFieldBad) {
-//     std::string test_string("1234(5:)");
+TEST(MixerAddress, AddressFieldBad) {
+    std::string test_string("1234(:)");
 
-//     auto p = Token::descent(build_address_parser(), test_string);
-// }
+    EXPECT_THROW(Token::descent(build_address_parser(), test_string), std::invalid_argument);
+}
 
 TEST(MixerAddress, AddressIndexFieldBad) {
     std::string test_string("1234,7(5:");
 
-    auto p = Token::descent(build_address_parser(), test_string);
+    EXPECT_THROW(Token::descent(build_address_parser(), test_string), std::invalid_argument);
 }
 
 TEST(MixerAddress, AddressIndexFieldCorrect) {

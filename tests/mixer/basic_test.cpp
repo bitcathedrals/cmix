@@ -126,9 +126,24 @@ TEST(MixerBasicToken, SpecialTest) {
     EXPECT_EQ(token.get_token(), "!!");
 }
 
+TEST(MixerBasicToken, LiteralTestMatch) {
+    std::string lower(":");
+
+    std::string::const_iterator begin = lower.cbegin();
+    std::string::const_iterator end = lower.cend();
+
+    Literal matcher(':');
+
+    Token token = matcher.match(begin, end);
+
+    EXPECT_EQ(token.get_type(), Token::label::special);
+    EXPECT_EQ(token.get_token().size(), static_cast<size_t>(1));
+    EXPECT_EQ(token.get_token(), ":");
+}
+
 TEST(MixerBasicToken, StopBeforeEndAndReturn) {
     Numeric matcher;
-    
+
     std::string input("1234,");
 
     std::string::const_iterator begin = input.cbegin();

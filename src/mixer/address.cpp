@@ -21,19 +21,19 @@ std::unique_ptr<Token> build_signed_number_parser(void) {
 std::unique_ptr<Token> build_field_parser(void) {
     production_t define;
 
-    auto left_paren = std::make_unique<Special>();
+    auto left_paren = std::make_unique<Literal>('(');
     left_paren->set_name("field_left_paren");
 
     auto left_number = std::make_unique<Numeric>();
     left_number->set_name("field_left_number");
 
-    auto field_middle = std::make_unique<Special>();
+    auto field_middle = std::make_unique<Literal>(':');
     field_middle->set_name("field_middle");
 
     auto right_number = std::make_unique<Numeric>();
     right_number->set_name("field_right_number");
 
-    auto right_paren = std::make_unique<Special>();
+    auto right_paren = std::make_unique<Literal>(')');
     right_paren->set_name("right_paren");
 
     define.push_back(std::move(left_paren));
@@ -48,7 +48,7 @@ std::unique_ptr<Token> build_field_parser(void) {
 std::unique_ptr<Token> build_index_field_parser(void) {
     production_t define;
 
-    auto comma = std::make_unique<Special>();
+    auto comma = std::make_unique<Literal>(',');
     comma->set_name("idx_comma");
 
     auto index = std::make_unique<Numeric>();

@@ -241,7 +241,7 @@ TEST(MixerDepth, DepthSimple) {
 }
 
 TEST(MixerDepth, DepthEmpty) {
-    std::string test_string("");
+     std::string test_string("");
 
     auto p = Token::descent(build_address_parser(), test_string);
 

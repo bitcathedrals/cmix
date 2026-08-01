@@ -228,7 +228,11 @@ Token Token::parse(std::string::const_iterator& begin,
                 break;
             }
 
-            return Token { Token::label::rollback };
+            if(i > 0) {
+                parse_fail_throw(parse, *tokens[i], backtrack, begin);
+            }
+
+            return Token(Token::label::rollback);
         }
 
         if (tokens[i]->get_type() == Token::label::node) {
@@ -238,14 +242,11 @@ Token Token::parse(std::string::const_iterator& begin,
                 using enum Token::label;
 
                 case rollback:
-                    if(tokens[i]->get_optional()) {
-                        begin = backtrack;
-                        continue;
+                    if(get_optional()) {
+                        return Token { Token::label::nothing };
                     }
 
                     return Token { Token::label::rollback };
-
-                    break;
 
                 case nothing:
                     if(tokens[i]->get_optional()) {
@@ -275,7 +276,12 @@ Token Token::parse(std::string::const_iterator& begin,
                 continue;
             }
 
-            parse_fail_throw(parse, *tokens[i], backtrack, begin);
+            if(i > 0) {
+                // we have a partial match, so error if we don't match every non-optional token
+                parse_fail_throw(parse, *tokens[i], backtrack, begin);
+            }
+
+            return Token( Token::label::nothing );
         }
 
         backtrack = begin;
@@ -475,3 +481,10 @@ bool Numeric::is_capture(const char x) const {
      return false;
  }
 
+bool Literal::is_capture(const char x) const {
+    if (literal == x) {
+        return true;
+    }
+
+    return false;
+}
