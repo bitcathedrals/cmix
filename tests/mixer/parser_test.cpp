@@ -239,3 +239,13 @@ TEST(MixerDepth, DepthSimple) {
 
     EXPECT_EQ(depth.back(), "index_field");
 }
+
+TEST(MixerDepth, DepthEmpty) {
+    std::string test_string("");
+
+    auto p = Token::descent(build_address_parser(), test_string);
+
+    split_t depth = p.depth();
+
+    EXPECT_EQ(depth.size(), static_cast<size_t>(0));
+}
