@@ -15,9 +15,9 @@ MAX_BACKTRACE=4
 CORE_DIAGNOSTICS = -Wall -Wextra -Werror -ftemplate-backtrace-limit=$(MAX_BACKTRACE)
 
 ifeq ($(CXX), g++)
-DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fdiagnostics-color=never -fmax-errors=$(MAX_ERRORS)
+DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fdiagnostics-color=never
 else
-DIAGNOSTICS = $(CORE_DIAGNOSTICS) -ferror-limit=$(MAX_ERRORS) 
+DIAGNOSTICS = $(CORE_DIAGNOSTICS)
 endif
 
 CXX ?= clang++
