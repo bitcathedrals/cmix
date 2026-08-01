@@ -188,10 +188,10 @@ TEST(MixerWalk,ShorterPathThanTokens) {
     Token bar {};
     bar.set_name("bar");
 
-    Token foo { std::move(AST_t { bar }) };
+    Token foo { AST_t { bar } };
     foo.set_name("foo");
 
-    Token t { std::move(AST_t { foo }) };
+    Token t { AST_t { foo } };
 
     auto ptr = t.walk(path);
 
@@ -204,10 +204,10 @@ TEST(MixerWalk, PathAndTokensSameLength) {
     Token bar {};
     bar.set_name("bar");
 
-    Token foo { std::move(AST_t { bar }) };
+    Token foo { AST_t { bar } };
     foo.set_name("foo");
 
-    Token t { std::move(AST_t { foo }) };
+    Token t { AST_t { foo } };
 
     auto ptr = t.walk(path);
 
@@ -220,10 +220,10 @@ TEST(MixerWalk, WalkGetNode) {
     Token bar { Token::label::text, "check" };
     bar.set_name("bar");
 
-    Token foo { std::move(AST_t { bar }) };
+    Token foo { AST_t { bar } };
     foo.set_name("foo");
 
-    Token t { std::move(AST_t { foo }) };
+    Token t { AST_t { foo } };
 
     auto ptr = t.walk(path);
 
