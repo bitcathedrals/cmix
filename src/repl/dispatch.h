@@ -19,10 +19,8 @@ enum class CmdStatus {
     out_of_range = -4,
 };
 
-std::string cmd_string(const split_t p);
-
 std::string status_string(const CmdStatus s);
 
-CmdStatus run_command(const split_t p);
+CmdStatus run_command(split_t p);
 
 #endif

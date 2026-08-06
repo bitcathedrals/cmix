@@ -6,8 +6,8 @@
 
 TEST(CommandDispatch, StringToCommand) {
     EXPECT_EQ(string_to_command("quit"), Command::quit);
-    EXPECT_EQ(string_to_command("read"), Command::read);
-    EXPECT_EQ(string_to_command("write"), Command::write);
+    EXPECT_EQ(string_to_command("r"), Command::read);
+    EXPECT_EQ(string_to_command("w"), Command::write);
 }
 
 TEST(CommandDispatch, LookupCommandEntry) {

@@ -23,8 +23,8 @@ CommandEntry lookup_command(const Command x) {
 Command string_to_command(const std::string command) {
     if(command == "quit") return Command::quit;
 
-    if(command == "read") return Command::read;
-    if(command == "write") return Command::write;
+    if(command == "r") return Command::read;
+    if(command == "w") return Command::write;
 
     return Command::unknown;
 }
