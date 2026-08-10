@@ -153,24 +153,3 @@ TEST(InstructionBasic, ChainSetters) {
     EXPECT_EQ(x.get_field(), 11);
     EXPECT_EQ(x.get_opcode(), 8);
 }
-
-struct winch_instruction : public Instruction {
-    using Instruction::assemble_field;
-};
-
-TEST(InstructionAssembleField, HappyPathInput) {
-    winch_instruction x;
-
-    std::string s("2:5)");
-
-    std::string::const_iterator begin = s.cbegin();
-    std::string::const_iterator end = s.end();
-
-    int lower = 0;
-    int upper = 0;
-
-    x.assemble_field(begin,end, lower, upper);
-
-    EXPECT_EQ(lower, 2);
-    EXPECT_EQ(upper, 5);
-}

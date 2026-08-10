@@ -5,9 +5,9 @@
 #include <utility>
 #include <memory>
 
+#include "toolbox.h"
 #include "cpu/defs.h"
 #include "cpu/word.h"
-#include "mixer/parser.h"
 
 enum class InstructionFields : byte {
     address_begin = 1,
@@ -19,7 +19,7 @@ enum class InstructionFields : byte {
 
 class Instruction : public Word {
 public:
-    Instruction(void);
+    Instruction(void) = default;
 
     int get_address() const;
 
@@ -45,7 +45,7 @@ public:
     Instruction& set_opcode(byte v);
     Instruction& set_opcode(std::string value);
 
-    std::pair<int, std::unique_ptr<Instruction>> assemble(const std::string assembly) const;
+    virtual std::unique_ptr<Instruction> assemble(const std::string assembly) const;
 
     virtual std::unique_ptr<Instruction> encode(int address,
                                                 int index,
@@ -58,33 +58,27 @@ public:
     virtual ~Instruction() = default;
 
 protected:
-    void assemble_field(std::string::const_iterator& begin,
-                        std::string::const_iterator& end,
-
-                        int& lower,
-                        int& upper) const;
-
-    void assemble_address(std::string::const_iterator& begin,
-                          std::string::const_iterator& end,
-
-                          int& address,
-                          int& index,
-                          int& field_lower,
-                          int& field_upper) const;
-
     virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator& begin,
                                                   std::string::const_iterator& end) const;
-
-    std::unique_ptr<Token> address_parser;
-
-    std::unique_ptr<Token> build_address_parser(void);
 };
 
 enum class InstructionOpCodes : byte {
     LDA = 8
 };
 
-extern std::map<std::string, std::unique_ptr<Instruction>> InstructionFactory;
-extern std::map<int, std::unique_ptr<Instruction>> InstructionTable;
+class InstructionFactory : public Singleton<InstructionFactory> {
+    friend class Singleton<InstructionFactory>;
+
+public:
+    std::shared_ptr<const Instruction> insert(const std::string key, const Instruction& instruction);
+    std::shared_ptr<const Instruction> operator[](const std::string key);
+
+private:
+    std::map<std::string, std::shared_ptr<const Instruction>> table;
+
+    InstructionFactory(void) = default;
+};
+
+// extern InstructionTable;
 
 #endif
