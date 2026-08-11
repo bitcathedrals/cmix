@@ -56,14 +56,14 @@ std::unique_ptr<Instruction> LDA::assemble(std::string::const_iterator& begin,
     int left=0;
     auto field_left = parse.walk("index_field/idx_field/field_left_number");
 
-    if(field_left != nullptr && field_left.get_type() == Token::label::number) {
+    if(field_left != nullptr && field_left->get_type() == Token::label::number) {
         left = std::stoi(field_left->get_token());
     }
 
     auto field_right = parse.walk("index_field/idx_field/field_right_number");
     int right=5;
 
-    if(field_right != nullptr && field_right.get_type() == Token::label::number) {
+    if(field_right != nullptr && field_right->get_type() == Token::label::number) {
         right = std::stoi(field_right->get_token());
     }
 
