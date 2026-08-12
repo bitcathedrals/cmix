@@ -37,7 +37,7 @@ public:
     byte get_field_upper() const;
 
     Instruction& set_field(byte v);
-    Instruction& set_field(byte lower, byte upper);
+    void set_field(byte lower, byte upper);
     Instruction& set_field(std::string value);
 
     byte get_opcode() const;

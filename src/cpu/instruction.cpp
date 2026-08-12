@@ -1,3 +1,4 @@
+#include <sstream>
 #include <stdexcept>
 #include <vector>
 #include <iterator>
@@ -96,13 +97,11 @@ Instruction& Instruction::set_field(std::string value) {
     return *this;
 }
 
-Instruction& Instruction::set_field(byte lower, byte upper) {
+void Instruction::set_field(byte lower, byte upper) {
     byte v = lower * 8;
     v = v + upper;
 
     operator[](static_cast<byte>(InstructionFields::field)) = v;
-
-    return *this;
 }
 
 byte Instruction::get_opcode(void) const {
@@ -159,5 +158,10 @@ void Instruction::execute(void) const {
 }
 
 void Instruction::opcode(void) const {
-    throw std::logic_error("Instruction::opcode base class method reached");
+    std::ostringstream dump;
+
+    dump << "Instruction::opcode base class method reached: "
+         << *this;
+
+    throw std::logic_error(dump.str());
 }
