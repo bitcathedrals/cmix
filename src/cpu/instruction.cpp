@@ -142,14 +142,14 @@ void Instruction::assemble(std::string::const_iterator& begin [[maybe_unused]],
 void Instruction::encode(int address [[maybe_unused]],
                          int index [[maybe_unused]],
                          int field_lower [[maybe_unused]],
- int field_upper [[maybe_unused]])  {
+                         int field_upper [[maybe_unused]])  {
     throw std::logic_error("assemble base class virtual called");
 }
 
 void Instruction::execute(void) const {
     switch(get_opcode()) {
         case static_cast<byte>(InstructionOpCodes::LDA):
-            static_cast<const Instruction*>(this)-> opcode();
+            static_cast<const LDA*>(this)->opcode();
             break;
 
         default:
