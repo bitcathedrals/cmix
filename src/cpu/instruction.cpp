@@ -10,12 +10,12 @@
 
 #include "cpu/instructions/lda.h"
 
-std::shared_ptr<const Instruction> InstructionFactory::insert(const std::string key, const Instruction& instruction) {
-    table[key] = std::make_shared<const Instruction>(instruction);
+std::shared_ptr<Instruction> InstructionFactory::insert(const std::string key, Instruction& instruction) {
+    table[key] = std::make_shared<Instruction>(instruction);
     return table[key];
 }
 
-std::shared_ptr<const Instruction> InstructionFactory::operator[](const std::string key) {
+std::shared_ptr<Instruction> InstructionFactory::operator[](const std::string key) {
     return table[key];
 }
 
@@ -121,7 +121,7 @@ Instruction& Instruction::set_opcode(std::string value) {
     return *this;
 }
 
-std::unique_ptr<Instruction> Instruction::assemble(const std::string assembly) const {
+void Instruction::assemble(const std::string assembly) {
     std::string::const_iterator begin = assembly.cbegin();
     std::string::const_iterator end = assembly.cend();
 
@@ -132,25 +132,25 @@ std::unique_ptr<Instruction> Instruction::assemble(const std::string assembly) c
         throw std::invalid_argument("can't find instruction opcode in assembly: " + assembly);
     }
 
-    return InstructionFactory::getInstance()[opcode.get_token()]->assemble(begin, end);
+    InstructionFactory::getInstance()[opcode.get_token()]->assemble(begin, end);
 }
 
-std::unique_ptr<Instruction> Instruction::assemble(std::string::const_iterator& begin [[maybe_unused]],
-                                                   std::string::const_iterator& end [[maybe_unused]]) const {
+void Instruction::assemble(std::string::const_iterator& begin [[maybe_unused]],
+                           std::string::const_iterator& end [[maybe_unused]]) {
     throw std::logic_error("assemble base class virtual called");
 }
 
-std::unique_ptr<Instruction> Instruction::encode(int address [[maybe_unused]],
-                                    int index [[maybe_unused]],
-                                    int field_lower [[maybe_unused]],
-                                    int field_upper [[maybe_unused]]) const {
+void Instruction::encode(int address [[maybe_unused]],
+                         int index [[maybe_unused]],
+                         int field_lower [[maybe_unused]],
+ int field_upper [[maybe_unused]])  {
     throw std::logic_error("assemble base class virtual called");
 }
 
 void Instruction::execute(void) const {
     switch(get_opcode()) {
         case static_cast<byte>(InstructionOpCodes::LDA):
-            static_cast<const LDA*>(this)->opcode();
+            static_cast<const Instruction*>(this)-> opcode();
             break;
 
         default:

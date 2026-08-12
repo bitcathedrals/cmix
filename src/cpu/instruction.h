@@ -45,12 +45,13 @@ public:
     Instruction& set_opcode(byte v);
     Instruction& set_opcode(std::string value);
 
-    virtual std::unique_ptr<Instruction> assemble(const std::string assembly) const;
+    void assemble(const std::string assembly);
 
-    virtual std::unique_ptr<Instruction> encode(int address,
-                                                int index,
-                                                int field_lower,
-                                                int field_upper) const;
+    virtual void encode(int address,
+                        int index,
+                        int field_lower,
+                        int field_upper);
+
     void execute(void) const;
 
     void opcode(void) const;
@@ -58,8 +59,8 @@ public:
     virtual ~Instruction() = default;
 
 protected:
-    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator& begin,
-                                                  std::string::const_iterator& end) const;
+    virtual void assemble(std::string::const_iterator& begin,
+                          std::string::const_iterator& end);
 };
 
 enum class InstructionOpCodes : byte {
@@ -70,11 +71,11 @@ class InstructionFactory : public Singleton<InstructionFactory> {
     friend class Singleton<InstructionFactory>;
 
 public:
-    std::shared_ptr<const Instruction> insert(const std::string key, const Instruction& instruction);
-    std::shared_ptr<const Instruction> operator[](const std::string key);
+    std::shared_ptr<Instruction> insert(const std::string key, Instruction& instruction);
+    std::shared_ptr<Instruction> operator[](const std::string key);
 
 private:
-    std::map<std::string, std::shared_ptr<const Instruction>> table;
+    std::map<std::string, std::shared_ptr<Instruction>> table;
 
     InstructionFactory(void) = default;
 };

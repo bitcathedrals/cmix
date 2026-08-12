@@ -4,12 +4,14 @@
 #include "mixer/address.h"
 #include "cpu/instruction.h"
 
+LDA test_monkey;
+
 struct CompileUnit {
 public:
     const Token parser;
 
     CompileUnit() : parser(*build_address_parser()) {
-        InstructionFactory::getInstance().insert("LDA", LDA {});
+        InstructionFactory::getInstance().insert("LDA", test_monkey);
 //        InstructionTable[static_cast<int>(InstructionOpCodes::LDA)] = std::make_unique<LDA>();
     }
 };
@@ -23,23 +25,19 @@ void LDA::opcode(void) const {
                             get_field_upper());
 }
 
-std::unique_ptr<Instruction> LDA::encode(int address,
-                                         int index,
-                                         int field_lower,
-                                         int field_upper) const {
-    auto encode = std::make_unique<LDA>();
-
-    encode->set_opcode(static_cast<byte>(InstructionOpCodes::LDA))
+void LDA::encode(int address,
+                 int index,
+                 int field_lower,
+                 int field_upper) {
+    set_opcode(static_cast<byte>(InstructionOpCodes::LDA))
         .set_address(address)
         .set_index(static_cast<byte>(index))
         .set_field(static_cast<byte>(field_lower),
                    static_cast<byte>(field_upper));
-
-    return encode;
 }
 
-std::unique_ptr<Instruction> LDA::assemble(std::string::const_iterator& begin,
-                                           std::string::const_iterator& end) const {
+void LDA::assemble(std::string::const_iterator& begin,
+                   std::string::const_iterator& end) {
 
     auto parse = Token::descent(unit.parser, std::string(begin, end));
 

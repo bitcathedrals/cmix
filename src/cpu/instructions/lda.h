@@ -11,14 +11,14 @@ public:
 
     virtual ~LDA() = default;
 
- protected:
-    virtual std::unique_ptr<Instruction> assemble(std::string::const_iterator& begin,
-                                                  std::string::const_iterator& end) const override;
+protected:
+    virtual void assemble(std::string::const_iterator& begin,
+                          std::string::const_iterator& end) override;
 
-    virtual std::unique_ptr<Instruction> encode(int address,
-                                                int index,
-                                                int field_lower,
-                                                int field_upper) const override;
+    virtual void encode(int address,
+                        int index,
+                        int field_lower,
+                        int field_upper) override;
 };
 
 #endif
