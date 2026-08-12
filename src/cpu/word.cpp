@@ -201,11 +201,11 @@ void Word::insert_subrange_from_to(const Word& source, Word& destination, byte l
 }
 
 std::ostream& operator<<(std::ostream& output, const Word& x) {
-    output << static_cast<int>(x.data[0]) << "::"
-           << static_cast<int>(x.data[1]) << "::"
-           << static_cast<int>(x.data[2]) << "::"
-           << static_cast<int>(x.data[3]) << "::"
-           << static_cast<int>(x.data[4]) << "::"
+    output << static_cast<int>(x.data[0]) << "_"
+           << static_cast<int>(x.data[1]) << "_"
+           << static_cast<int>(x.data[2]) << "_"
+           << static_cast<int>(x.data[3]) << "_"
+           << static_cast<int>(x.data[4]) << "_"
            << static_cast<int>(x.data[5]);
 
     return output;
