@@ -45,7 +45,6 @@ TEST(LDACpuTest, CpuInstructionTest) {
     EXPECT_EQ(CPU.A[5], 12);
 }
 
-
 TEST(LDACpuTest, CpuRunTest) {
     CPU.reset();
 

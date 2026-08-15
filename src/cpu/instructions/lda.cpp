@@ -65,5 +65,5 @@ void LDA::assemble(std::string::const_iterator& begin,
         right = std::stoi(field_right->get_token());
     }
 
-    return encode(adr, index, left, right);
+    encode(adr, index, left, right);
 }
