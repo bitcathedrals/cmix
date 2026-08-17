@@ -11,7 +11,8 @@ TODO for the CMIX project
   - implement a proper number system that implements sign/magnitude correctly
     for setting and ops.
 
-* Inustruction
-  - properly handle signs (do signs affect both address and index?
+* fix compilation of bench on apple which does not have chrono::current_zone
+
+
 
 
