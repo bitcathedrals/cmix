@@ -215,7 +215,7 @@ tools: tools/graph
 #
 
 kloc:
-	wc -l `find src tests perf debug -type f -print`
+	wc -l `find src tests perf -type f -print`
 
 prod: $(PROD_TARGET)
 
