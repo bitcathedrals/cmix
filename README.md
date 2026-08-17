@@ -82,5 +82,5 @@ Debugger.
 
 ### Deps
 
-- googletest - for testing
-- libedit - for CLI
+- googletest - Only for the test target
+- libedit - required for CLI, pre-installed on MacOS & OpenBSD, packaged on Linux.
