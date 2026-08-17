@@ -1,6 +1,6 @@
 # CMix
 
-CMix is an implementation of the Knuth CMix mythical computer. Mix
+CMix is an implementation of the Knuth CMix mythical computer. MIX
 is a machine based upon 1960's era technology. It contains a couple
 of general purpose registers, 4000 words of memory, and some index
 registers.
@@ -12,41 +12,38 @@ tools such as an a assembler.
 
 ## Goals
 
-- Idiomatic C++, a refresh on idioms and best practices.
+- Idiomatic C++, a refresh on idioms and C++ Guidelines.
 - Portable: currently developed on MacOS, Linux, and
   OpenBSD. Buildable with Clang or GCC.
 - Correctness and simplicity first. No premature optimization.
 - no command dependenies except the compiler and GNU Make.
-- Multiple targets for testing, benchmarking, debugging, and prod.
+- Multiple targets for testing, benchmarking, and prod.
 - Minimal external code. External vendor code is checked in as 
   submodules. No patching vendor code in the submodules.
 - Exploring compiler features like profile driven optimizations.
+- Learn Modern C++
+- Have a implementation for reading "The Art of Computer Programming"
+- have a nice blend of a CLI for cmix, and the teletype for MIX.
+- explore compiler optimization techniques.
 
 ## Non Goals
 
 - Not competing with other implementations. Other implementations that
   I am aware of are a web version, and a Java version. Both are
-  portable in a way, however the web version requires a browser which is
-  big and slow, and Java is big and slow.
+  very heavy.
+
 - Heavy optimization: optimization is a part of the project but
   maximum speed possible is not a goal. For that a machine code translation
   would be a place to start, not an emulator.
 
 ## Personal Goals
 
-- to become familiar and proficient in Modern C++. My old C++
-  experience is with '03. I am aiming at '17 as legacy, and '20 for
-  green field projects.
-
-## History
-
-I wanted to study Knuth's the Art of Computer Programming, and I wanted to
-come up to speed with modern C++. This project works on both axis making
-the best use of my time possible.
+- to become familiar and proficient in Modern C++. I am targeting '20
+  to learn and use.
 
 ## Process to Progress
 
-### Phase 1
+### Phase 1 - Done
 
 The first stage is to lay down the core defitions. This would be the 
 core abstractions for both instructions and data. I want to make it
@@ -60,20 +57,21 @@ the most pressing bits.
 
 ### Phase 2
 
-The second phase would be: churning out instructions for both
-execution and assembling. Execution involves decoding into MicroCode
-the instructions. Assembling involves taking strings and encoding into
-instructions.
+The second part involves churning out instructions and creating
+a simple one pass assembler. The assembler can be a simplistic
+and niave, but any chip these days will run it easily.
 
-### Phase 3
+Also a simple loader will be implemented
 
-Phase 3 is implementing a external assembler and a linker.
+two commands: execute and run. Execute will execute a single
+instruction. Run will continue execution until a zero word
+or end of memory is reached.
 
-### Phase 4 is IO.
+### Phase 4
 
-Implement the disks first, and then the punch card reader.
+Phase 4 is IO.
 
 ### Deps
 
-googletest - for testing
-- libreadline-dev  readline library
+- googletest - for testing
+- libedit - for CLI
