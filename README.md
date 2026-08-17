@@ -1,6 +1,6 @@
 # CMix
 
-CMix is an implementation of the Knuth CMix mythical computer. MIX
+CMix is an implementation of the Knuth MIX mythical computer. MIX
 is a machine based upon 1960's era technology. It contains a couple
 of general purpose registers, 4000 words of memory, and some index
 registers.
