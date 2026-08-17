@@ -3,10 +3,12 @@
 
 #include <sstream>
 
+#include <stdexcept>
+
 #include "cpu/word.h"
 #include "cpu/operation.h"
 #include "cpu/overflow.h"
-#include "parse.h"
+#include "split.h"
 
 void Word::sanitize(void) {
     auto itr_b = data.begin();
@@ -25,7 +27,19 @@ void Word::sanitize(void) {
 
 Word::Word() : data {sign_default, 0, 0, 0, 0, 0} {}
 
-Word::Word(const Word& other) : data(other.data) {}
+Word::Word(const Word& other) {
+    for(auto i = 0; i < word_size; i++) {
+        data[i] = other.data[i];
+    }
+}
+
+void Word::reset() {
+    data[0] = sign_default;
+
+    for(auto i = data_offset; i < word_size; i++) {
+        data[i] = 0;
+    }
+}
 
 Word& Word::operator=(const Word& other) {
     data = other.data;
@@ -33,7 +47,7 @@ Word& Word::operator=(const Word& other) {
 }
 
 Word& Word::operator=(const std::string& x) {
-    parse_t p = parse_word(x);
+    split_t p = split_word(x);
 
     if(!(p.size() == data_size)) {
         throw std::out_of_range("word::operator=(const std::string& x) parse is the wrong size");
@@ -43,7 +57,7 @@ Word& Word::operator=(const std::string& x) {
     itr_b++; // skip over the sign
 
     std::transform(p.begin(), p.end(), itr_b, [](const std::string& x) {
-        return static_cast<byte>(std::atoi(x.c_str()));
+        return static_cast<byte>(std::stoi(x.c_str()));
     });
 
     sanitize();
@@ -51,14 +65,14 @@ Word& Word::operator=(const std::string& x) {
     return *this;
 }
 
-Word& Word::operator=(const parse_t& p) {
+Word& Word::operator=(const split_t& p) {
     auto dest_itr_b = data.begin();
     dest_itr_b++;  // skip over sign
 
     if(!(p.size() == data_size)) {
         std::ostringstream fmt;
 
-        fmt << "word::operator=(const std::parse_t& x) parse is the wrong size: "
+        fmt << "word::operator=(const std::split_t& x) parse is the wrong size: "
             << p.size();
 
         throw std::out_of_range(fmt.str());
@@ -90,7 +104,7 @@ Word::Word(Word& other, byte lower, byte upper) {
 
     lower += data_offset;
 
-    for(byte i = data_min; i <= data_max; i++) {
+    for(auto i = lower; i <= data_max; i++) {
         if(i >= lower && i <= upper) {
             data[i] = other[i];
         }
@@ -100,13 +114,25 @@ Word::Word(Word& other, byte lower, byte upper) {
     }
 }
 
+byte Word::operator[](const byte index) const {
+    return data[index];
+}
+
+byte Word::operator[](const int index) const {
+    return data[index];
+}
+
 byte& Word::operator[](const byte index) {
-    return data[index + data_offset];
+    return data[index];
+}
+
+byte& Word::operator[](const int index) {
+    return data[index];
 }
 
 bool Word::overflowed(byte index) {
-    if (data[index + data_offset] > positive_max ||
-        data[index + data_offset] < negative_max) {
+    if (data[index] > positive_max ||
+        data[index] < negative_max) {
         return true;
     }
 
@@ -155,20 +181,31 @@ Word& Word::binary(byte low, byte high, OpInfo info, Operation op, Word v) {
     return *this;
 }
 
-Word& Word::copy_subrange(Word& other, byte lower, byte upper) {
-    for(byte i = lower + data_offset; i <= upper; i++) {
-        data[i] = other[i];
+Word& Word::insert_subrange(Word& other, byte lower, byte upper) {
+    upper += 1;
+
+    for(;lower < upper; lower++) {
+        data[lower] = other.data[lower];
     }
 
     return *this;
 }
 
+
+void Word::insert_subrange_from_to(const Word& source, Word& destination, byte lower, byte upper) const {
+    upper += 1;
+
+    for(;lower < upper; lower++) {
+        destination.data[lower] = source.data[lower];
+    }
+}
+
 std::ostream& operator<<(std::ostream& output, const Word& x) {
-    output << static_cast<int>(x.data[0]) << "::"
-           << static_cast<int>(x.data[1]) << "::"
-           << static_cast<int>(x.data[2]) << "::"
-           << static_cast<int>(x.data[3]) << "::"
-           << static_cast<int>(x.data[4]) << "::"
+    output << static_cast<int>(x.data[0]) << "_"
+           << static_cast<int>(x.data[1]) << "_"
+           << static_cast<int>(x.data[2]) << "_"
+           << static_cast<int>(x.data[3]) << "_"
+           << static_cast<int>(x.data[4]) << "_"
            << static_cast<int>(x.data[5]);
 
     return output;
@@ -182,7 +219,7 @@ std::istream& operator>>(std::istream& input, Word& x) {
 
     std::string in(begin, end);
 
-    x = parse_word(in);
+    x = split_word(in);
 
     return input;
 };

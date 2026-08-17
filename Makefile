@@ -6,7 +6,7 @@ OS := $(shell uname -s)
 
 PROD_GOAL = prod
 TEST_GOAL = test
-DEBUG_GOAL = debug
+UTIL_GOAL = util
 PERF_GOAL = benchmark
 
 MAX_ERRORS=3
@@ -15,13 +15,13 @@ MAX_BACKTRACE=4
 CORE_DIAGNOSTICS = -Wall -Wextra -Werror -ftemplate-backtrace-limit=$(MAX_BACKTRACE)
 
 ifeq ($(CXX), g++)
-DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fdiagnostics-color=never -fmax-errors=$(MAX_ERRORS)
+DIAGNOSTICS = $(CORE_DIAGNOSTICS) -fdiagnostics-color=never
 else
-DIAGNOSTICS = $(CORE_DIAGNOSTICS) -ferror-limit=$(MAX_ERRORS) 
+DIAGNOSTICS = $(CORE_DIAGNOSTICS)
 endif
 
 CXX ?= clang++
-CXXFLAGS = -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread -MMD
+CXXFLAGS = -g -std=c++20 $(DIAGNOSTICS) -I$(SRC_DIR) -pthread -MMD
 LDFLAGS = -ledit -lncurses
 
 #
@@ -38,14 +38,17 @@ ifneq ($(findstring $(PROD_GOAL), $(MAKECMDGOALS)),)
   DFILES = $(wildcard $(OBJ_DIR)/*.d $(OBJ_DIR)/*/*.d $(OBJ_DIR)/*/*/*.d)
 
   ifneq ($(DFILES),)
-    $(info DFILES is $(DFILES))
     include $(DFILES)
   endif
 endif
 
 PROD_TARGET = cmix
 
-OPT_FLAGS ?= -O3 -flto
+PROD_OPT_FLAGS ?= -O3 -flto -ffunction-sections -fdata-sections
+
+ifeq ($(CXX),g++) 
+	OPT_FLAGS=$(PROD_OPT_FLAGS) -Wl,--gc-sections
+endif
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(@D)
@@ -90,7 +93,6 @@ TEST_WITHOUT_MAIN=$(filter-out $(TEST_OBJ)/cmix.o , $(TEST_CORE_OBJS))
 ifneq ($(findstring $(TEST_GOAL), $(MAKECMDGOALS)),)
   TEST_DFILES = $(wildcard $(TEST_OBJ)/*.d $(TEST_OBJ)/*/*.d $(TEST_OBJ)/*/*/*.d)
   ifneq ($(TEST_DFILES),)
-    $(info TEST_DFILES is $(TEST_DFILES))
     include $(TEST_DFILES)
   endif
 endif
@@ -113,58 +115,12 @@ XCRUN =
 endif
 
 run:
-	runner --gtest_show_internal_stack_frames=0
+	find $(TEST_OBJ) -name '*.gcda' -exec rm "{}" \;
+	./runner
 
 coverage:
 	$(XCRUN) llvm-profdata merge -sparse *.profraw -o final.profdata
 	$(XCRUN) llvm-cov show -ignore-filename-regex "vendor/*" -instr-profile=final.profdata ./runner >coverage.txt
-
-#
-# debug
-#
-
-DEBUG_DIR = debug/
-
-DEBUG_SRCS = $(wildcard $(DEBUG_DIR)/*.cpp $(DEBUG_DIR)/*/*.cpp $(DEBUG_DIR)/*/*/*.cpp)
-
-DBG_OBJ_DIR = .build/dbg
-
-DEBUG_FLAGS = -g -O0 -I$(GOOGLE_TEST)/googletest/include -I$(TEST_DIR)
-
-DEBUG_LDFLAGS = -L$(GOOGLE_TEST)/lib -lgtest
-
-DBG_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(SRCS)) \
-           $(patsubst $(TEST_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(TEST_SRCS)) \
-           $(patsubst $(DEBUG_DIR)/%.cpp,$(DBG_OBJ_DIR)/%.o,$(DEBUG_SRCS))
-
-DEBUG_WITHOUT_MAIN=$(filter-out $(DBG_OBJ_DIR)/cmix.o , $(DBG_OBJS))
-
-$(info DEBUG_WITHOUT_MAIN is $(DEBUG_WITHOUT_MAIN))
-
-ifneq ($(findstring $(DEBUG_GOAL), $(MAKECMDGOALS)),)
-	DEBUG_DFILES = $(wildcard $(DBG_OBJ_DIR)/*.d $(DBG_OBJ_DIR)/*/*.d $(DBG_OBJ_DIR)/*/*/*.d)
-
-  ifneq ($(DEBUG_DFILES),)
-    include $(DEBUG_DFILES)
-  endif
-endif
-
-DEBUG_TARGET = buggy
-
-$(DBG_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
-
-$(DBG_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
-
-$(DBG_OBJ_DIR)/%.o: $(DEBUG_DIR)/%.cpp
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(DEBUG_FLAGS) -c $< -o $@
-
-$(DEBUG_TARGET): $(DEBUG_WITHOUT_MAIN)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(DEBUG_FLAGS) $(LDFLAGS) $(DEBUG_LDFLAGS)
 
 #
 # perf
@@ -181,7 +137,7 @@ ifeq ($(DO_OPTMIZE), 1)
 PERF_PROFILE_FLAGS = -fprofile-generate
 endif
 
-PERF_FLAGS = -g -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
+PERF_FLAGS = -O2 -fno-omit-frame-pointer $(PERF_PROFILE_FLAGS)
 
 PERF_SRCS = $(wildcard $(PERF_DIR)/*.cpp $(PERF_DIR)/*/*.cpp $(PERF_DIR)/*/*/*.cpp)
 
@@ -194,7 +150,6 @@ ifneq ($(findstring $(PERF_GOAL), $(MAKECMDGOALS)),)
 	PERF_DFILES = $(wildcard $(PERF_OBJ)/*.d $(PERF_OBJ)/*/*.d $(PERF_OBJ)/*/*/*.d)
 
   ifneq ($(PERF_DFILES),)
-    $(info PERF_DFILES is $(PERF_DFILES))
     include $(PERF_DFILES)
   endif
 endif
@@ -215,14 +170,56 @@ $(PERF_TARGET): $(PERF_WITHOUT_MAIN)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(PERF_FLAGS) $(LDFLAGS)
 
 #
+# util
+# 
+
+UTIL_TOOLS = perf/graph
+
+UTIL_DIR = util/
+UTIL_OBJ = .build/util
+
+UTIL_FLAGS = -O2 -fno-omit-frame-pointer
+
+UTIL_SRCS = $(wildcard $(UTIL_DIR)/*.cpp $(UTIL_DIR)/*/*.cpp $(UTIL_DIR)/*/*/*.cpp)
+
+UTIL_CORE_OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(UTIL_OBJ)/%.o,$(SRCS))
+UTIL_PROG_OBJS = $(patsubst $(UTIL_DIR)/%.cpp,$(UTIL_OBJ)/%.o,$(UTIL_SRCS))
+
+UTIL_OBJS = $(UTIL_CORE_OBJS) $(UTIL_PROG_OBJS)
+
+ifneq ($(findstring $(UTIL_GOAL), $(MAKECMDGOALS)),)
+	UTIL_DFILES = $(wildcard $(UTIL_OBJ)/*.d $(UTIL_OBJ)/*/*.d $(UTIL_OBJ)/*/*/*.d)
+
+  ifneq ($(UTIL_DFILES),)
+    include $(UTIL_DFILES)
+  endif
+endif
+
+UTIL_WITHOUT_MAIN=$(filter-out $(UTIL_OBJ)/cmix.o $(UTIL_OBJ)/util/graph.o, $(UTIL_OBJS))
+
+$(UTIL_OBJ)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(UTIL_FLAGS) -c $< -o $@
+
+$(UTIL_OBJ)/%.o: $(UTIL_DIR)/%.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(UTIL_FLAGS) -c $< -o $@
+
+tools/graph: $(UTIL_WITHOUT_MAIN) $(UTIL_OBJ)/graph.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+tools: tools/graph
+
+#
 # project scope
 #
+
+kloc:
+	wc -l `find src tests perf debug -type f -print`
 
 prod: $(PROD_TARGET)
 
 test: $(TEST_TARGET)
-
-debug: $(DEBUG_TARGET)
 
 benchmark: $(PERF_TARGET)
 
@@ -238,16 +235,16 @@ test-clean:
 	-rm -f *.profraw
 	-rm -f *.profdata
 
-debug-clean:
-	-rm -f $(DEBUG_TARGET)
-	-rm -rf $(DBG_OBJ_DIR)
-
 benchmark-clean:
 	-rm -rf $(PERF_OBJ)
 	-rm -f $(PERF_TARGET)
 
-clean: prod-clean test-clean debug-clean perf-clean
+tools-clean:
+	-rm -rf $(UTIL_OBJ)
+	-rm -f tools/graph
 
-.PHONY: prod-clean test-clean debug-clean perf-clean default
+clean: prod-clean test-clean perf-clean tools-clean
+
+.PHONY: prod-clean test-clean perf-clean default tools
 
 # $(info TEST_OBJS is $(TEST_OBJS))

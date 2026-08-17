@@ -5,13 +5,14 @@
 #include "repl/command.h"
 
 CommandEntry CommandTable[CommandCount] = {
-    {Command::quit, 1, "quit cmix."},
+    {Command::quit, 0, "quit cmix."},
     {Command::read, 1, "read <i> = print memory at <i>"},
-    {Command::write, 7, "write <i> <x> = write word at i with x,x,x,x,x"}
+    {Command::write, 2, "write <i> <x> = write word at i with x,x,x,x,x"},
+    {Command::help, 3, "give help on commands"}
 };
 
 CommandEntry lookup_command(const Command x) {
-    for(auto i = 0; i <CommandCount; i++) {
+    for(auto i = 0; i < CommandCount; i++) {
         if (CommandTable[i].cmd == x) {
             return CommandTable[i];
         }
@@ -21,10 +22,11 @@ CommandEntry lookup_command(const Command x) {
 };
 
 Command string_to_command(const std::string command) {
-    if(command == "quit") return Command::quit;
+    if(command == "q") return Command::quit;
+    if(command == "?") return Command::help;
 
-    if(command == "read") return Command::read;
-    if(command == "write") return Command::write;
+    if(command == "r") return Command::read;
+    if(command == "w") return Command::write;
 
     return Command::unknown;
 }

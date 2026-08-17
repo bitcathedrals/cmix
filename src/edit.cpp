@@ -16,7 +16,7 @@ extern "C" {
     int history_size = 512;
 
     char* edit_prompt(EditLine* el [[maybe_unused]]) {
-        return const_cast<char*>("buggy> ");
+        return const_cast<char*>("cmix> ");
     }
 
     void setup_lib_edit() {

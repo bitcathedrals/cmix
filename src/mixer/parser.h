@@ -10,6 +10,8 @@
 #include <memory>
 #include <iostream>
 
+#include "split.h"
+
 class Token;
 
 using production_t = std::vector<std::unique_ptr<Token>>;
@@ -18,15 +20,15 @@ using AST_t = std::vector<Token>;
 class Token {
 public:
     enum class label {
-        number,
-        symbol,
-        text,
+        number = 0,
+        symbol = 1,
+        text = 2,
+        special = 3,
 
-        node,
+        node = 4,
 
-        nothing,
-        error,
-        end
+        nothing = 5,
+        rollback = 6
     };
 
     Token();
@@ -40,18 +42,30 @@ public:
     explicit Token(AST_t&& parse);
     explicit Token(production_t&& children);
 
+    Token(const Token& other);
+
+    virtual std::unique_ptr<Token> clone(void) const {
+        return std::make_unique<Token>(*this);
+    }
+
     virtual ~Token(void) = default;
 
     void operator=(AST_t&& parse);
-    const Token& operator[](int index) const;
 
-    Token& set_optional(void);
+    int size(void) const { return tree.size(); }
+    const Token& operator[](size_t index) const;
 
+    Token* set_name(const std::string name);
+    Token* set_optional(void);
+
+    std::string get_name(void) const;
+    bool get_optional(void) const { return optional; };
     Token::label get_type(void) const { return t; }
-    const std::string get_token(void) const { return value; }
+    const std::string get_token(void) const;
     const std::vector<Token>& get_production(void) const { return tree; }
 
     static Token descent(const Token& definition, const std::string text);
+    static Token descent(const std::unique_ptr<const Token> definition, const std::string text);
 
     Token match(std::string::const_iterator& i,
                 std::string::const_iterator& end) const;
@@ -61,10 +75,20 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const Token& token);
 
+    void graph(std::ostream& out);
+    void graph_ast(std::ostream& output);
+
+    const std::unique_ptr<Token> walk(const std::string node_path);
+    const std::unique_ptr<Token> safe_walk(const Token& node, split_t path);
+
+    split_t depth(void);
+
 protected:
     virtual bool is_capture(const char x [[maybe_unused]]) const;
 
 private:
+    std::string name;
+
     Token::label t;
 
     production_t tokens;
@@ -73,12 +97,26 @@ private:
     AST_t tree;
     std::string value;
 
-    static constexpr std::array<char, 4> terminal {' ', '\t', '\n', ','};
+    bool rest_are_optional(const size_t i) const;
+
+    const std::unique_ptr<Token> walk(const Token& node, split_t path);
+
+    static constexpr std::array<char, 4> terminal {' ', '\t', '\n'};
 
     bool is_terminal(const char x) const;
 
     void skip_terminal(std::string::const_iterator& i,
                        std::string::const_iterator& n) const;
+
+    void graph_header(std::ostream& output);
+    void graph_footer(std::ostream& output);
+
+    void graph_define(std::string label, std::ostream& output);
+    void graph_node(std::ostream& output);
+
+    void graph_ast_internal(std::ostream& output);
+
+    void depth_inner(const AST_t x, split_t& deepest, split_t stack);
 };
 
 std::ostream& operator<<(std::ostream& out, const Token& token);
@@ -88,14 +126,25 @@ public:
     Alphabetic() : Token(Token::label::text) {}
     Alphabetic(const Token::label label) : Token(label) {}
 
-private:
-    virtual bool is_capture(const char x) const override {
-        if (std::isalpha(x)) {
-             return true;
-         }
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<Alphabetic>(*this);
+    }
 
-         return false;
-    };
+private:
+    virtual bool is_capture(const char x) const override;
+};
+
+class NumSign : public Token {
+public:
+    NumSign() : Token(Token::label::special) {}
+    NumSign(const Token::label label) : Token(label) {}
+
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<NumSign>(*this);
+    }
+
+private:
+    virtual bool is_capture(const char x) const override;
 };
 
 class Numeric : public Token {
@@ -103,14 +152,12 @@ public:
     Numeric() : Token(Token::label::number) {}
     Numeric(const Token::label label) : Token(label) {}
 
-private:
-    virtual bool is_capture(const char x) const override {
-         if (std::isdigit(x)) {
-             return true;
-         }
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<Numeric>(*this);
+    }
 
-         return false;
-    };
+private:
+    virtual bool is_capture(const char x) const override;
 };
 
 class AlphaNumeric : public Token {
@@ -118,14 +165,40 @@ public:
     AlphaNumeric() : Token(Token::label::symbol) {}
     AlphaNumeric(const Token::label label) : Token(label) {}
 
-private:
-    virtual bool is_capture(const char x) const override {
-        if (std::isalnum(x)) {
-            return true;
-        }
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<AlphaNumeric>(*this);
+    }
 
-        return false;
-    };
+private:
+    virtual bool is_capture(const char x) const override;
+};
+
+class Special : public Token {
+public:
+    Special() : Token(Token::label::special) {}
+    Special(const Token::label label) : Token(label) {}
+
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<Special>(*this);
+    }
+
+private:
+    virtual bool is_capture(const char x) const override;
+};
+
+class Literal : public Token {
+public:
+    explicit Literal(const char lit) : Token(Token::label::special),
+                                       literal(lit) {}
+
+    virtual std::unique_ptr<Token> clone(void) const override {
+        return std::make_unique<Literal>(*this);
+    }
+
+private:
+    const char literal;
+
+    virtual bool is_capture(const char x) const override;
 };
 
 #endif

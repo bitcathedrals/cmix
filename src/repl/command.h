@@ -10,6 +10,7 @@ enum class Command {
     read = 1,
     write = 2,
 
+    help = 3,
     unknown = 32
 };
 

@@ -1,11 +1,12 @@
 cmix
 runner
-buggy
 bench
+tools/graph
 .build
 *.profdata
 *.profraw
 coverage.txt
 *.gcno
+*.png
 
 

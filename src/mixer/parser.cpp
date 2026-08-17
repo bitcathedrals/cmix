@@ -1,8 +1,26 @@
+#include <format>
 #include <algorithm>
+#include <stdexcept>
+#include <iostream>
 
 #include "mixer/parser.h"
 
-Token::Token() : t {Token::label::end} {}
+Token::Token() : t {Token::label::nothing}  {}
+
+Token::Token(const Token& other) : name(other.name),
+                                   t(other.t),
+                                   optional(other.optional),
+                                   tree(other.tree),
+                                   value(other.value) {
+
+    for (const auto& token_ptr : other.tokens) {
+        if (token_ptr) {
+            tokens.push_back(token_ptr->clone());
+        } else {
+            tokens.push_back(nullptr);
+        }
+    }
+}
 
 Token::Token(const Token::label label) : t {label} {}
 
@@ -17,18 +35,92 @@ Token::Token(production_t&& children) : t(Token::label::node) {
     tokens = std::move(children);
 }
 
+Token* Token::set_name(const std::string ast_name) {
+    name = ast_name;
+    return this;
+}
+
+std::string Token::get_name(void) const {
+    return name;
+}
+
 void Token::operator=(AST_t&& parse) {
     tree = std::move(parse);
 }
 
-const Token& Token::operator[](int index) const {
+const Token& Token::operator[](size_t index) const {
+    if(index >= tree.size()) {
+        throw std::out_of_range(std::format("id: \"{}\" out of range Token& [] index = {} in tree.size() {}",
+                                            get_name(),
+                                            index,
+                                            tree.size()));
+    }
+
     return tree[index];
 }
 
-Token& Token::set_optional(void) {
-    optional = true;
-    return *this;
+const std::string Token::get_token(void) const {
+    if(t == Token::label::node) {
+        std::string traversed;
+
+        for(size_t i = 0; i < tree.size(); i++) {
+            traversed += tree[i].get_token();
+        }
+
+        return traversed;
+    }
+
+    return value;
 }
+
+Token* Token::set_optional(void) {
+    optional = true;
+    return this;
+}
+
+const std::unique_ptr<Token> Token::walk(const Token& node, split_t path) {
+    if(path.empty()) {
+        return nullptr;
+    }
+
+    for(size_t i = 0; i < node.tree.size(); i++) {
+        if(node.tree[i].get_name() == path.front()) {
+            if(path.size() == 1) {
+                return node.tree[i].clone();
+            }
+
+            path.erase(path.begin());
+            return walk(node.tree[i], path);
+        }
+    }
+
+    return nullptr;
+}
+
+const std::unique_ptr<Token> Token::safe_walk(const Token& node, split_t path) {
+    auto ptr = walk(node, path);
+
+    if(ptr == nullptr) {
+        throw std::invalid_argument(std::format("{} node bad path: {}",
+                                                node.get_name(),
+                                                split_join(path, "/")));
+
+    }
+
+    return ptr;
+}
+
+
+const std::unique_ptr<Token> Token::walk(const std::string path) {
+    split_t split = split_path(path);
+
+    if(split.size() < 1) {
+        return std::make_unique<Token>(*this);
+    }
+
+    return walk(*this, split);
+}
+
 
 bool Token::is_capture(const char x [[maybe_unused]]) const {
     throw std::logic_error("is_capture should never be called in the Token base class");
@@ -36,11 +128,10 @@ bool Token::is_capture(const char x [[maybe_unused]]) const {
 };
 
 bool Token::is_terminal(const char x) const {
-    if(terminal[0] == x ||
-       terminal[1] == x ||
-       terminal[2] == x ||
-       terminal[3] == x) {
-        return true;
+    for(const auto& t : terminal) {
+        if(x == t) {
+            return true;
+        }
     }
 
     return false;
@@ -90,17 +181,113 @@ Token Token::match(std::string::const_iterator& i,
     return Token(t, capture);
 }
 
-Token Token::parse(std::string::const_iterator& i,
+static void parse_fail_throw(const AST_t& parse,
+                             const Token& token,
+
+                             const std::string::const_iterator& backtrack,
+                             const std::string::const_iterator& begin) {
+    std::string diagnostic;
+
+    std::string type((token.get_type() == Token::label::node) ? "parse" : "match");
+
+    if(parse.size() < 1) {
+        diagnostic = "<nothing emitted>";
+    }
+    else {
+        const Token& last = parse.back();
+        diagnostic = last.get_token();
+    }
+
+    throw std::invalid_argument(std::format("{} {} failed {} characters after checkpoint \"{}\" over: \"{}\" ",
+                                            type,
+                                            token.get_name(),
+                                            std::distance(backtrack, begin),
+                                            diagnostic,
+                                           *begin));
+}
+
+bool Token::rest_are_optional(const size_t i) const {
+    for(auto y = i + 1; y < tokens.size(); y++) {
+        if(!tokens[y]->get_optional()) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+Token Token::parse(std::string::const_iterator& begin,
                    std::string::const_iterator& end) const {
     AST_t parse;
 
-    for(const auto& x : tokens) {
-        if (x->get_type() == Token::label::node) {
-            parse.push_back(x->parse(i, end));
+    auto backtrack = begin;
+
+    for(size_t i = 0; i < tokens.size(); i++) {
+        if(begin == end) {
+            if(rest_are_optional(i)) {
+                break;
+            }
+
+            if(i > 0) {
+                parse_fail_throw(parse, *tokens[i], backtrack, begin);
+            }
+
+            return Token(Token::label::rollback);
         }
-        else {
-            parse.push_back(x->match(i, end));
+
+        if (tokens[i]->get_type() == Token::label::node) {
+            auto ascent = tokens[i]->parse(begin, end);
+
+            switch(ascent.get_type()) {
+                using enum Token::label;
+
+                case rollback:
+                    if(get_optional()) {
+                        return Token { Token::label::nothing };
+                    }
+
+                    return Token { Token::label::rollback };
+
+                case nothing:
+                    if(tokens[i]->get_optional()) {
+                        begin = backtrack;
+                        continue;
+                    }
+
+                    parse_fail_throw(parse, *tokens[i], backtrack, begin);
+
+                    break;
+
+                default:
+                    backtrack = begin;
+
+                    parse.push_back(std::move(ascent));
+                    parse.back().set_name(tokens[i]->get_name());
+
+                    continue;
+            };
         }
+
+        auto ascent = tokens[i]->match(begin, end);
+
+        if(ascent.get_type() == Token::label::nothing) {
+            if(tokens[i]->get_optional()) {
+                begin = backtrack;
+                continue;
+            }
+
+            if(i > 0) {
+                // we have a partial match, so error if we don't match every non-optional token
+                parse_fail_throw(parse, *tokens[i], backtrack, begin);
+            }
+
+            return Token( Token::label::nothing );
+        }
+
+        backtrack = begin;
+
+        parse.push_back(std::move(ascent));
+        parse.back().set_name(tokens[i]->get_name());
     }
 
     if (parse.size() < 1) {
@@ -114,11 +301,33 @@ Token Token::descent(const Token& definition, const std::string text) {
     auto i = text.cbegin();
     auto end = text.cend();
 
-    if (definition.get_type() == Token::label::node) {
-        return definition.parse(i, end);
+    try {
+        if (definition.get_type() == Token::label::node) {
+            return definition.parse(i, end);
+        }
+        else {
+            return definition.match(i, end);
+        }
+    } catch(const std::invalid_argument& exception) {
+        std::cerr << "cmix parser fail: " << exception.what() << "on input: " << text << std::endl;
+        throw;
     }
-    else {
-        return definition.match(i, end);
+}
+
+Token Token::descent(const std::unique_ptr<const Token> definition, const std::string text) {
+    auto i = text.cbegin();
+    auto end = text.cend();
+
+    try {
+        if (definition->get_type() == Token::label::node) {
+            return definition->parse(i, end);
+        }
+        else {
+            return definition->match(i, end);
+        }
+    } catch(const std::invalid_argument& exception) {
+        std::cerr << "cmix parser fail: " << exception.what() << "on input: " << text << std::endl;
+        throw;
     }
 }
 
@@ -132,25 +341,20 @@ std::ostream& operator<<(std::ostream& out, const Token& token) {
         case Token::label::text:
             label = "text";
             break;
-
         case Token::label::symbol:
             label = "symbol";
             break;
-
+        case Token::label::special:
+            label = "special";
+            break;
         case Token::label::node:
             label = "node";
             break;
-
         case Token::label::nothing:
             label = "nothing";
             break;
-
-        case Token::label::error:
-            label = "error";
-            break;
-
-        case Token::label::end:
-            label = "end";
+        case Token::label::rollback:
+            label = "rollback";
             break;
     }
 
@@ -158,4 +362,129 @@ std::ostream& operator<<(std::ostream& out, const Token& token) {
         << " value = " << token.value;
 
     return out;
+}
+
+void Token::graph_header(std::ostream& output) {
+    output << "digraph { "
+           << std::endl << "    rank=TB" << std::endl;
+}
+
+void Token::graph_footer(std::ostream& output) {
+    output << "}" << std::endl;
+}
+
+void Token::graph_define(std::string label, std::ostream& output) {
+    output << label << " [label = \"" << label << "\"]" << std::endl;
+}
+
+void Token::graph_node(std::ostream& output) {
+    std::string name = get_name();
+    if (get_optional()) {
+        name = name + " :optional";
+    }
+
+    graph_define(name, output);
+
+    for(size_t i = 0; i < tokens.size(); i++) {
+        output << "    " << tokens[i]->get_name() <<  " -> " <<   get_name() << std::endl;
+        tokens[i]->graph_node(output);
+    }
+}
+
+void Token::graph_ast_internal(std::ostream& output) {
+    std::string name = get_name();
+
+    graph_define(name, output);
+
+    for(size_t i = 0; i < tree.size(); i++) {
+        output << "    " << tree[i].get_name() <<  " -> " <<   get_name() << std::endl;
+        tree[i].graph_ast_internal(output);
+    }
+}
+
+void Token::graph(std::ostream& output) {
+    graph_header(output);
+
+    graph_node(output);
+
+    graph_footer(output);
+}
+
+void Token::graph_ast(std::ostream& output) {
+    graph_header(output);
+
+    graph_ast_internal(output);
+
+    graph_footer(output);
+}
+
+void Token::depth_inner(const AST_t x, split_t& deepest, split_t stack) {
+    for(size_t i = 0; i < x.size(); i++) {
+        if(x[i].get_type() == Token::label::node) {
+            stack.push_back(x[i].get_name());
+
+            if(stack.size() >= deepest.size()) {
+                deepest = stack;
+            }
+
+            depth_inner(x[i].tree, deepest, stack);
+        }
+    }
+}
+
+split_t Token::depth(void) {
+    split_t deepest;
+    split_t stack;
+
+    depth_inner(tree, deepest, stack);
+
+    return deepest;
+}
+
+bool Alphabetic::is_capture(const char x) const {
+    if (std::isalpha(x)) {
+        return true;
+    }
+
+    return false;
+}
+
+bool NumSign::is_capture(const char x) const {
+    if (x == '+' || x == '-') {
+        return true;
+    }
+
+    return false;
+}
+
+bool Numeric::is_capture(const char x) const {
+    if (std::isdigit(x)) {
+        return true;
+    }
+
+    return false;
+}
+
+ bool AlphaNumeric::is_capture(const char x) const {
+     if (std::isalnum(x)) {
+         return true;
+     }
+
+     return false;
+ }
+
+ bool Special::is_capture(const char x) const {
+     if (std::ispunct(x)) {
+         return true;
+     }
+
+     return false;
+ }
+
+bool Literal::is_capture(const char x) const {
+    if (literal == x) {
+        return true;
+    }
+
+    return false;
 }
