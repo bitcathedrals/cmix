@@ -184,6 +184,15 @@ static CmdStatus exec_write(const split_t p) {
     return CmdStatus::bad_input;
 }
 
+static CmdStatus exec_help() {
+    std::cerr << "? help" << std::endl
+              << "r <register| address. register = a,,i<1-6>" << std::endl
+              << "w <register| address. register = a,x,i<1-6>" << std::endl
+              << std::endl;
+
+    return CmdStatus::ok;
+}
+
 CmdStatus run_command(const split_t p) {
     size_t size = p.size();
 
@@ -209,6 +218,10 @@ CmdStatus run_command(const split_t p) {
 
         case Command::write:
             return exec_write(p);
+            break;
+
+        case Command::help:
+            return exec_help();
             break;
 
         case Command::unknown:

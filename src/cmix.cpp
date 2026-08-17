@@ -32,8 +32,7 @@ int main() {
 
         CmdStatus status = run_command(parse);
 
-        std::cerr << parse
-                  << " command terminated with status: "
+        std::cerr << "command terminated with status: "
                   << status_string(status) << std::endl;
     } while(true);
 
