@@ -45,31 +45,38 @@ tools such as an a assembler.
 
 ### Phase 1 - Done
 
-The first stage is to lay down the core defitions. This would be the 
-core abstractions for both instructions and data. I want to make it
-an options to load a CSV file into the machine from the CLI or
-command line. This will allow IO to be punted.
+The first stage is to lay down the core defitions for both
+instructions and data.
 
 A lot of the general abstractions or structures would be pulled in as
-well in phase 1. Once I had both a Data and Instruction class I should
-be able to churn out instructions until done with the CPU, or at least
-the most pressing bits.
+well in phase 1. 
+
+Once I had both a Data and Instruction class I should be able to churn
+out instructions until done with the CPU, or at least the most
+pressing bits.
 
 ### Phase 2
+
+I want to make load into memory from a CSV file from the CLI. This
+will allow IO to be punted.
 
 The second part involves churning out instructions and creating
 a simple one pass assembler. The assembler can be a simplistic
 and niave, but any chip these days will run it easily.
 
-Also a simple loader will be implemented
-
-two commands: execute and run. Execute will execute a single
+two CLI commands: execute and run. Execute will execute a single
 instruction. Run will continue execution until a zero word
 or end of memory is reached.
 
-### Phase 4
+### Phase 3
 
-Phase 4 is IO.
+Implement IO such as persistent storage. This will save/load
+"machines" or snapshots complete with all IO, memory/register, and
+memory contents.
+
+#### Phase 4
+
+Debugger.
 
 ### Deps
 
