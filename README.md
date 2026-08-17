@@ -8,7 +8,7 @@ registers.
 CMix also has IO in the form of disks, and a punch card interface.
 
 This project aims to implement CMIX with a CLI interface, and related
-tools such as an a assembler.
+tools such as an a assembler, and debugger.
 
 ## Goals
 
@@ -16,7 +16,7 @@ tools such as an a assembler.
 - Portable: currently developed on MacOS, Linux, and
   OpenBSD. Buildable with Clang or GCC.
 - Correctness and simplicity first. No premature optimization.
-- no command dependenies except the compiler and GNU Make.
+- no dependenies except the compiler and GNU Make for main program.
 - Multiple targets for testing, benchmarking, and prod.
 - Minimal external code. External vendor code is checked in as 
   submodules. No patching vendor code in the submodules.
@@ -28,9 +28,10 @@ tools such as an a assembler.
 
 ## Non Goals
 
-- Not competing with other implementations. Other implementations that
-  I am aware of are a web version, and a Java version. Both are
-  very heavy.
+- Competing with other implementations. Other implementations that I
+  am aware of are a web version, and a Java version. Both use a lot of
+  memory. I want cmix to use a tiny bit of memory and respond
+  instantly.
 
 - Heavy optimization: optimization is a part of the project but
   maximum speed possible is not a goal. For that a machine code translation
@@ -40,6 +41,8 @@ tools such as an a assembler.
 
 - to become familiar and proficient in Modern C++. I am targeting '20
   to learn and use.
+
+- to learn more about computers at a machine level.
 
 ## Process to Progress
 
@@ -60,9 +63,8 @@ pressing bits.
 I want to make load into memory from a CSV file from the CLI. This
 will allow IO to be punted.
 
-The second part involves churning out instructions and creating
-a simple one pass assembler. The assembler can be a simplistic
-and niave, but any chip these days will run it easily.
+Churning out instructions and create a simple one pass assembler. The
+assembler can be naive since scaling isn't a concern.
 
 two CLI commands: execute and run. Execute will execute a single
 instruction. Run will continue execution until a zero word
